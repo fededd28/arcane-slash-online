@@ -4,6 +4,8 @@ import { GameRoom } from './room.js';
 
 export { GameRoom };
 
+const MAX_ROOMS = 10; // el cliente tiene el mismo tope (MAX_ROOMS en index.html)
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -12,8 +14,11 @@ export default {
       if (request.headers.get('Upgrade') !== 'websocket') {
         return new Response('Se esperaba una conexión WebSocket', { status: 426 });
       }
-      // Una sola sala global. Para tener varias salas, se puede elegir el nombre según la URL.
-      const id = env.ROOM.idFromName('main');
+      // Varias salas: el cliente pide ?room=N y, si la sala está llena, prueba la siguiente.
+      // La sala 1 conserva el nombre 'main' (la de siempre).
+      const n = parseInt(url.searchParams.get('room') || '1', 10);
+      const room = Number.isInteger(n) && n >= 1 && n <= MAX_ROOMS ? n : 1;
+      const id = env.ROOM.idFromName(room === 1 ? 'main' : `room-${room}`);
       return env.ROOM.get(id).fetch(request);
     }
 

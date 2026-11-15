@@ -3460,6 +3460,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  net.state = 'idle';
  }
 
+ const MAX_ROOMS = 10; // mismo tope que en src/worker.js
+
  function beginConnect() {
  if (net.state === 'connecting' || net.state === 'open') return;
  const name = (nameInputEl.value.trim() || t('player.default')).slice(0, 14);
@@ -3469,11 +3471,17 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  playBtnEl.disabled = true;
  playBtnEl.textContent = t('start.connecting');
  ensureAudio();
+ connectRoom(name, 1);
+ }
+
+ // Si la sala está llena, se prueba la siguiente (2, 3...) hasta MAX_ROOMS
+ function connectRoom(name, room) {
  net.lastError = '';
  let ws;
  try {
  const override = new URLSearchParams(location.search).get('ws'); // solo para pruebas locales
- ws = new WebSocket(override || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
+ const base = override || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`;
+ ws = new WebSocket(`${base}${base.includes('?') ? '&' : '?'}room=${room}`);
  } catch (err) {
  connectFailed('net.openFail');
  return;
@@ -3497,6 +3505,9 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (net.playing) {
  net.lost = true;
  netOverlayEl.classList.add('visible');
+ } else if (net.lastError === 'net.full' && room < MAX_ROOMS) {
+ net.state = 'idle';
+ connectRoom(name, room + 1);
  } else {
  connectFailed(net.lastError || 'net.connectFail');
  }
