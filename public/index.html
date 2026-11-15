@@ -385,7 +385,8 @@
  transition: opacity 0.15s ease;
  cursor: default;
  }
- #pause-menu.visible { opacity: 1; pointer-events: auto; }
+ #pause-menu { visibility: hidden; }
+ #pause-menu.visible { opacity: 1; pointer-events: auto; visibility: visible; }
 
  .menu-panel {
  width: min(560px, 92vw);
@@ -3611,6 +3612,23 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  });
 
 
+ // Mientras se juega, que los atajos del navegador no interrumpan:
+ // - Tab movía el foco fuera de la página y se dejaba de recibir el teclado.
+ // - Ctrl + S / A / D / P / F... abrían cuadros de diálogo o seleccionaban todo.
+ // Ctrl + W (cerrar pestaña) no se puede bloquear desde una página normal; por eso se pide confirmación
+ // al cerrar, y en pantalla completa el teclado queda bloqueado (ver el botón de Pantalla Completa).
+ const BLOCKED_CTRL = new Set(['KeyS', 'KeyA', 'KeyD', 'KeyP', 'KeyF', 'KeyG', 'KeyH', 'KeyU', 'KeyO', 'KeyE', 'KeyK', 'KeyL', 'KeyB', 'KeyJ', 'KeyW', 'KeyT', 'KeyN']);
+ window.addEventListener('keydown', (e) => {
+ if (!gameStarted) return;
+ if (e.code === 'Tab' && !menuOpen) e.preventDefault();
+ if ((e.ctrlKey || e.metaKey) && BLOCKED_CTRL.has(e.code)) e.preventDefault();
+ }, true);
+ window.addEventListener('beforeunload', (e) => {
+ if (net.playing && !net.lost) {
+ e.preventDefault();
+ e.returnValue = '';
+ }
+ });
  window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
  window.addEventListener('keyup', (e) => {
  keys[e.code] = false;
@@ -3813,7 +3831,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
 
  // Acceso para pruebas desde la consola del navegador
- window.__arcane = { fx: { potion: spawnPotionAura, petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
+ window.__arcane = { setStarted(v) { gameStarted = v; }, fx: { potion: spawnPotionAura, petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
 
  animate();
 
