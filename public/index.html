@@ -583,7 +583,7 @@
  --sa-l: env(safe-area-inset-left, 0px); --sa-r: env(safe-area-inset-right, 0px);
  --slot: 54px;
  }
- body.touch #left-col { top: calc(8px + var(--sa-t)); left: calc(8px + var(--sa-l)); width: 150px; gap: 6px; }
+ body.touch #left-col { top: calc(8px + var(--sa-t)); left: auto; right: calc(8px + var(--sa-r)); width: 150px; gap: 6px; }
  body.touch #leaderboard { padding: 6px 8px 5px; font-size: 11px; }
  body.touch .lb-title { font-size: 9px; padding-bottom: 3px; margin-bottom: 2px; }
  body.touch .lb-row { font-size: 11px; }
@@ -591,11 +591,11 @@
  body.touch #lb-me { font-size: 10px; }
  body.touch #hud { padding: 5px 7px; }
  body.touch .hud-btns button { padding: 8px 12px !important; font-size: 13px; }
- body.touch #minimap-box { top: calc(8px + var(--sa-t)); right: calc(8px + var(--sa-r)); padding: 4px; }
+ body.touch #minimap-box { top: calc(8px + var(--sa-t)); right: auto; left: calc(8px + var(--sa-l)); padding: 4px; }
  body.touch #minimap { width: 92px; height: 92px; }
- body.touch #killfeed { top: calc(112px + var(--sa-t)); right: calc(8px + var(--sa-r)); width: 170px; font-size: 11px; }
+ body.touch #killfeed { top: calc(210px + var(--sa-t)); right: calc(8px + var(--sa-r)); width: 170px; font-size: 11px; }
  /* Vida y maná: justo arriba de la fila de botones, del mismo ancho */
- body.touch #vitals { top: auto; transform: none; left: calc(8px + var(--sa-l)); right: calc(var(--slot) + 26px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); width: auto; grid-template-columns: 1fr; gap: 4px; }
+ body.touch #vitals { top: auto; transform: none; left: calc(var(--slot) + 26px + var(--sa-l)); right: calc(8px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); width: auto; grid-template-columns: 1fr; gap: 4px; }
  body.touch .bar-wrap { padding: 3px 8px; }
  body.touch #vitals { pointer-events: none; }
  body.touch .bar-label { font-size: 10px; }
@@ -604,13 +604,14 @@
  body.touch #tutorial-text { font-size: 12.5px; }
 
  /* Joystick (abajo a la izquierda) */
- #joystick { position: fixed; z-index: 11; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 150px; height: 150px; touch-action: none; }
+ /* Joystick abajo en el medio (se mueve con el pulgar derecho) */
+ #joystick { position: fixed; z-index: 11; left: 50%; margin-left: -75px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 150px; height: 150px; touch-action: none; }
  #joy-base { position: absolute; inset: 15px; border-radius: 50%; background: rgba(14, 17, 24, 0.5); border: 2px solid rgba(212, 166, 74, 0.45); backdrop-filter: blur(4px); }
  #joy-knob { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: rgba(212, 166, 74, 0.55); border: 2px solid rgba(255, 220, 140, 0.8); box-shadow: 0 0 12px rgba(212, 166, 74, 0.4); }
 
  /* Botones de acción (abajo a la derecha): cuadrícula */
  body.touch #spellbar {
- left: auto; right: calc(8px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); transform: none;
+ left: calc(8px + var(--sa-l)); right: auto; bottom: calc(8px + var(--sa-b)); transform: none;
  /* Una sola columna. De arriba a abajo: escudo, daño (Cataclismo, Descarga), Disipar, Petrificar, poción de vida, poción de maná.
  Espada y dash no tienen botón: tocar el mapa = espadazo, deslizar el dedo = dash. */
  display: flex; flex-direction: column; gap: 4px; padding: 5px; border-radius: 12px;
@@ -640,14 +641,17 @@
  body.touch { --slot: min(50px, calc((100vh - 56px) / 7)); }
  body.touch #killfeed { display: none; }
  body.touch #minimap { width: 70px; height: 70px; }
- body.touch #minimap-box { right: calc(var(--slot) + 26px + var(--sa-r)); }
+ body.touch #minimap-box { left: calc(var(--slot) + 26px + var(--sa-l)); }
  body.touch #tutorial { top: calc(8px + var(--sa-t)); bottom: auto; width: 230px; left: 50%; transform: translateX(-50%); }
  body.touch #toast { top: calc(120px + var(--sa-t)); left: 50%; }
- body.touch #vitals { left: calc(170px + var(--sa-l)); grid-template-columns: 1fr 1fr; }
+ body.touch #vitals { grid-template-columns: 1fr 1fr; }
+ body.touch #joystick { bottom: calc(50px + var(--sa-b)); }
  }
  @media (orientation: landscape) and (max-height: 480px) {
  body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
- body.touch #joystick { width: 130px; height: 130px; }
+ body.touch #joystick { width: 112px; height: 112px; margin-left: -56px; bottom: calc(42px + var(--sa-b)); }
+ body.touch #joy-base { inset: 6px; }
+ body.touch #joy-knob { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
  }
  /* Vertical: columnas a la derecha, barras abajo a la izquierda, joystick arriba de las barras */
  @media (orientation: portrait) {
@@ -657,7 +661,6 @@
  body.touch #joystick { bottom: calc(76px + var(--sa-b)); }
  /* Columna de botones centrada en el borde derecho */
  body.touch #spellbar { bottom: auto; top: 50%; transform: translateY(-50%); }
- body.touch #killfeed { right: calc(var(--slot) + 26px + var(--sa-r)); }
  body.touch #toast { top: auto; bottom: calc(7 * var(--slot) + 50px + var(--sa-b)); max-width: 60vw; }
  body.touch #tutorial { top: calc(204px + var(--sa-t)); bottom: auto; width: calc(100vw - 24px); }
  body.touch #death-title { font-size: 30px; letter-spacing: 3px; }
