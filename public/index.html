@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
  <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+ <meta name="mobile-web-app-capable" content="yes" />
+ <meta name="apple-mobile-web-app-capable" content="yes" />
  <title>Arcane Slash Online - Guerreros Brujos</title>
  <style>
  * {
@@ -566,6 +568,88 @@
  #hud { padding: 8px 10px; }
  #hud .hud-btns { margin-top: 0; flex-wrap: nowrap; align-items: center; }
  #hud .hud-btns button { white-space: nowrap; padding: 4px 9px; }
+
+ /* ===================== Celular / tablet (body.touch) ===================== */
+ .touch-only { display: none; }
+ body.touch .touch-only { display: block; }
+ body.touch { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+ body.touch #name-input { user-select: text; -webkit-user-select: text; }
+ body.touch #fullscreen-btn, body.touch .mouse-note, body.touch #reset-controls, body.touch #controls-list, body.touch .menu-label small { display: none; }
+ body.touch .start-card, body.touch .menu-panel { touch-action: pan-y; }
+
+ /* Paneles de arriba, chicos */
+ body.touch {
+ --sa-t: env(safe-area-inset-top, 0px); --sa-b: env(safe-area-inset-bottom, 0px);
+ --sa-l: env(safe-area-inset-left, 0px); --sa-r: env(safe-area-inset-right, 0px);
+ --slot: 54px;
+ }
+ body.touch #left-col { top: calc(8px + var(--sa-t)); left: calc(8px + var(--sa-l)); width: 150px; gap: 6px; }
+ body.touch #leaderboard { padding: 6px 8px 5px; font-size: 11px; }
+ body.touch .lb-title { font-size: 9px; padding-bottom: 3px; margin-bottom: 2px; }
+ body.touch .lb-row { font-size: 11px; }
+ body.touch #lb-rows .lb-row:nth-child(n+5) { display: none; }
+ body.touch #lb-me { font-size: 10px; }
+ body.touch #hud { padding: 5px 7px; }
+ body.touch .hud-btns button { padding: 8px 12px !important; font-size: 13px; }
+ body.touch #minimap-box { top: calc(8px + var(--sa-t)); right: calc(8px + var(--sa-r)); padding: 4px; }
+ body.touch #minimap { width: 92px; height: 92px; }
+ body.touch #killfeed { top: calc(112px + var(--sa-t)); right: calc(8px + var(--sa-r)); width: 170px; font-size: 11px; }
+ body.touch #vitals { top: calc(8px + var(--sa-t)); bottom: auto; width: min(280px, 38vw); grid-template-columns: 1fr; gap: 4px; }
+ body.touch .bar-wrap { padding: 3px 8px; }
+ body.touch #toast { bottom: auto; top: calc(78px + var(--sa-t)); max-width: 80vw; text-align: center; }
+ body.touch #tutorial { bottom: auto; top: calc(100px + var(--sa-t)); width: min(340px, 60vw); padding: 7px 10px; }
+ body.touch #tutorial-text { font-size: 12.5px; }
+
+ /* Joystick (abajo a la izquierda) */
+ #joystick { position: fixed; z-index: 11; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 150px; height: 150px; touch-action: none; }
+ #joy-base { position: absolute; inset: 15px; border-radius: 50%; background: rgba(14, 17, 24, 0.5); border: 2px solid rgba(212, 166, 74, 0.45); backdrop-filter: blur(4px); }
+ #joy-knob { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: rgba(212, 166, 74, 0.55); border: 2px solid rgba(255, 220, 140, 0.8); box-shadow: 0 0 12px rgba(212, 166, 74, 0.4); }
+
+ /* Botones de acción (abajo a la derecha): cuadrícula */
+ body.touch #spellbar {
+ left: auto; right: calc(10px + var(--sa-r)); bottom: calc(10px + var(--sa-b)); transform: none;
+ display: grid; grid-template-columns: repeat(var(--cols, 5), var(--slot)); gap: 6px; padding: 7px; border-radius: 12px;
+ touch-action: none;
+ }
+ body.touch .bar-divider { display: none; }
+ body.touch .spell-slot, body.touch .potion-slot { width: var(--slot); height: var(--slot); padding: 3px 2px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; touch-action: none; }
+ body.touch .spell-slot:hover, body.touch .potion-slot:hover { transform: none; }
+ body.touch .spell-name { display: none; }
+ body.touch .spell-top { position: absolute; top: 1px; left: 0; right: 0; padding: 0 3px; margin: 0; font-size: 9px; justify-content: flex-end; pointer-events: none; }
+ body.touch .spell-key, body.touch .shield-tag { display: none; }
+ body.touch .spell-icon { height: 30px; margin: 6px 0 0; pointer-events: none; }
+ body.touch .ico { width: 28px; height: 28px; }
+ body.touch .potion-slot.touch-pressed, body.touch .spell-slot.touch-pressed { border-color: var(--gold); background: var(--gold-soft); }
+ .dash-ico { font-size: 30px; font-weight: 800; color: #9fc5ff; line-height: 1; }
+
+ /* Horizontal */
+ @media (orientation: landscape) {
+ body.touch { --cols: 5; }
+ body.touch #killfeed { display: none; }
+ body.touch #tutorial { top: auto; bottom: calc(8px + var(--sa-b)); width: 230px; left: calc(50% - 70px); }
+ body.touch #vitals { width: min(240px, 34vw); }
+ body.touch .bar-label { font-size: 10px; }
+ }
+ /* Pantalla baja (celular horizontal): todo más compacto */
+ @media (orientation: landscape) and (max-height: 480px) {
+ body.touch { --slot: 48px; }
+ body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
+ body.touch #joystick { width: 130px; height: 130px; }
+ body.touch .ico { width: 24px; height: 24px; }
+ body.touch .spell-icon { height: 26px; margin-top: 8px; }
+ }
+ /* Vertical */
+ @media (orientation: portrait) {
+ body.touch { --cols: 3; }
+ body.touch #left-col { width: 140px; }
+ body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
+ body.touch #vitals { top: auto; bottom: calc(222px + var(--sa-b)); left: 12px; right: 12px; transform: none; width: auto; grid-template-columns: 1fr 1fr; }
+ body.touch #toast { top: auto; bottom: calc(272px + var(--sa-b)); }
+ body.touch #tutorial { top: calc(204px + var(--sa-t)); bottom: auto; width: calc(100vw - 24px); }
+ body.touch #death-title { font-size: 30px; letter-spacing: 3px; }
+ }
+ body.touch .start-card { padding: 18px 16px; }
+ body.touch .start-title { font-size: 26px; letter-spacing: 4px; }
  #hud-hidden[hidden] { display: none !important; }
  </style>
  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
@@ -757,7 +841,13 @@
  <div class="spell-icon"><svg class="ico"><use href="#ico-potion-mp"/></svg></div>
  <div class="spell-name">Poción Maná</div>
  </div>
+ <div class="potion-slot touch-only" id="dash-slot">
+ <div class="spell-icon"><span class="dash-ico">»</span></div>
+ <div class="spell-name">Dash</div>
  </div>
+ </div>
+
+ <div id="joystick" class="touch-only"><div id="joy-base"><div id="joy-knob"></div></div></div>
 
  <div id="tutorial" class="panel hidden">
  <div class="tut-head"><span id="tutorial-title">TUTORIAL</span><button id="tutorial-skip" type="button">Saltar tutorial</button></div>
@@ -833,14 +923,20 @@
  document.body.appendChild(renderer.domElement);
 
  // --- Cámara Ortográfica 2D ---
- let viewSize = 18;
+ // Celular / tablet: pantalla táctil (se activa también el diseño de botones en pantalla)
+ const IS_TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window;
+ document.body.classList.toggle('touch', IS_TOUCH);
+ // viewSize = alto visible en horizontal; en vertical es el ANCHO visible (así no se ve gigante ni angosto)
+ let viewSize = IS_TOUCH ? 12 : 18;
  function getFrustum() {
  const aspect = window.innerWidth / window.innerHeight;
+ const vw = aspect >= 1 ? viewSize * aspect : viewSize;
+ const vh = aspect >= 1 ? viewSize : viewSize / aspect;
  return {
- left: (-viewSize * aspect) / 2,
- right: (viewSize * aspect) / 2,
- top: viewSize / 2,
- bottom: -viewSize / 2
+ left: -vw / 2,
+ right: vw / 2,
+ top: vh / 2,
+ bottom: -vh / 2
  };
  }
 
@@ -2307,7 +2403,7 @@ sfx('block', pos);
  scene.add(reticle);
 
  function updateReticle() {
- const show = selectedSpellId !== null && gameStarted && !paused && !menuOpen && playerDeadTimer <= 0;
+ const show = selectedSpellId !== null && gameStarted && !paused && !menuOpen && playerDeadTimer <= 0 && (!IS_TOUCH || isAiming);
  reticle.visible = show;
  if (!show) return;
  const p = screenToWorld(lastMouseX, lastMouseY);
@@ -2353,7 +2449,14 @@ sfx('block', pos);
  let tutorialLastY = 0;
 
 const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
- const TUTORIAL_STEPS = [
+ const TUTORIAL_STEPS = IS_TOUCH ? [
+ { event: 'move', text: () => 'Movete con el <b>joystick</b> (abajo a la izquierda). El botón <b>»</b> es un dash corto.' },
+ { event: 'orb', text: () => 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.' },
+ { event: 'spell', text: () => 'Tocá el rayo para elegir <b>Descarga Espectral</b> y tocá un rival (o arrastrá desde el botón y soltá sobre él).' },
+ { event: 'sword', text: () => 'Pegate a un rival y tocá la <b>espada</b>.' },
+ { event: 'shield', text: () => 'Mantené el <b>escudo</b> apretado: recibís un 75% menos de daño.' },
+ { event: 'potion', text: () => 'Las pociones curan vida y maná. Son infinitas.' }
+ ] : [
  { event: 'move', text: () => `Movete con ${tk('up')}${tk('left')}${tk('down')}${tk('right')} (o las flechas). ${tk('dash')} es un dash corto.` },
  { event: 'orb', text: () => 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.' },
  { event: 'spell', text: () => `Apretá ${tk('spell2')} para elegir <b>Descarga Espectral</b> y hacé <b>clic</b> sobre un rival (o mantené el clic y soltalo sobre él).` },
@@ -2372,7 +2475,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  function renderTutorial() {
  if (tutorialFinished) {
  tutorialTitleEl.textContent = 'TUTORIAL COMPLETO';
- tutorialTextEl.innerHTML = '¡Listo! Eliminá rivales para robarles puntos: al <b>líder</b> le sacás más. <b>Esc</b> abre el menú.';
+ tutorialTextEl.innerHTML = '¡Listo! Eliminá rivales para robarles puntos: al <b>líder</b> le sacás más. ' + (IS_TOUCH ? '<b>☰ Menú</b> arriba a la izquierda.' : '<b>Esc</b> abre el menú.');
  } else if (tutorialTimer > 0) {
  tutorialTitleEl.textContent = `TUTORIAL · ${tutorialStep}/${TUTORIAL_STEPS.length}`;
  tutorialTextEl.innerHTML = '✓ ¡Bien!';
@@ -2536,6 +2639,16 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  [ico('dispel'), 'Disipar', 'spell4', 4]
  ].map(([ico, name, act, id]) => tile(ico, name, kc(act), hex(SPELLS[id].color))).join('');
 
+ if (IS_TOUCH) {
+ el.innerHTML =
+ `<div class="g-title">CÓMO JUGAR</div>` +
+ `<div class="g-label">MOVER</div><div class="g-foot" style="text-align:left">Joystick abajo a la izquierda · botón <b>»</b> = dash</div>` +
+ `<div class="g-label">HECHIZOS</div><div class="g-cards">${spellTiles.replace(/<div class="t-keys">.*?<\/div>/g, '<div class="t-keys"></div>')}</div>` +
+ `<div class="g-foot" style="text-align:left">Tocá un hechizo y después tocá el mapa, o arrastrá desde el botón y soltá donde querés lanzarlo (soltar sobre los botones cancela).</div>` +
+ `<div class="g-label">ACCIONES</div><div class="g-foot" style="text-align:left">Espada · Escudo (mantener) · Pociones · dos dedos = zoom</div>` +
+ `<div class="g-foot">Juntá orbes y eliminá rivales para sumar puntos</div>`;
+ return;
+ }
  el.innerHTML =
  `<div class="g-title">CÓMO JUGAR</div>` +
  `<div class="g-move">` +
@@ -2993,6 +3106,9 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  let potPulse = 0;
  let potionMouseHeld = null;
  let currentInput = { mx: 0, my: 0, bl: 0, ph: 0 };
+ // Controles táctiles: joystick (mx/my), escudo mantenido
+ const touchInput = { mx: 0, my: 0, shield: false };
+ const dashSlotEl = document.getElementById('dash-slot');
 
  const gameplayActive = () => net.playing && !menuOpen && playerDeadTimer <= 0;
 
@@ -3006,7 +3122,9 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (isHeld('down') || keys.ArrowDown) my -= 1;
  if (isHeld('left') || keys.ArrowLeft) mx -= 1;
  if (isHeld('right') || keys.ArrowRight) mx += 1;
- bl = isHeld('shield') ? 1 : 0;
+ mx += touchInput.mx;
+ my += touchInput.my;
+ bl = isHeld('shield') || touchInput.shield ? 1 : 0;
  if (isHeld('potHp') || potionMouseHeld === 'hp') ph = 1;
  else if (isHeld('potMp') || potionMouseHeld === 'mp') ph = 2;
  if (!ph && potPulse) ph = potPulse;
@@ -3671,6 +3789,184 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  updateCameraFrustum();
  renderer.setSize(window.innerWidth, window.innerHeight);
  });
+ window.addEventListener('orientationchange', () => setTimeout(() => window.dispatchEvent(new Event('resize')), 250));
+
+ // ===================== Controles táctiles (celular / tablet) =====================
+ // Joystick = mover · botones = hechizos/acciones · hechizos: tocar el botón y después tocar el mapa,
+ // o arrastrar desde el botón y soltar donde querés lanzarlo (soltar sobre los botones cancela) · dos dedos = zoom.
+ if (IS_TOUCH) {
+ const joyEl = document.getElementById('joystick');
+ const joyBase = document.getElementById('joy-base');
+ const joyKnob = document.getElementById('joy-knob');
+ const JOY_R = 46;
+ const JOY_DEAD = 0.22;
+ let joyId = null;
+ let joyCx = 0;
+ let joyCy = 0;
+ let aim = null; // { id, fromSlot, wasSelected, sx, sy, moved }
+ const held = new Map(); // id de dedo -> { el, up }
+ const pinch = new Map(); // dedos sobre el mapa (para el zoom)
+ let pinchDist = 0;
+
+ const touchOk = () => !paused && !menuOpen && playerDeadTimer <= 0 && net.playing;
+ const findTouch = (list, id) => { for (const t of list) if (t.identifier === id) return t; return null; };
+ const overUI = (x, y) => {
+ const el = document.elementFromPoint(x, y);
+ return !!(el && el.closest('#spellbar, #joystick'));
+ };
+
+ function joyMove(t) {
+ let dx = t.clientX - joyCx;
+ let dy = t.clientY - joyCy;
+ const d = Math.hypot(dx, dy);
+ if (d > JOY_R) { dx = (dx / d) * JOY_R; dy = (dy / d) * JOY_R; }
+ joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+ const n = Math.hypot(dx, dy) / JOY_R;
+ if (n < JOY_DEAD) { touchInput.mx = 0; touchInput.my = 0; return; }
+ touchInput.mx = dx / JOY_R;
+ touchInput.my = -dy / JOY_R; // pantalla hacia abajo = mundo hacia abajo
+ }
+ function joyEnd() {
+ joyId = null;
+ touchInput.mx = 0;
+ touchInput.my = 0;
+ joyKnob.style.transform = '';
+ }
+ joyEl.addEventListener('touchstart', (e) => {
+ e.preventDefault();
+ ensureAudio();
+ if (joyId !== null) return;
+ const t = e.changedTouches[0];
+ const r = joyBase.getBoundingClientRect();
+ joyCx = r.left + r.width / 2;
+ joyCy = r.top + r.height / 2;
+ joyId = t.identifier;
+ joyMove(t);
+ }, { passive: false });
+
+ // Botones de hechizo: elegir + (opcional) arrastrar para apuntar
+ document.querySelectorAll('.spell-slot').forEach((slot) => {
+ slot.addEventListener('touchstart', (e) => {
+ e.preventDefault();
+ ensureAudio();
+ if (!touchOk() || aim) return;
+ const t = e.changedTouches[0];
+ const id = Number(slot.dataset.spell);
+ const wasSelected = selectedSpellId === id;
+ setSpellCursor(id);
+ isAiming = true;
+ lastMouseX = t.clientX;
+ lastMouseY = t.clientY;
+ aim = { id: t.identifier, fromSlot: true, wasSelected, sx: t.clientX, sy: t.clientY, moved: false };
+ slot.classList.add('touch-pressed');
+ }, { passive: false });
+ });
+
+ // Botones de acción (espada, escudo, pociones, dash)
+ function bindHold(el, down, up) {
+ el.addEventListener('touchstart', (e) => {
+ e.preventDefault();
+ ensureAudio();
+ const t = e.changedTouches[0];
+ el.classList.add('touch-pressed');
+ held.set(t.identifier, { el, up });
+ if (touchOk()) down();
+ }, { passive: false });
+ }
+ bindHold(document.getElementById('melee-slot'), () => sendMelee());
+ bindHold(document.getElementById('shield-slot'), () => { touchInput.shield = true; }, () => { touchInput.shield = false; });
+ bindHold(document.getElementById('pot-hp'), () => { potionMouseHeld = 'hp'; potPulse = 1; tutorialEvent('potion'); }, () => { potionMouseHeld = null; });
+ bindHold(document.getElementById('pot-mp'), () => { potionMouseHeld = 'mp'; potPulse = 2; tutorialEvent('potion'); }, () => { potionMouseHeld = null; });
+ bindHold(dashSlotEl, () => {
+ if (playerImmobilized > 0) showToast('¡Estás petrificado! Usá Disipar sobre vos');
+ else if (dashCooldown > 0) showToast(`Dash en cooldown: ${dashCooldown.toFixed(1)}s`);
+ else dashRequested = true;
+ });
+
+ // Mapa: apuntar con el hechizo elegido (mantener y soltar) o pellizcar para zoom
+ const canvas = renderer.domElement;
+ canvas.addEventListener('touchstart', (e) => {
+ e.preventDefault();
+ ensureAudio();
+ for (const t of e.changedTouches) pinch.set(t.identifier, { x: t.clientX, y: t.clientY });
+ if (pinch.size >= 2) {
+ // dos dedos: zoom, se cancela el apuntado
+ if (aim && !aim.fromSlot) { aim = null; isAiming = false; }
+ const [a, b] = [...pinch.values()];
+ pinchDist = Math.hypot(a.x - b.x, a.y - b.y);
+ return;
+ }
+ if (aim || !touchOk() || selectedSpellId === null) return;
+ const t = e.changedTouches[0];
+ isAiming = true;
+ lastMouseX = t.clientX;
+ lastMouseY = t.clientY;
+ aim = { id: t.identifier, fromSlot: false, wasSelected: true, sx: t.clientX, sy: t.clientY, moved: false };
+ }, { passive: false });
+
+ window.addEventListener('touchmove', (e) => {
+ const jt = joyId !== null ? findTouch(e.changedTouches, joyId) : null;
+ if (jt) joyMove(jt);
+ const at = aim ? findTouch(e.changedTouches, aim.id) : null;
+ if (at) {
+ lastMouseX = at.clientX;
+ lastMouseY = at.clientY;
+ if (Math.hypot(at.clientX - aim.sx, at.clientY - aim.sy) > 24) aim.moved = true;
+ }
+ let pinched = false;
+ for (const t of e.changedTouches) {
+ if (pinch.has(t.identifier)) { pinch.set(t.identifier, { x: t.clientX, y: t.clientY }); pinched = true; }
+ }
+ if (pinched && pinch.size >= 2) {
+ const [a, b] = [...pinch.values()];
+ const d = Math.hypot(a.x - b.x, a.y - b.y);
+ if (pinchDist > 0 && d > 0) {
+ viewSize = THREE.MathUtils.clamp(viewSize * (pinchDist / d), 9, 34);
+ updateCameraFrustum();
+ }
+ pinchDist = d;
+ }
+ if ((jt || at || pinched) && e.cancelable) e.preventDefault();
+ }, { passive: false });
+
+ function touchEnd(e, cancelled) {
+ for (const t of e.changedTouches) {
+ pinch.delete(t.identifier);
+ if (t.identifier === joyId) joyEnd();
+ const h = held.get(t.identifier);
+ if (h) {
+ held.delete(t.identifier);
+ h.el.classList.remove('touch-pressed');
+ if (h.up) h.up();
+ }
+ if (aim && t.identifier === aim.id) {
+ const a = aim;
+ aim = null;
+ isAiming = false;
+ document.querySelectorAll('.spell-slot.touch-pressed').forEach((el) => el.classList.remove('touch-pressed'));
+ if (cancelled || !touchOk() || selectedSpellId === null) continue;
+ if (a.fromSlot) {
+ if (!a.moved) {
+ if (a.wasSelected) setSpellCursor(null); // tocar de nuevo el hechizo elegido lo suelta
+ } else if (overUI(t.clientX, t.clientY)) {
+ setSpellCursor(null); // soltar sobre los botones = cancelar
+ } else {
+ castSelectedSpell(screenToWorld(t.clientX, t.clientY));
+ }
+ } else {
+ castSelectedSpell(screenToWorld(t.clientX, t.clientY));
+ }
+ }
+ }
+ if (pinch.size < 2) pinchDist = 0;
+ }
+ window.addEventListener('touchend', (e) => touchEnd(e, false));
+ window.addEventListener('touchcancel', (e) => touchEnd(e, true));
+ window.addEventListener('blur', () => { joyEnd(); touchInput.shield = false; aim = null; held.clear(); pinch.clear(); });
+ document.addEventListener('visibilitychange', () => { if (document.hidden) { joyEnd(); touchInput.shield = false; aim = null; held.clear(); pinch.clear(); isAiming = false; } });
+ // Sin zoom del navegador con gestos
+ ['gesturestart', 'gesturechange'].forEach((n) => document.addEventListener(n, (e) => e.preventDefault()));
+ }
 
 
  // --- Minimapa ---
@@ -3819,6 +4115,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  potionStatusEl.className = potionCooldownTimer > 0 ? 'cd-wait' : 'cd-ready';
  potHpSlot.classList.toggle('on-cd', potionCooldownTimer > 0);
  potMpSlot.classList.toggle('on-cd', potionCooldownTimer > 0);
+ dashSlotEl.classList.toggle('on-cd', dashCooldown > 0);
  }
  
  drawMinimap();
