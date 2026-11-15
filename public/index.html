@@ -595,7 +595,7 @@
  body.touch #minimap { width: 92px; height: 92px; }
  body.touch #killfeed { top: calc(112px + var(--sa-t)); right: calc(8px + var(--sa-r)); width: 170px; font-size: 11px; }
  /* Vida y maná: justo arriba de la fila de botones, del mismo ancho */
- body.touch #vitals { top: auto; transform: none; left: calc(8px + var(--sa-l)); right: calc(2 * var(--slot) + 30px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); width: auto; grid-template-columns: 1fr; gap: 4px; }
+ body.touch #vitals { top: auto; transform: none; left: calc(8px + var(--sa-l)); right: calc(var(--slot) + 26px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); width: auto; grid-template-columns: 1fr; gap: 4px; }
  body.touch .bar-wrap { padding: 3px 8px; }
  body.touch .bar-label { font-size: 10px; }
  body.touch #toast { bottom: auto; top: calc(78px + var(--sa-t)); max-width: 80vw; text-align: center; }
@@ -610,12 +610,19 @@
  /* Botones de acción (abajo a la derecha): cuadrícula */
  body.touch #spellbar {
  left: auto; right: calc(8px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); transform: none;
- /* Dos columnas: afuera los 4 hechizos (se arrastran hasta el rival), adentro espada/escudo/pociones/dash */
- display: grid; grid-template-columns: repeat(2, var(--slot)); grid-auto-flow: row dense; gap: 4px; padding: 5px; border-radius: 12px;
+ /* Una sola columna. De arriba a abajo: escudo, daño (Cataclismo, Descarga), Disipar, Petrificar, poción de vida, poción de maná.
+ Espada y dash no tienen botón: tocar el mapa = espadazo, deslizar el dedo = dash. */
+ display: flex; flex-direction: column; gap: 4px; padding: 5px; border-radius: 12px;
  touch-action: none;
  }
- body.touch .spell-slot { grid-column: 2; }
- body.touch .potion-slot { grid-column: 1; }
+ body.touch #shield-slot { order: 1; }
+ body.touch #slot-3 { order: 2; }
+ body.touch #slot-2 { order: 3; }
+ body.touch #slot-4 { order: 4; }
+ body.touch #slot-1 { order: 5; }
+ body.touch #pot-hp { order: 6; }
+ body.touch #pot-mp { order: 7; }
+ body.touch #melee-slot, body.touch #dash-slot { display: none; }
  body.touch .bar-divider { display: none; }
  body.touch .spell-slot, body.touch .potion-slot { width: var(--slot); height: var(--slot); padding: 0; border-radius: 9px; display: flex; flex-direction: column; justify-content: center; align-items: center; touch-action: none; }
  body.touch .spell-slot:hover, body.touch .potion-slot:hover { transform: none; }
@@ -629,9 +636,10 @@
 
  /* Horizontal: fila de 9 botones abajo a la derecha */
  @media (orientation: landscape) {
- body.touch { --slot: min(50px, calc((100vh - 120px) / 5)); }
+ body.touch { --slot: min(50px, calc((100vh - 56px) / 7)); }
  body.touch #killfeed { display: none; }
  body.touch #minimap { width: 70px; height: 70px; }
+ body.touch #minimap-box { right: calc(var(--slot) + 26px + var(--sa-r)); }
  body.touch #tutorial { top: calc(8px + var(--sa-t)); bottom: auto; width: 230px; left: 50%; transform: translateX(-50%); }
  body.touch #toast { top: calc(120px + var(--sa-t)); left: 50%; }
  body.touch #vitals { left: calc(170px + var(--sa-l)); grid-template-columns: 1fr 1fr; }
@@ -646,7 +654,7 @@
  body.touch #left-col { width: 140px; }
  body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
  body.touch #joystick { bottom: calc(76px + var(--sa-b)); }
- body.touch #toast { top: auto; bottom: calc(5 * var(--slot) + 50px + var(--sa-b)); max-width: 60vw; }
+ body.touch #toast { top: auto; bottom: calc(7 * var(--slot) + 50px + var(--sa-b)); max-width: 60vw; }
  body.touch #tutorial { top: calc(204px + var(--sa-t)); bottom: auto; width: calc(100vw - 24px); }
  body.touch #death-title { font-size: 30px; letter-spacing: 3px; }
  }
@@ -2453,10 +2461,10 @@ sfx('block', pos);
 
 const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const TUTORIAL_STEPS = IS_TOUCH ? [
- { event: 'move', text: () => 'Movete con el <b>joystick</b> (abajo a la izquierda). El botón <b>»</b> es un dash corto.' },
+ { event: 'move', text: () => 'Movete con el <b>joystick</b> (abajo a la izquierda). Para un <b>dash</b>, deslizá el dedo por el mapa.' },
  { event: 'orb', text: () => 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.' },
  { event: 'spell', text: () => 'Poné el dedo sobre el <b>rayo</b>, <b>arrastralo hasta un rival</b> y soltá: ahí le pega.' },
- { event: 'sword', text: () => 'Pegate a un rival y tocá la <b>espada</b>.' },
+ { event: 'sword', text: () => 'Pegate a un rival y <b>tocá la pantalla</b>: golpeás con la espada.' },
  { event: 'shield', text: () => 'Mantené el <b>escudo</b> apretado: recibís un 75% menos de daño.' },
  { event: 'potion', text: () => 'Las pociones curan vida y maná. Son infinitas.' }
  ] : [
@@ -2645,10 +2653,10 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (IS_TOUCH) {
  el.innerHTML =
  `<div class="g-title">CÓMO JUGAR</div>` +
- `<div class="g-label">MOVER</div><div class="g-foot" style="text-align:left">Joystick abajo a la izquierda · botón <b>»</b> = dash</div>` +
+ `<div class="g-label">MOVER</div><div class="g-foot" style="text-align:left">Joystick abajo a la izquierda · deslizá el dedo por el mapa = dash</div>` +
  `<div class="g-label">HECHIZOS</div><div class="g-cards">${spellTiles.replace(/<div class="t-keys">.*?<\/div>/g, '<div class="t-keys"></div>')}</div>` +
  `<div class="g-foot" style="text-align:left">Poné el dedo sobre un hechizo (columna de la derecha), arrastralo hasta el rival y soltá. Soltar sobre los botones cancela. También podés tocar el hechizo y después tocar el mapa.</div>` +
- `<div class="g-label">ACCIONES</div><div class="g-foot" style="text-align:left">Espada · Escudo (mantener) · Pociones · dos dedos = zoom</div>` +
+ `<div class="g-label">ACCIONES</div><div class="g-foot" style="text-align:left">Tocar la pantalla = espadazo · Escudo (mantener) · Pociones abajo de la columna · dos dedos = zoom</div>` +
  `<div class="g-foot">Juntá orbes y eliminá rivales para sumar puntos</div>`;
  return;
  }
@@ -3110,7 +3118,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  let potionMouseHeld = null;
  let currentInput = { mx: 0, my: 0, bl: 0, ph: 0 };
  // Controles táctiles: joystick (mx/my), escudo mantenido
- const touchInput = { mx: 0, my: 0, shield: false };
+ const touchInput = { mx: 0, my: 0, shield: false, dashDir: null };
  const dashSlotEl = document.getElementById('dash-slot');
 
  const gameplayActive = () => net.playing && !menuOpen && playerDeadTimer <= 0;
@@ -3127,6 +3135,11 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (isHeld('right') || keys.ArrowRight) mx += 1;
  mx += touchInput.mx;
  my += touchInput.my;
+ if (touchInput.dashDir) { // dash deslizando el dedo: va hacia donde se deslizó
+ mx = touchInput.dashDir.mx;
+ my = touchInput.dashDir.my;
+ touchInput.dashDir = null;
+ }
  bl = isHeld('shield') || touchInput.shield ? 1 : 0;
  if (isHeld('potHp') || potionMouseHeld === 'hp') ph = 1;
  else if (isHeld('potMp') || potionMouseHeld === 'mp') ph = 2;
@@ -3880,11 +3893,15 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  bindHold(document.getElementById('shield-slot'), () => { touchInput.shield = true; }, () => { touchInput.shield = false; });
  bindHold(document.getElementById('pot-hp'), () => { potionMouseHeld = 'hp'; potPulse = 1; tutorialEvent('potion'); }, () => { potionMouseHeld = null; });
  bindHold(document.getElementById('pot-mp'), () => { potionMouseHeld = 'mp'; potPulse = 2; tutorialEvent('potion'); }, () => { potionMouseHeld = null; });
- bindHold(dashSlotEl, () => {
- if (playerImmobilized > 0) showToast('¡Estás petrificado! Usá Disipar sobre vos');
- else if (dashCooldown > 0) showToast(`Dash en cooldown: ${dashCooldown.toFixed(1)}s`);
- else dashRequested = true;
- });
+ // Dash: deslizar el dedo por el mapa (sin tocar ningún botón), hacia donde se desliza
+ function requestDash(dxScreen, dyScreen) {
+ if (playerImmobilized > 0) return showToast('¡Estás petrificado! Usá Disipar sobre vos');
+ if (dashCooldown > 0) return showToast(`Dash en cooldown: ${dashCooldown.toFixed(1)}s`);
+ const d = Math.hypot(dxScreen, dyScreen) || 1;
+ touchInput.dashDir = { mx: dxScreen / d, my: -dyScreen / d };
+ dashRequested = true;
+ }
+ let tap = null; // dedo suelto sobre el mapa sin hechizo elegido: toque = espadazo, deslizar = dash
 
  // Mapa: apuntar con el hechizo elegido (mantener y soltar) o pellizcar para zoom
  const canvas = renderer.domElement;
@@ -3895,12 +3912,17 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  if (pinch.size >= 2) {
  // dos dedos: zoom, se cancela el apuntado
  if (aim && !aim.fromSlot) { aim = null; isAiming = false; }
+ tap = null;
  const [a, b] = [...pinch.values()];
  pinchDist = Math.hypot(a.x - b.x, a.y - b.y);
  return;
  }
- if (aim || !touchOk() || selectedSpellId === null) return;
+ if (aim || !touchOk()) return;
  const t = e.changedTouches[0];
+ if (selectedSpellId === null) {
+ tap = { id: t.identifier, sx: t.clientX, sy: t.clientY, dashed: false };
+ return;
+ }
  isAiming = true;
  lastMouseX = t.clientX;
  lastMouseY = t.clientY;
@@ -3916,6 +3938,15 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  lastMouseY = at.clientY;
  if (Math.hypot(at.clientX - aim.sx, at.clientY - aim.sy) > 24) aim.moved = true;
  }
+ const tt = tap ? findTouch(e.changedTouches, tap.id) : null;
+ if (tt && !tap.dashed) {
+ const dx = tt.clientX - tap.sx;
+ const dy = tt.clientY - tap.sy;
+ if (Math.hypot(dx, dy) > 40) {
+ tap.dashed = true;
+ if (touchOk()) requestDash(dx, dy);
+ }
+ }
  let pinched = false;
  for (const t of e.changedTouches) {
  if (pinch.has(t.identifier)) { pinch.set(t.identifier, { x: t.clientX, y: t.clientY }); pinched = true; }
@@ -3929,12 +3960,17 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
  pinchDist = d;
  }
- if ((jt || at || pinched) && e.cancelable) e.preventDefault();
+ if ((jt || at || tt || pinched) && e.cancelable) e.preventDefault();
  }, { passive: false });
 
  function touchEnd(e, cancelled) {
  for (const t of e.changedTouches) {
  pinch.delete(t.identifier);
+ if (tap && t.identifier === tap.id) {
+ const wasTap = !cancelled && !tap.dashed && Math.hypot(t.clientX - tap.sx, t.clientY - tap.sy) <= 25;
+ tap = null;
+ if (wasTap && touchOk()) sendMelee(); // tocar la pantalla = espadazo
+ }
  if (t.identifier === joyId) joyEnd();
  const h = held.get(t.identifier);
  if (h) {
@@ -3965,8 +4001,8 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
  window.addEventListener('touchend', (e) => touchEnd(e, false));
  window.addEventListener('touchcancel', (e) => touchEnd(e, true));
- window.addEventListener('blur', () => { joyEnd(); touchInput.shield = false; aim = null; held.clear(); pinch.clear(); });
- document.addEventListener('visibilitychange', () => { if (document.hidden) { joyEnd(); touchInput.shield = false; aim = null; held.clear(); pinch.clear(); isAiming = false; } });
+ window.addEventListener('blur', () => { joyEnd(); touchInput.shield = false; aim = null; tap = null; held.clear(); pinch.clear(); });
+ document.addEventListener('visibilitychange', () => { if (document.hidden) { joyEnd(); touchInput.shield = false; aim = null; tap = null; held.clear(); pinch.clear(); isAiming = false; } });
  // Sin zoom del navegador con gestos
  ['gesturestart', 'gesturechange'].forEach((n) => document.addEventListener(n, (e) => e.preventDefault()));
  }
