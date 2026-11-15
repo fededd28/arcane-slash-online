@@ -141,7 +141,7 @@ console.log('Espada, muertes y puntos');
   c.score = 0; b.score = 2000; b.streak = 5; a.score = 0;
   g.update(TICK_DT);
   g.handleMelee(a.id);
-  check('la espada hace 40 de daño a un rival pegado', b.hp === MAX_HP - MELEE_DAMAGE, `hp=${b.hp}`);
+  check('la espada hace 70 de daño a un rival pegado', b.hp === MAX_HP - MELEE_DAMAGE, `hp=${b.hp}`);
   b.hp = 10; run(g, 1.6);
   g.handleMelee(a.id);
   check('al morir el rival queda muerto', b.dead === true);
@@ -160,7 +160,7 @@ console.log('Escudo');
   place(a, 0, 0); place(b, 1, 0);
   inp(g, b.id, { bl: 1 });
   g.handleMelee(a.id);
-  check('bloquear con escudo reduce el daño al 25%', b.hp === MAX_HP - 10, `hp=${b.hp}`);
+  check('bloquear con escudo reduce el daño al 25%', b.hp === MAX_HP - Math.round(MELEE_DAMAGE * 0.25), `hp=${b.hp}`);
 }
 
 console.log('Inmovilizados no se empujan');

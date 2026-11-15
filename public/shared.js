@@ -17,7 +17,7 @@ export const SPELL_GLOBAL_INTERVAL = 1.4;
 // Un hechizo que falla no gasta maná, pero deja una espera corta: así no se puede ametrallar ni apuntar gratis a fuerza bruta
 export const SPELL_MISS_INTERVAL = 0.4;
 export const MELEE_INTERVAL = 1.5;
-export const MELEE_DAMAGE = 40;
+export const MELEE_DAMAGE = 70;
 export const POTION_COOLDOWN_TOTAL = 0.3;
 export const POTION_HP_AMOUNT = 30;
 export const POTION_MP_AMOUNT = 30;
