@@ -1,3 +1,6 @@
 node_modules/
 .wrangler/
 .dev.vars
+
+# Historial personal (no se sube a GitHub)
+HISTORIAL.md
