@@ -373,7 +373,6 @@ export class Game {
     const toast = (text) => this.msg(id, { t: 'toast', text });
 
     if (e.spellCd > 0) return toast(`Intervalo entre habilidades: espera ${e.spellCd.toFixed(1)}s`);
-    if (e.potCd > 0) return toast('Terminando de tomar la poción...');
     if (e.mp < sp.mana) return toast('Maná insuficiente');
 
     // Tiempo al que el cliente vio el mundo (compensación de retraso)

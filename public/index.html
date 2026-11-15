@@ -2189,23 +2189,46 @@ sfx('block', pos);
  }
 
  function spawnPotionAura(pos, color) {
-sfx('potion', pos);
+ sfx('potion', pos);
+ if (!fxTex.red) fxTex.red = makeGlowTexture(255, 110, 100);
+ const kind = color === 0xff7b72 ? 'hp' : color === 0x58a6ff ? 'mp' : 'gold';
+ const tex = kind === 'hp' ? fxTex.red : kind === 'mp' ? fxTex.blue : fxTex.gold;
+ const col = kind === 'hp' ? 0xff8a80 : kind === 'mp' ? 0x8fd0ff : 0xffe28a;
  const group = new THREE.Group();
- group.position.set(pos.x, pos.y + 0.35, 1.5);
- const ring = new THREE.Mesh(
- new THREE.RingGeometry(0.42, 0.78, 24),
- new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
- );
- group.add(ring);
- scene.add(group);
- activeFX.push({
- group,
- life: 0.3,
- maxLife: 0.3,
- update(dt, alpha) {
- ring.position.y += dt * 1.4;
- ring.material.opacity = alpha;
+ group.position.set(pos.x, pos.y + 0.1, 1.5);
+ const glow = fxSprite(tex, 1.15, 0, 0.4, 0.01, 0.65);
+ const ring = fxRing(0.18, 0.21, col, 0.7);
+ ring.position.z = 0.02;
+ group.add(glow, ring);
+ const bits = [];
+ const n = kind === 'hp' ? 3 : 5;
+ for (let i = 0; i < n; i++) {
+ const x0 = (i - (n - 1) / 2) * (kind === 'hp' ? 0.2 : 0.13) + (Math.random() - 0.5) * 0.06;
+ let mesh;
+ if (kind === 'hp') {
+ // cruces chicas que suben (curación)
+ mesh = new THREE.Group();
+ mesh.add(fxQuad(0.21, 0.06, col, 1), fxQuad(0.06, 0.21, col, 1));
+ } else {
+ // destellos chicos que suben
+ mesh = new THREE.Group();
+ mesh.add(fxSprite(tex, 0.34, 0, 0, 0, 0.95), fxSprite(fxTex.white, 0.13, 0, 0, 0.01, 1));
  }
+ mesh.position.set(x0, 0.08 + Math.random() * 0.15, 0.03);
+ group.add(mesh);
+ bits.push({ mesh, x0, vy: 1.2 + Math.random() * 0.6, phase: Math.random() * 6 });
+ }
+ addFX(group, 0.45, (dt, alpha) => {
+ const p = 1 - alpha;
+ glow.material.opacity = Math.max(0, 0.65 - p * 1.5);
+ setRing(ring, 0.18 + easeOut(p) * 0.4, 0.015 + 0.03 * alpha);
+ ring.material.opacity = 0.7 * alpha;
+ const op = Math.min(1, alpha * 2);
+ bits.forEach((b) => {
+ b.mesh.position.y += b.vy * dt;
+ b.mesh.position.x = b.x0 + Math.sin(b.phase + p * 9) * 0.04;
+ b.mesh.traverse((o) => { if (o.material) o.material.opacity = op; });
+ });
  });
  }
 
@@ -3133,7 +3156,6 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
 
  // Estas comprobaciones solo dan aviso rápido; el servidor es el que decide
  if (spellIntervalTimer > 0) return showToast(`Intervalo entre habilidades: espera ${spellIntervalTimer.toFixed(1)}s`);
- if (potionCooldownTimer > 0) return showToast('Terminando de tomar la poción...');
  if (playerMp < spell.mana) return showToast('Maná insuficiente');
  if (spell.immobilize > 0) {
  const t = findEnemyAt(worldPos);
@@ -3793,7 +3815,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
 
  // Acceso para pruebas desde la consola del navegador
- window.__arcane = { fx: { petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
+ window.__arcane = { fx: { potion: spawnPotionAura, petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
 
  animate();
 

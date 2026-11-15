@@ -1,6 +1,6 @@
 // Pruebas de las reglas del servidor (sin Cloudflare): node test/sim-test.mjs
 import { Game, sanitizeName } from '../src/sim.js';
-import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, BASE_SPEED, RESPAWN_TIME } from '../public/shared.js';
+import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME } from '../public/shared.js';
 
 let failed = 0;
 let passed = 0;
@@ -103,6 +103,19 @@ console.log('Pociones');
   a.hp = MAX_HP; a.mp = 100;
   for (let i = 0; i < 20; i++) { inp(g, a.id, { ph: 2 }); g.update(TICK_DT); }
   check('la poción de maná sube el maná y no pasa del máximo', a.mp > 100 && a.mp <= MAX_MP);
+}
+
+console.log('Hechizos mientras se mantiene la poción');
+{
+  const g = arena(); g.__seq = 0;
+  const a = g.addPlayer('A', 0); const b = g.addPlayer('B', 1);
+  place(a, 0, 0); place(b, 5, 0); a.hp = 100; a.mp = MAX_MP;
+  for (let i = 0; i < 8; i++) { inp(g, a.id, { ph: 1 }); g.update(TICK_DT); }
+  check('la poción se está tomando (intervalo activo)', a.potCd > 0 || a.hp > 100, `potCd=${a.potCd}`);
+  a.potCd = POTION_COOLDOWN_TOTAL; // en pleno intervalo de poción
+  g.handleCast(a.id, { id: 2, x: 5, y: 0.3, rt: g.time * 1000 });
+  check('el hechizo sale aunque la poción esté en su intervalo', b.hp < MAX_HP, `hp=${b.hp}`);
+  check('después del hechizo la poción espera un instante', a.potCd >= POTION_COOLDOWN_TOTAL - 0.001);
 }
 
 console.log('Espada, muertes y puntos');
