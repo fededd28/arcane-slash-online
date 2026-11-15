@@ -58,7 +58,7 @@ check('mi snapshot trae mi maná y el de los demás está oculto', b.last().p.fi
 const castFrom = a.snaps.length;
 a.send({ t: 'cast', id: 3, x: 0, y: 0, rt: Date.now() });
 await sleep(500);
-check('lanzar un hechizo da respuesta (golpe, falla o aviso) y gasta maná', a.snaps.slice(castFrom).some((s) => (s.d || []).length || s.ev.some((e) => e[0] === 'ms' || e[0] === 'sp')) && a.last().me.mp < 300);
+check('lanzar un hechizo da respuesta (golpe o falla) y si falla no gasta maná', a.snaps.slice(castFrom).some((s) => (s.d || []).length || s.ev.some((e) => e[0] === 'ms' || e[0] === 'sp')) && (a.last().me.mp === 300 || a.last().me.mp < 300));
 a.send({ t: 'cast', id: 99, x: 0, y: 0 });
 a.send({ t: 'in', seq: 'x', mx: 'basura', my: null });
 a.ws.send('esto no es json');

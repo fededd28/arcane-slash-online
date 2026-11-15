@@ -384,21 +384,24 @@ export class Game {
 
     if (sp.immobilize > 0 && target && target.imm > 0) return toast(`¡${target.name} ya está petrificado!`);
 
-    e.mp -= sp.mana;
     e.spellCd = SPELL_GLOBAL_INTERVAL;
-    e.potCd = Math.max(e.potCd, POTION_COOLDOWN_TOTAL);
     e.swingT = 0.2;
     e.dir = dirFromVector(wx - e.x, wy - e.y, e.dir);
+
+    // Si falla (no hay nadie bajo el cursor) NO se gasta maná; igual se respeta el intervalo entre hechizos
+    if (!selfCast && !target) {
+      this.ev(['ms', r2(wx), r2(wy), sp.id]);
+      toast('¡Fallaste! Apunta directo sobre el personaje (no gastó maná)');
+      return;
+    }
+
+    e.mp -= sp.mana;
+    e.potCd = Math.max(e.potCd, POTION_COOLDOWN_TOTAL);
 
     if (selfCast) {
       this.ev(['sp', e.id, sp.id, r2(e.x), r2(e.y), r2(e.x), r2(e.y)]);
       e.imm = 0;
       toast('¡Petrificación disipada!');
-      return;
-    }
-    if (!target) {
-      this.ev(['ms', r2(wx), r2(wy), sp.id]);
-      toast('¡Fallaste! Apunta directo sobre el personaje');
       return;
     }
     this.ev(['sp', e.id, sp.id, r2(e.x), r2(e.y), r2(target.x), r2(target.y)]);

@@ -3168,10 +3168,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
 
  sendNet({ t: 'cast', id: spell.id, x: r2(worldPos.x), y: r2(worldPos.y), rt: Math.round(renderServerTime()), self: self ? 1 : 0 });
  setSpellCursor(null);
- // Se refleja enseguida; el servidor lo confirma en el próximo estado
- playerMp -= spell.mana;
+ // Se refleja enseguida el intervalo; el maná lo confirma el servidor (si falla, no se gasta)
  spellIntervalTimer = SPELL_GLOBAL_INTERVAL;
- potionCooldownTimer = Math.max(potionCooldownTimer, 0.3);
  if (playerChar) {
  playerChar.dir = DIR_NAMES[dirFromVector(worldPos.x - player.position.x, worldPos.y - player.position.y, 0)];
  playerChar.swingTimer = 0.2;
