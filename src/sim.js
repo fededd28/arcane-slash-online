@@ -11,7 +11,7 @@ import {
 
 export const MAX_PLAYERS = 24;
 const BOT_TARGET_POPULATION = 8; // entre humanos y bots se intenta llegar a este número
-const MIN_BOTS = 3;
+const MIN_BOTS = 0; // con BOT_TARGET_POPULATION jugadores reales o más ya no queda ningún bot
 const HISTORY_SECONDS = 0.5;
 const MAX_REWIND = 0.3;
 

@@ -198,5 +198,21 @@ console.log('Bots y población');
   check('al salir el humano vuelven los bots', [...g.entities.values()].filter((e) => e.isBot).length === 8);
 }
 
+console.log('Los bots se van cuando hay 8 jugadores reales');
+{
+  const g = new Game();
+  const bots = () => [...g.entities.values()].filter((e) => e.isBot).length;
+  const ps = [];
+  for (let i = 1; i <= 5; i++) ps.push(g.addPlayer('J' + i, i % 10));
+  check('con 5 jugadores quedan 3 bots', bots() === 3, 'bots=' + bots());
+  for (let i = 6; i <= 8; i++) ps.push(g.addPlayer('J' + i, i % 10));
+  check('con 8 jugadores ya no queda ningún bot', bots() === 0, 'bots=' + bots());
+  for (let i = 9; i <= 24; i++) ps.push(g.addPlayer('J' + i, i % 10));
+  check('con 24 jugadores sigue sin haber bots', bots() === 0 && g.humans() === 24, 'bots=' + bots() + ' humanos=' + g.humans());
+  check('el jugador 25 no entra (sala llena)', g.addPlayer('Extra', 0) === null);
+  for (let i = 0; i < 17; i++) g.removePlayer(ps[i].id);
+  check('al bajar a 7 jugadores vuelve 1 bot', g.humans() === 7 && bots() === 1, 'humanos=' + g.humans() + ' bots=' + bots());
+}
+
 console.log(`\n${passed} bien, ${failed} con fallas`);
 process.exit(failed ? 1 : 0);

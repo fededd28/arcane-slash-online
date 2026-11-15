@@ -55,7 +55,7 @@ Para usar tu propio dominio: Cloudflare -> Workers & Pages -> `arcane-slash` -> 
 - **Los demás se ven suaves**: se dibujan 100 ms en el pasado, interpolando entre los últimos estados recibidos.
 - **Apuntar con retraso**: al lanzar un hechizo el navegador avisa qué instante estaba viendo, y el servidor
   revisa dónde estaba el rival en ese momento (compensación de retraso, hasta 300 ms).
-- **Bots**: completan la sala hasta unos 8 personajes; al entrar humanos, salen bots.
+- **Bots**: completan la sala hasta 8 personajes. A medida que entran jugadores salen bots, y con 8 jugadores reales o más ya no queda ninguno (`MIN_BOTS` y `BOT_TARGET_POPULATION` en `src/sim.js`).
 - **Capacidad**: hasta 24 jugadores en una sola sala (`MAX_PLAYERS` en `src/sim.js`).
 
 ## 4. Costos y límites (revisalo en tu panel antes de abrirlo al público)
