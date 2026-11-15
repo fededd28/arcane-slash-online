@@ -559,7 +559,11 @@
  .net-title { font-size: 20px; font-weight: 800; color: #e5484d; }
  .net-msg { margin-top: 8px; min-height: 16px; font-size: 12px; color: #ff7b72; text-align: center; }
  #play-btn:disabled { opacity: 0.6; cursor: wait; }
- #ping { color: var(--steel); }
+ #ping { color: var(--steel); font-size: 11px; align-self: center; margin-left: 2px; font-variant-numeric: tabular-nums; }
+ #hud { padding: 8px 10px; }
+ #hud .hud-btns { margin-top: 0; flex-wrap: nowrap; align-items: center; }
+ #hud .hud-btns button { white-space: nowrap; padding: 4px 9px; }
+ #hud-hidden[hidden] { display: none !important; }
  </style>
  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 </head>
@@ -578,22 +582,13 @@
  </div>
 
  <div id="hud" class="panel">
- <div id="stats-row">
- <span id="coords">Pos: (0.0, 0.0)</span>
- <span id="ping">— ms</span>
- <span>Estado: <span id="status-badge" class="badge badge-libre">Libre</span></span>
- </div>
- <div id="cooldowns-row">
- <div class="cd-pill">Dash (10s): <span id="dash-status" class="cd-ready">Listo</span></div>
- <div class="cd-pill">Magia (1.4s): <span id="spell-interval-status" class="cd-ready">Listo</span></div>
- <div class="cd-pill">Espada (1.5s): <span id="melee-status" class="cd-ready">Listo</span></div>
- <div class="cd-pill">Poción (0.3s): <span id="potion-status" class="cd-ready">Listo</span></div>
- </div>
- <div style="margin-top:8px">
+ <div class="hud-btns"><button id="fullscreen-btn" type="button">⛶ Pantalla Completa</button><button id="menu-btn" type="button" title="Menú (Esc)">☰ Menú</button><span id="ping">— ms</span></div>
+ <!-- Estos elementos siguen existiendo (el juego escribe en ellos) pero están ocultos -->
+ <div id="hud-hidden" hidden>
+ <div id="stats-row"><span id="coords">Pos: (0.0, 0.0)</span><span id="status-badge" class="badge badge-libre">Libre</span></div>
+ <div id="cooldowns-row"><span id="dash-status">Listo</span><span id="spell-interval-status">Listo</span><span id="melee-status">Listo</span><span id="potion-status">Listo</span></div>
  <div id="hud-line1"></div>
  <div id="hud-line2"></div>
- </div>
- <div class="hud-btns"><button id="fullscreen-btn" type="button">⛶ Pantalla Completa</button><button id="menu-btn" type="button">☰ Menú (Esc)</button></div>
  </div>
  </div>
 
