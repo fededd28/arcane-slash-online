@@ -1318,7 +1318,11 @@
 
  // --- Cámara Ortográfica 2D ---
  // Celular / tablet: pantalla táctil (se activa también el diseño de botones en pantalla)
- const IS_TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window;
+ // Celular = el puntero principal es tactil. Una notebook con pantalla tactil (que ademas tiene mouse o touchpad) usa la interfaz de escritorio.
+ const IS_TOUCH = (() => {
+ if (!window.matchMedia) return 'ontouchstart' in window;
+ return matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window && !matchMedia('(any-hover: hover)').matches);
+ })();
  document.body.classList.toggle('touch', IS_TOUCH);
  // viewSize = alto visible en horizontal; en vertical es el ANCHO visible (así no se ve gigante ni angosto)
  let viewSize = IS_TOUCH ? 9.5 : 18;
