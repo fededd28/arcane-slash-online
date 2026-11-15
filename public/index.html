@@ -2661,7 +2661,7 @@ sfx('slash', targetPos);
  });
  }
 
- const ZOOM_MIN = 11, ZOOM_MAX = 34; // límites del zoom (rueda y pellizco)
+ const ZOOM_MIN = IS_TOUCH ? 8 : 13, ZOOM_MAX = IS_TOUCH ? 16 : 26; // límites del zoom (rueda y pellizco)
 
  // Número flotante de daño (rojo) o curación (verde): sube un poco y se desvanece
  function spawnFloatText(pos, text, color) {
