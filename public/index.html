@@ -3390,7 +3390,10 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  }
 
  function handleDirect(m) {
- if (m.t === 'toast') showToast(m.k ? t('srv.' + m.k, m.a) : m.text);
+ if (m.t === 'toast') {
+ showToast(m.k ? t('srv.' + m.k, m.a) : m.text);
+ if (m.k === 'targetPet') setSpellCursor(null); // el servidor dijo que ya estaba petrificado: vuelve al puntero (también en celular)
+ }
  else if (m.t === 'pet') showToast(IS_TOUCH ? t('toast.petByTouch', { by: m.by }) : t('toast.petBy', { by: m.by, key: keyName(bindings.spell4) }));
  else if (m.t === 'death') {
  document.getElementById('death-by').textContent = m.by ? t('death.by', { by: m.by, lost: m.lost }) : '';
@@ -3725,7 +3728,11 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (playerMp < spell.mana) return showToast(t('srv.noMana'));
  if (spell.immobilize > 0) {
  const tgt = findEnemyAt(worldPos);
- if (tgt && tgt.flags & 2) return showToast(t('srv.targetPet', { name: tgt.name }));
+ const lastB = tgt && tgt.buf.length ? tgt.buf[tgt.buf.length - 1] : null; // el dato más nuevo (lo dibujado va ~100 ms atrás)
+ if (tgt && ((tgt.flags & 2) || (lastB && (lastB.flags & 2)))) {
+ setSpellCursor(null); // vuelve al puntero: así no se puede spamear el clic hasta que se le vaya
+ return showToast(t('srv.targetPet', { name: tgt.name }));
+ }
  }
 
  const dxSelf = Math.abs(worldPos.x - player.position.x);
