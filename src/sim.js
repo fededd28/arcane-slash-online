@@ -413,10 +413,7 @@ export class Game {
     const selfCast = !!m.self && sp.cleanse;
     const target = selfCast ? null : this.findTargetAt(e, wx, wy, t);
 
-    if (sp.immobilize > 0 && target && target.imm > 0) {
-      e.spellCd = SPELL_MISS_INTERVAL; // espera corta: no se puede ametrallar el clic
-      return toast('targetPet', { name: target.name });
-    }
+    if (sp.immobilize > 0 && target && target.imm > 0) return toast('targetPet', { name: target.name });
 
     e.swingT = 0.2;
     e.dir = dirFromVector(wx - e.x, wy - e.y, e.dir);
