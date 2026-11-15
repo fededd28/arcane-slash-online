@@ -65,6 +65,7 @@ console.log('Hechizos');
   const mp = a.mp;
   g.handleCast(a.id, { id: 1, x: 5, y: 0.3, rt: g.time * 1000 });
   check('no se puede petrificar a un petrificado (sin gastar maná)', a.mp === mp);
+  check('apuntar a un petrificado deja solo una espera corta', a.spellCd > 0 && a.spellCd <= 0.41, `cd=${a.spellCd}`);
   // disipar al otro
   run(g, 1.5);
   g.handleCast(a.id, { id: 4, x: 5, y: 0.3, rt: g.time * 1000 });
