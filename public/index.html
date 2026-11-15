@@ -597,6 +597,7 @@
  /* Vida y maná: justo arriba de la fila de botones, del mismo ancho */
  body.touch #vitals { top: auto; transform: none; left: calc(8px + var(--sa-l)); right: calc(var(--slot) + 26px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); width: auto; grid-template-columns: 1fr; gap: 4px; }
  body.touch .bar-wrap { padding: 3px 8px; }
+ body.touch #vitals { pointer-events: none; }
  body.touch .bar-label { font-size: 10px; }
  body.touch #toast { bottom: auto; top: calc(78px + var(--sa-t)); max-width: 80vw; text-align: center; }
  body.touch #tutorial { bottom: auto; top: calc(100px + var(--sa-t)); width: min(340px, 60vw); padding: 7px 10px; }
@@ -654,6 +655,9 @@
  body.touch #left-col { width: 140px; }
  body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
  body.touch #joystick { bottom: calc(76px + var(--sa-b)); }
+ /* Columna de botones centrada en el borde derecho */
+ body.touch #spellbar { bottom: auto; top: 50%; transform: translateY(-50%); }
+ body.touch #killfeed { right: calc(var(--slot) + 26px + var(--sa-r)); }
  body.touch #toast { top: auto; bottom: calc(7 * var(--slot) + 50px + var(--sa-b)); max-width: 60vw; }
  body.touch #tutorial { top: calc(204px + var(--sa-t)); bottom: auto; width: calc(100vw - 24px); }
  body.touch #death-title { font-size: 30px; letter-spacing: 3px; }
@@ -3302,7 +3306,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const self = spell.cleanse && dxSelf <= 0.44 && dySelf >= -0.35 && dySelf <= 1.02;
 
  sendNet({ t: 'cast', id: spell.id, x: r2(worldPos.x), y: r2(worldPos.y), rt: Math.round(renderServerTime()), self: self ? 1 : 0 });
- setSpellCursor(null);
+ if (!IS_TOUCH) setSpellCursor(null); // en celular queda elegido para tirarlo varias veces (se suelta tocando el botón de nuevo)
  // Se refleja enseguida el intervalo; el maná lo confirma el servidor (si falla, no se gasta)
  spellIntervalTimer = SPELL_GLOBAL_INTERVAL;
  if (playerChar) {
@@ -3847,7 +3851,9 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  touchInput.mx = 0;
  touchInput.my = 0;
  joyKnob.style.transform = '';
+ joyEl.style.transform = ''; // vuelve a su lugar
  }
+ const JOY_ZONE = 150; // apretando a esta distancia del joystick, el joystick aparece donde apretaste
  joyEl.addEventListener('touchstart', (e) => {
  e.preventDefault();
  ensureAudio();
@@ -3908,6 +3914,21 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  canvas.addEventListener('touchstart', (e) => {
  e.preventDefault();
  ensureAudio();
+ // Cerca del joystick: el joystick aparece justo donde apretaste
+ if (joyId === null) {
+ const t0 = e.changedTouches[0];
+ const r = joyBase.getBoundingClientRect();
+ const bx = r.left + r.width / 2;
+ const by = r.top + r.height / 2;
+ if (Math.hypot(t0.clientX - bx, t0.clientY - by) <= JOY_ZONE) {
+ joyEl.style.transform = `translate(${t0.clientX - bx}px, ${t0.clientY - by}px)`;
+ joyId = t0.identifier;
+ joyCx = t0.clientX;
+ joyCy = t0.clientY;
+ joyMove(t0);
+ return;
+ }
+ }
  for (const t of e.changedTouches) pinch.set(t.identifier, { x: t.clientX, y: t.clientY });
  if (pinch.size >= 2) {
  // dos dedos: zoom, se cancela el apuntado
