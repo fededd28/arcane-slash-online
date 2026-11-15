@@ -2682,7 +2682,7 @@ sfx('slash', targetPos);
  group.position.set(x0, y0, 3);
  group.add(spr);
  scene.add(group);
- activeFX.push({ group, life: 0.9, maxLife: 0.9,
+ activeFX.push({ group, life: 0.9, maxLife: 0.9, dispose() { tex.dispose(); },
  update(dt, alpha) {
  group.position.y = y0 + (1 - alpha) * 0.6;
  mat.opacity = Math.min(1, alpha * 2.5);
@@ -4579,6 +4579,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  const alpha = Math.max(0, fx.life / fx.maxLife);
  if (fx.update) fx.update(dt, alpha);
  if (fx.life <= 0) {
+ if (fx.dispose) fx.dispose();
  scene.remove(fx.group);
  fx.group.traverse((child) => {
  if (child.geometry) child.geometry.dispose();
