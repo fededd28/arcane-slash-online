@@ -1134,7 +1134,7 @@
 <script type="module">
  import {
  PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
- SPELL_GLOBAL_INTERVAL, DASH_COOLDOWN_TOTAL, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
+ SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, DASH_COOLDOWN_TOTAL, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
  clamp, separatePair, stepPlayerMovement, dirFromVector
  } from './shared.js';
  const THREE = window.THREE;
@@ -3690,8 +3690,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const hitTarget = self || !!findEnemyAt(worldPos);
  sendNet({ t: 'cast', id: spell.id, x: r2(worldPos.x), y: r2(worldPos.y), rt: Math.round(renderServerTime()), self: self ? 1 : 0 });
  if (!IS_TOUCH) setSpellCursor(null); // en celular queda elegido para tirarlo varias veces (se suelta tocando el botón de nuevo)
- // Solo se anticipa el cooldown si apunta a un objetivo (si falla, no activa cooldown)
- if (hitTarget) spellIntervalTimer = SPELL_GLOBAL_INTERVAL;
+ // Se anticipa la espera: completa si apunta a alguien, corta si falla (el servidor lo confirma)
+ spellIntervalTimer = hitTarget ? SPELL_GLOBAL_INTERVAL : SPELL_MISS_INTERVAL;
  if (playerChar) {
  playerChar.dir = DIR_NAMES[dirFromVector(worldPos.x - player.position.x, worldPos.y - player.position.y, 0)];
  playerChar.swingTimer = 0.2;

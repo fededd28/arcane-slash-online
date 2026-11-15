@@ -4,7 +4,7 @@
 // ============================================================================
 import {
   TICK_DT, MAX_HP, MAX_MP, SPELLS, SCORE, OBSTACLES, HALF_MAP, ORB_COUNT, SPAWN_POINTS, PLAYER_COLORS,
-  SPELL_GLOBAL_INTERVAL, MELEE_INTERVAL, MELEE_DAMAGE, POTION_COOLDOWN_TOTAL, POTION_HP_AMOUNT,
+  SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, MELEE_INTERVAL, MELEE_DAMAGE, POTION_COOLDOWN_TOTAL, POTION_HP_AMOUNT,
   POTION_MP_AMOUNT, RESPAWN_TIME, BOT_POTION_INTERVAL, CHARACTER_RADIUS, BASE_SPEED,
   clamp, resolveEnvironmentCollisions, separatePair, stepPlayerMovement, dirFromVector
 } from '../public/shared.js';
@@ -387,8 +387,9 @@ export class Game {
     e.swingT = 0.2;
     e.dir = dirFromVector(wx - e.x, wy - e.y, e.dir);
 
-    // Si falla (no hay nadie bajo el cursor) NO se gasta maná ni activa el intervalo entre hechizos
+    // Si falla (no hay nadie bajo el cursor) NO se gasta mana; solo queda una espera corta (SPELL_MISS_INTERVAL)
     if (!selfCast && !target) {
+      e.spellCd = SPELL_MISS_INTERVAL;
       this.ev(['ms', r2(wx), r2(wy), sp.id]);
       toast('missed');
       return;

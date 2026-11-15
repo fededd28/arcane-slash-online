@@ -76,7 +76,19 @@ console.log('Hechizos');
   g.handleCast(a.id, { id: 2, x: 12, y: 3, rt: g.time * 1000 });
   check('un clic fuera del cuerpo falla y no daña', b.hp === hp2 && g.events.some((e) => e[0] === 'ms'));
   check('un fallo NO gasta maná', a.mp === mpAntes, 'mp=' + a.mp + ' antes=' + mpAntes);
-  check('un fallo NO activa el intervalo entre hechizos', a.spellCd === 0, 'spellCd=' + a.spellCd);
+  check('un fallo deja una espera corta (no el intervalo completo)', a.spellCd > 0.3 && a.spellCd < 0.5, 'spellCd=' + a.spellCd);
+  {
+    // Ametrallar: 10 fallos seguidos en el mismo instante
+    run(g, 1.6);
+    g.events = [];
+    for (let i = 0; i < 10; i++) g.handleCast(a.id, { id: 2, x: 12 + i, y: 3, rt: g.time * 1000 });
+    const fallos = g.events.filter((e) => e[0] === 'ms').length;
+    check('no se puede ametrallar: 10 fallos juntos cuentan como 1', fallos === 1, 'fallos=' + fallos);
+    run(g, 0.45);
+    g.events = [];
+    g.handleCast(a.id, { id: 2, x: 14, y: 3, rt: g.time * 1000 });
+    check('pasada la espera corta se puede volver a intentar', g.events.some((e) => e[0] === 'ms'));
+  }
   // sin maná
   a.mp = 10; run(g, 1.5);
   g.handleCast(a.id, { id: 3, x: 5, y: 0.3, rt: g.time * 1000 });
