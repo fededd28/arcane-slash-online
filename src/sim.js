@@ -209,7 +209,7 @@ export class Game {
       this.ev(['oc', i, e.id]);
       if (wasLeader) {
         const amount = Math.round(MAX_HP * (o.big ? SCORE.leaderOrbHealBig : SCORE.leaderOrbHealSmall));
-        this.heal(e, amount);
+        this.heal(e, amount, true);
         this.ev(['po', r2(e.x), r2(e.y), 2]);
       }
     }
@@ -227,15 +227,15 @@ export class Game {
         this.msg(target.id, { t: 'toast', k: 'blocked', a: { name: attacker ? attacker.name : '?', dmg } });
       }
     }
-    this.ev(['dm', r2(target.x), r2(target.y), dmg]);
+    this.ev(['dm', r2(target.x), r2(target.y), dmg, target.id, attacker ? attacker.id : 0]);
     target.hp = Math.max(0, target.hp - dmg);
     if (target.hp <= 0) this.kill(target, attacker);
   }
 
-  heal(e, amount) {
+  heal(e, amount, show = false) {
     const got = Math.min(MAX_HP, e.hp + amount) - e.hp;
     e.hp += got;
-    if (got > 0) this.ev(['hl', r2(e.x), r2(e.y), Math.round(got)]);
+    if (got > 0 && show) this.ev(['hl', r2(e.x), r2(e.y), Math.round(got), e.id]);
   }
 
   // Al activar el escudo, aparta un poco a los que están pegados (sin daño ni aturdimiento)

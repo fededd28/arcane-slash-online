@@ -2674,7 +2674,7 @@ sfx('slash', targetPos);
  const tex = new THREE.CanvasTexture(cv);
  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
  const spr = new THREE.Sprite(mat);
- spr.scale.set(1.3, 0.65, 1);
+ spr.scale.set(0.6, 0.3, 1);
  const group = new THREE.Group();
  const x0 = pos.x + (Math.random() - 0.5) * 0.4, y0 = pos.y + 1.0;
  group.position.set(x0, y0, 3);
@@ -2682,7 +2682,7 @@ sfx('slash', targetPos);
  scene.add(group);
  activeFX.push({ group, life: 0.9, maxLife: 0.9,
  update(dt, alpha) {
- group.position.y = y0 + (1 - alpha) * 0.9;
+ group.position.y = y0 + (1 - alpha) * 0.6;
  mat.opacity = Math.min(1, alpha * 2.5);
  } });
  }
@@ -3362,8 +3362,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (ev[3] === net.myId) tutorialEvent('sword');
  break;
  }
- case 'dm': spawnFloatText({ x: ev[1], y: ev[2] }, '-' + ev[3], '#ff4d4d'); break;
- case 'hl': spawnFloatText({ x: ev[1], y: ev[2] }, '+' + ev[3], '#4dff7a'); break;
+ case 'dm': if (ev[4] === net.myId || ev[5] === net.myId) spawnFloatText({ x: ev[1], y: ev[2] }, '-' + ev[3], '#ff4d4d'); break;
+ case 'hl': if (ev[4] === net.myId) spawnFloatText({ x: ev[1], y: ev[2] }, '+' + ev[3], '#4dff7a'); break;
  case 'bk': spawnShieldBlockFX({ x: ev[1], y: ev[2] }); break;
  case 'po': spawnPotionAura({ x: ev[1], y: ev[2] }, ev[3] === 0 ? 0xff7b72 : ev[3] === 1 ? 0x58a6ff : 0xf2cc60); break;
  case 'rs': spawnCleanseFX({ x: ev[1], y: ev[2] }); break;
