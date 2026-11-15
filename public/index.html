@@ -1136,7 +1136,7 @@
 <script type="module">
  import {
  PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
- SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, DASH_COOLDOWN_TOTAL, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
+ SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, DASH_COOLDOWN_TOTAL, SHIELD_COOLDOWN, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
  clamp, separatePair, stepPlayerMovement, dirFromVector
  } from './shared.js';
  const THREE = window.THREE;
@@ -1155,7 +1155,7 @@
  'bar.hp': 'VIDA', 'bar.mp': 'MANÁ',
  'spell.1': 'Petrificar', 'spell.2': 'Descarga Espectral', 'spell.2.short': 'Desc. Espectral', 'spell.3': 'Cataclismo', 'spell.4': 'Disipar',
  'melee': 'Espadazo', 'melee.title': 'Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)',
- 'shield': 'Escudo', 'shield.title': 'Mantener la tecla de escudo para bloquear',
+ 'shield': 'Escudo', 'shield.title': 'Escudo: golpe corto que aparta a los de al lado y bloquea un instante (espera 8 s)',
  'potHp': 'Poción de Vida', 'potHp.short': 'Poción Vida', 'potMp': 'Poción de Maná', 'potMp.short': 'Poción Maná', 'dash': 'Dash', 'dash.title': 'Impulso rápido hacia tu dirección',
  'aim.hint': '{name} · {mana} maná · Clic izquierdo para lanzar · Clic derecho cancela',
  'banner.petrified': 'Petrificado ({s}s) — Usa {key} + clic sobre ti para Disipar',
@@ -1168,12 +1168,12 @@
  'tut.d.orb': 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.',
  'tut.d.spell': 'Apretá {k} para elegir <b>Descarga Espectral</b> y hacé <b>clic</b> sobre un rival (o mantené el clic y soltalo sobre él).',
  'tut.d.sword': 'Pegate a un rival y golpeá con {k} o <b>clic derecho</b>.',
- 'tut.d.shield': 'Mantené {k} para cubrirte con el escudo: recibís un 75% menos de daño.',
+ 'tut.d.shield': 'Apretá {k} para el golpe de escudo: aparta a los de al lado y recibís un 75% menos de daño un instante (espera 8 s).',
  'tut.d.potion': '{hp} te cura y {mp} recupera maná. Las pociones son infinitas.',
  'tut.t.move': 'Movete con el <b>joystick</b> (abajo en el medio). Para un <b>dash</b>, deslizá el dedo por el mapa.',
  'tut.t.spell': 'Poné el dedo sobre el <b>rayo</b>, <b>arrastralo hasta un rival</b> y soltá: ahí le pega.',
  'tut.t.sword': 'Pegate a un rival y <b>tocá la pantalla</b>: golpeás con la espada.',
- 'tut.t.shield': 'Mantené el <b>escudo</b> apretado: recibís un 75% menos de daño.',
+ 'tut.t.shield': 'Tocá el <b>escudo</b>: aparta a los de al lado y recibís un 75% menos de daño un instante (espera 8 s).',
  'tut.t.potion': 'Las pociones curan vida y maná. Son infinitas.',
  'net.lostTitle': 'Conexión perdida', 'net.lostText': 'Se cortó la conexión con el servidor.', 'net.reconnect': 'Volver a conectar',
  'net.full': 'La sala está llena, probá en un rato.', 'net.idle': 'Te sacamos de la sala por inactividad.', 'net.version': 'Hay una versión nueva: recargá la página.',
@@ -1184,7 +1184,7 @@
  'help.clickHold': 'clic, o mantener y soltar',
  'help.tMove': 'Joystick abajo en el medio · deslizá el dedo por el mapa = dash',
  'help.tSpell': 'Poné el dedo sobre un hechizo (columna de la izquierda), arrastralo hasta el rival y soltá. Soltar sobre los botones cancela. También podés tocar el hechizo y después tocar el mapa.',
- 'help.tActions': 'Tocar la pantalla = espadazo · Escudo (mantener) · Pociones abajo de la columna · dos dedos = zoom',
+ 'help.tActions': 'Tocar la pantalla = espadazo · Escudo (golpe, espera 8 s) · Pociones abajo de la columna · dos dedos = zoom',
  'help.foot': 'Juntá orbes y eliminá rivales para sumar puntos', 'help.footDesk': 'Juntá orbes y eliminá rivales para sumar puntos · {esc} menú',
  'help.sword': 'Espada', 'help.potHp': 'Poción vida', 'help.potMp': 'Poción maná',
  'menu.title': '⚙ Menú', 'menu.sub': '· el juego sigue en marcha', 'menu.volume': 'Volumen',
@@ -1221,7 +1221,7 @@
  'bar.hp': 'HEALTH', 'bar.mp': 'MANA',
  'spell.1': 'Petrify', 'spell.2': 'Spectral Bolt', 'spell.2.short': 'Spectral Bolt', 'spell.3': 'Cataclysm', 'spell.4': 'Dispel',
  'melee': 'Sword Slash', 'melee.title': 'Melee sword slash (sword key or right click, next to the enemy)',
- 'shield': 'Shield', 'shield.title': 'Hold the shield key to block',
+ 'shield': 'Shield', 'shield.title': 'Shield: a short bash that pushes nearby players and blocks for a moment (8 s cooldown)',
  'potHp': 'Health Potion', 'potHp.short': 'Health Pot.', 'potMp': 'Mana Potion', 'potMp.short': 'Mana Pot.', 'dash': 'Dash', 'dash.title': 'Quick dash in your movement direction',
  'aim.hint': '{name} · {mana} mana · Left click to cast · Right click cancels',
  'banner.petrified': 'Petrified ({s}s) — Use {key} + click on yourself to Dispel',
@@ -1234,12 +1234,12 @@
  'tut.d.orb': 'Walk over a <b>glowing orb</b> to score points.',
  'tut.d.spell': 'Press {k} to pick <b>Spectral Bolt</b>, then <b>click</b> on an enemy (or hold the click and release on them).',
  'tut.d.sword': 'Get next to an enemy and strike with {k} or <b>right click</b>.',
- 'tut.d.shield': 'Hold {k} to cover yourself with the shield: you take 75% less damage.',
+ 'tut.d.shield': 'Press {k} for the shield bash: it pushes nearby players and you take 75% less damage for a moment (8 s cooldown).',
  'tut.d.potion': '{hp} heals you and {mp} restores mana. Potions are unlimited.',
  'tut.t.move': 'Move with the <b>joystick</b> (bottom center). For a <b>dash</b>, swipe your finger across the map.',
  'tut.t.spell': 'Put your finger on the <b>bolt</b>, <b>drag it to an enemy</b> and release: it hits there.',
  'tut.t.sword': 'Get next to an enemy and <b>tap the screen</b>: you strike with the sword.',
- 'tut.t.shield': 'Hold the <b>shield</b> button: you take 75% less damage.',
+ 'tut.t.shield': 'Tap the <b>shield</b> button: it pushes nearby players and you take 75% less damage for a moment (8 s cooldown).',
  'tut.t.potion': 'Potions restore health and mana. They are unlimited.',
  'net.lostTitle': 'Connection lost', 'net.lostText': 'The connection to the server was cut.', 'net.reconnect': 'Reconnect',
  'net.full': 'The room is full, try again in a bit.', 'net.idle': 'You were removed from the room for inactivity.', 'net.version': 'There is a new version: reload the page.',
@@ -1250,7 +1250,7 @@
  'help.clickHold': 'click, or hold and release',
  'help.tMove': 'Joystick at the bottom center · swipe your finger across the map = dash',
  'help.tSpell': 'Put your finger on a spell (left column), drag it to the enemy and release. Releasing over the buttons cancels. You can also tap the spell and then tap the map.',
- 'help.tActions': 'Tap the screen = sword slash · Shield (hold) · Potions at the bottom of the column · two fingers = zoom',
+ 'help.tActions': 'Tap the screen = sword slash · Shield (bash, 8 s cooldown) · Potions at the bottom of the column · two fingers = zoom',
  'help.foot': 'Collect orbs and eliminate enemies to score points', 'help.footDesk': 'Collect orbs and eliminate enemies to score points · {esc} menu',
  'help.sword': 'Sword', 'help.potHp': 'Health potion', 'help.potMp': 'Mana potion',
  'menu.title': '⚙ Menu', 'menu.sub': '· the game keeps running', 'menu.volume': 'Volume',
@@ -3528,13 +3528,15 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  // ===================== Mi personaje: predicción, reconciliación y acciones =====================
  // Mi movimiento se calcula acá en pasos de 50 ms (igual que el servidor) para que responda al instante.
  // El servidor confirma cada paso; si difiere, se corrige suavemente.
- const pred = { x: 0, y: 0, dashT: 0, dashCd: 0, lastDx: 0, lastDy: -1, imm: 0, dead: false };
+ const pred = { x: 0, y: 0, dashT: 0, dashCd: 0, shieldT: 0, shieldCd: 0, lastDx: 0, lastDy: -1, imm: 0, dead: false };
  const predPrev = { x: 0, y: 0 };
  const visOff = { x: 0, y: 0 };
  const pending = [];
  let predAcc = 0;
  let mySeq = 0;
  let dashRequested = false;
+ let shieldHeldPrev = false;
+ let shieldCooldown = 0;
  let potPulse = 0;
  let potionMouseHeld = null;
  let currentInput = { mx: 0, my: 0, bl: 0, ph: 0 };
@@ -3561,11 +3563,14 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  my = touchInput.dashDir.my;
  touchInput.dashDir = null;
  }
- bl = isHeld('shield') || touchInput.shield ? 1 : 0;
+ const shHeld = isHeld('shield') || touchInput.shield;
+ bl = shHeld && !shieldHeldPrev ? 1 : 0; // un pulso al apretar (no se mantiene)
+ shieldHeldPrev = shHeld;
  if (isHeld('potHp') || potionMouseHeld === 'hp') ph = 1;
  else if (isHeld('potMp') || potionMouseHeld === 'mp') ph = 2;
  if (!ph && potPulse) ph = potPulse;
  }
+ if (!gameplayActive()) shieldHeldPrev = false;
  potPulse = 0;
  return { mx, my, bl, ph };
  }
@@ -3586,6 +3591,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  stepPlayerMovement(pred, inp, TICK_DT);
  pushOutFromOthers(pred);
  if (pred.dashCd > 0) pred.dashCd = Math.max(0, pred.dashCd - TICK_DT);
+ if (pred.shieldCd > 0) pred.shieldCd = Math.max(0, pred.shieldCd - TICK_DT);
  if (pred.imm > 0) pred.imm = Math.max(0, pred.imm - TICK_DT);
  }
 
@@ -3619,6 +3625,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  playerImmobilized = m.imm;
  playerDeadTimer = m.dead;
  dashCooldown = m.dcd;
+ shieldCooldown = m.shcd;
  spellIntervalTimer = m.scd;
  meleeCooldownTimer = m.mcd;
  potionCooldownTimer = m.pcd;
@@ -3632,6 +3639,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  pred.y = m.y;
  pred.dashT = m.dt;
  pred.dashCd = m.dcd;
+ pred.shieldT = m.sht;
+ pred.shieldCd = m.shcd;
  pred.lastDx = m.lx;
  pred.lastDy = m.ly;
  pred.imm = m.imm;
@@ -3681,7 +3690,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const dead = playerDeadTimer > 0;
  const frozen = playerImmobilized > 0;
  const hasDir = currentInput.mx !== 0 || currentInput.my !== 0;
- playerChar.isBlocking = !dead && !frozen && currentInput.bl === 1;
+ playerChar.isBlocking = !dead && !frozen && pred.shieldT > 0;
  if (!dead && !frozen && hasDir) playerChar.dir = DIR_NAMES[dirFromVector(currentInput.mx, currentInput.my, 0)];
  player.visible = !dead;
  playerChar.hpBar.scale.x = Math.max(0.001, playerHp / MAX_HP);
@@ -4557,6 +4566,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
  // Los tiempos de espera bajan en pantalla entre estado y estado del servidor
  dashCooldown = Math.max(0, dashCooldown - dt);
+ shieldCooldown = Math.max(0, shieldCooldown - dt);
  spellIntervalTimer = Math.max(0, spellIntervalTimer - dt);
  meleeCooldownTimer = Math.max(0, meleeCooldownTimer - dt);
  potionCooldownTimer = Math.max(0, potionCooldownTimer - dt);
@@ -4667,6 +4677,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  setSlotCd(potHpSlot, potionCooldownTimer, POTION_COOLDOWN_TOTAL);
  setSlotCd(potMpSlot, potionCooldownTimer, POTION_COOLDOWN_TOTAL);
  setSlotCd(dashSlotEl, dashCooldown, DASH_COOLDOWN_TOTAL);
+ setSlotCd(shieldSlot, shieldCooldown, SHIELD_COOLDOWN);
  }
  
  drawMinimap();

@@ -74,7 +74,7 @@ export class Game {
       x: 0, y: 0, dir: 0, hp: MAX_HP, mp: MAX_MP,
       score: 0, kills: 0, deaths: 0, streak: 0, lastKills: {},
       imm: 0, dead: false, deadT: 0, blocking: false, moving: false,
-      dashT: 0, dashCd: 0, lastDx: 0, lastDy: -1,
+      dashT: 0, dashCd: 0, shieldT: 0, shieldCd: 0, lastDx: 0, lastDy: -1,
       spellCd: 0, meleeCd: 0, potCd: 0, swingT: 0,
       input: { mx: 0, my: 0, bl: 0, ph: 0 }, ack: 0, budget: 4,
       hist: [],
@@ -261,6 +261,7 @@ export class Game {
     victim.imm = 0;
     victim.blocking = false;
     victim.dashT = 0;
+    victim.shieldT = 0;
     victim.hp = 0;
     this.registerKill(killer, victim);
   }
@@ -383,6 +384,8 @@ export class Game {
     if (sp.immobilize > 0) {
       target.imm = sp.immobilize;
       target.dashT = 0;
+      target.shieldT = 0;
+      target.blocking = false;
       if (target.isBot) target.ai.cleanseDelay = 1 + Math.random() * 1.2;
       else this.msg(target.id, { t: 'pet', by: attacker.name });
     }
@@ -588,6 +591,7 @@ export class Game {
       e.meleeCd = Math.max(0, e.meleeCd - dt);
       e.potCd = Math.max(0, e.potCd - dt);
       e.dashCd = Math.max(0, e.dashCd - dt);
+      e.shieldCd = Math.max(0, e.shieldCd - dt);
       if (e.imm > 0) e.blocking = false;
       // Pociones manteniendo apretado
       if (e.input.ph === 1 && e.hp < MAX_HP && e.potCd <= 0) {
@@ -655,7 +659,7 @@ export class Game {
     if (me) {
       snap.me = {
         ack: me.ack, hp: Math.ceil(me.hp), mp: Math.floor(me.mp),
-        dcd: r2(me.dashCd), scd: r2(me.spellCd), mcd: r2(me.meleeCd), pcd: r2(me.potCd),
+        dcd: r2(me.dashCd), shcd: r2(me.shieldCd), sht: r2(me.shieldT), scd: r2(me.spellCd), mcd: r2(me.meleeCd), pcd: r2(me.potCd),
         imm: r2(me.imm), dead: me.dead ? r2(Math.max(0, me.deadT)) : 0,
         x: r2(me.x), y: r2(me.y), dt: r2(me.dashT), lx: r2(me.lastDx), ly: r2(me.lastDy),
         score: Math.round(me.score), kills: me.kills, streak: me.streak

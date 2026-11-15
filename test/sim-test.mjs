@@ -169,6 +169,12 @@ console.log('Escudo');
   inp(g2, d.id, { bl: 1 });
   check('el escudo aparta un poco al de al lado', d.x === 1 && c.x < -0.3 && c.x > -1.2, `c.x=${c.x}`);
   check('el empuje no hace daño', c.hp === MAX_HP && d.hp === MAX_HP);
+  // Es un golpe: dura poco y después espera 8 s
+  check('el escudo queda en espera de 8 s', d.shieldCd > 7.9 && d.shieldT > 0);
+  for (let i = 0; i < 20; i++) { d.budget = 4; inp(g2, d.id, {}); g2.update(TICK_DT); }
+  check('el escudo se apaga solo a los ~0,8 s', d.blocking === false);
+  d.budget = 4; inp(g2, d.id, { bl: 1 });
+  check('en espera no se puede volver a usar', d.blocking === false);
 }
 
 console.log('Inmovilizados no se empujan');

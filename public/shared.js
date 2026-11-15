@@ -4,7 +4,7 @@
 // así el servidor y el cliente calculan exactamente lo mismo.
 // ============================================================================
 
-export const PROTOCOL_VERSION = 2;
+export const PROTOCOL_VERSION = 3;
 
 // --- Tiempos de la simulación ---
 export const TICK_RATE = 20; // el servidor actualiza el mundo 20 veces por segundo
@@ -17,6 +17,9 @@ export const SPELL_GLOBAL_INTERVAL = 1.4;
 // Un hechizo que falla no gasta maná, pero deja una espera corta: así no se puede ametrallar ni apuntar gratis a fuerza bruta
 export const SPELL_MISS_INTERVAL = 0.4;
 export const MELEE_INTERVAL = 1.5;
+// Escudo: un golpe corto (no se mantiene). Dura SHIELD_TIME y después espera SHIELD_COOLDOWN
+export const SHIELD_TIME = 0.8;
+export const SHIELD_COOLDOWN = 8.0;
 export const MELEE_DAMAGE = 70;
 export const POTION_COOLDOWN_TOTAL = 0.3;
 export const POTION_HP_AMOUNT = 30;
@@ -157,10 +160,11 @@ export function separatePair(a, b) {
 
 // Un paso de movimiento de 50 ms (lo usan igual el servidor y la predicción del cliente).
 // `s` es el estado: x, y, dashT, dashCd, lastDx, lastDy, imm, dead.
-// `inp` es la entrada: mx, my (dirección), bl (escudo), dash (pedido de dash).
+// `inp` es la entrada: mx, my (dirección), bl (pedido de escudo, un pulso), dash (pedido de dash).
 export function stepPlayerMovement(s, inp, dt) {
   if (s.dead) {
     s.dashT = 0;
+    s.shieldT = 0;
     return { moving: false, blocking: false };
   }
   const len = Math.hypot(inp.mx, inp.my);
@@ -174,8 +178,13 @@ export function stepPlayerMovement(s, inp, dt) {
   }
   const frozen = s.imm > 0;
   const moving = len > 0 && !frozen;
-  const blocking = !!inp.bl && !frozen;
-  if (frozen) s.dashT = 0;
+  if (frozen) { s.dashT = 0; s.shieldT = 0; }
+  if (inp.bl && !frozen && s.shieldCd <= 0 && s.shieldT <= 0) {
+    s.shieldT = SHIELD_TIME;
+    s.shieldCd = SHIELD_COOLDOWN;
+  }
+  const blocking = s.shieldT > 0 && !frozen;
+  if (blocking) s.shieldT -= dt;
 
   if (inp.dash && !frozen && s.dashCd <= 0 && s.dashT <= 0) {
     s.dashT = DASH_TIME;
