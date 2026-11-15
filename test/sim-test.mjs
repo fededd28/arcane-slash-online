@@ -157,10 +157,18 @@ console.log('Escudo');
 {
   const g = arena(); g.__seq = 0;
   const a = g.addPlayer('A', 0); const b = g.addPlayer('B', 1);
-  place(a, 0, 0); place(b, 1, 0);
+  place(a, 0, 0); place(b, 5, 0);
   inp(g, b.id, { bl: 1 });
+  place(a, 4.5, 0);
   g.handleMelee(a.id);
   check('bloquear con escudo reduce el daño al 25%', b.hp === MAX_HP - Math.round(MELEE_DAMAGE * 0.25), `hp=${b.hp}`);
+  // Al activar el escudo se aparta un poco al de al lado, sin daño
+  const g2 = arena(); g2.__seq = 0;
+  const c = g2.addPlayer('C', 0); const d = g2.addPlayer('D', 1);
+  place(c, 0, 0); place(d, 1, 0);
+  inp(g2, d.id, { bl: 1 });
+  check('el escudo aparta un poco al de al lado', d.x === 1 && c.x < -0.3 && c.x > -1.2, `c.x=${c.x}`);
+  check('el empuje no hace daño', c.hp === MAX_HP && d.hp === MAX_HP);
 }
 
 console.log('Inmovilizados no se empujan');

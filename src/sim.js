@@ -18,6 +18,8 @@ const MAX_REWIND = 0.3;
 const BOT_NAMES = ['Vexor', 'Lyssara', 'Mordain', 'Kaelen', 'Thalric', 'Nyra', 'Orvyn', 'Sorrel',
   'Dravik', 'Selene', 'Ulric', 'Iona', 'Tarkin', 'Mirelle', 'Gorran', 'Zephyra'];
 
+const SHIELD_PUSH_RANGE = 1.4; // a quién empuja el escudo al activarse
+const SHIELD_PUSH_DIST = 0.6; // cuánto (poco)
 const r2 = (v) => Math.round(v * 100) / 100;
 const rnd = (a, b) => a + Math.random() * (b - a);
 
@@ -207,7 +209,7 @@ export class Game {
       this.ev(['oc', i, e.id]);
       if (wasLeader) {
         const amount = Math.round(MAX_HP * (o.big ? SCORE.leaderOrbHealBig : SCORE.leaderOrbHealSmall));
-        e.hp = Math.min(MAX_HP, e.hp + amount);
+        this.heal(e, amount);
         this.ev(['po', r2(e.x), r2(e.y), 2]);
       }
     }
@@ -225,8 +227,32 @@ export class Game {
         this.msg(target.id, { t: 'toast', k: 'blocked', a: { name: attacker ? attacker.name : '?', dmg } });
       }
     }
+    this.ev(['dm', r2(target.x), r2(target.y), dmg]);
     target.hp = Math.max(0, target.hp - dmg);
     if (target.hp <= 0) this.kill(target, attacker);
+  }
+
+  heal(e, amount) {
+    const got = Math.min(MAX_HP, e.hp + amount) - e.hp;
+    e.hp += got;
+    if (got > 0) this.ev(['hl', r2(e.x), r2(e.y), Math.round(got)]);
+  }
+
+  // Al activar el escudo, aparta un poco a los que están pegados (sin daño ni aturdimiento)
+  shieldPush(e) {
+    let any = false;
+    for (const o of this.entities.values()) {
+      if (o === e || o.dead || o.imm > 0) continue;
+      const dx = o.x - e.x, dy = o.y - e.y;
+      const d = Math.hypot(dx, dy);
+      if (d > SHIELD_PUSH_RANGE) continue;
+      const nx = d > 0.001 ? dx / d : 1, ny = d > 0.001 ? dy / d : 0;
+      o.x += nx * SHIELD_PUSH_DIST;
+      o.y += ny * SHIELD_PUSH_DIST;
+      resolveEnvironmentCollisions(o, CHARACTER_RADIUS);
+      any = true;
+    }
+    if (any) this.ev(['bk', r2(e.x), r2(e.y)]);
   }
 
   kill(victim, killer) {
@@ -313,8 +339,10 @@ export class Game {
     const ph = m.ph === 1 || m.ph === 2 ? m.ph : 0;
     e.input = { mx, my, bl: m.bl ? 1 : 0, ph };
     const r = stepPlayerMovement(e, { mx, my, bl: e.input.bl, dash: !!m.dash }, TICK_DT);
+    const wasBlocking = e.blocking;
     e.moving = r.moving;
     e.blocking = r.blocking;
+    if (!wasBlocking && e.blocking && e.imm <= 0 && !e.dead) this.shieldPush(e);
     if (r.moving && (mx !== 0 || my !== 0)) e.dir = dirFromVector(mx, my, e.dir);
     e.ack = seq;
   }
@@ -436,7 +464,9 @@ export class Game {
     ai.meleeCooldown = Math.max(0, ai.meleeCooldown - dt);
     ai.potionCooldown = Math.max(0, ai.potionCooldown - dt);
     ai.blockTimer = Math.max(0, ai.blockTimer - dt);
+    const botWasBlocking = b.blocking;
     b.blocking = ai.blockTimer > 0 && b.imm <= 0;
+    if (!botWasBlocking && b.blocking) this.shieldPush(b);
 
     // Si está petrificado, usa Disipar sobre sí mismo (con un pequeño retraso de reacción)
     if (b.imm > 0) {
@@ -453,7 +483,7 @@ export class Game {
     if (ai.potionCooldown <= 0) {
       if (b.hp < MAX_HP * 0.4) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
-        b.hp = Math.min(MAX_HP, b.hp + POTION_HP_AMOUNT);
+        this.heal(b, POTION_HP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 0]);
       } else if (b.mp < 70) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
@@ -562,7 +592,7 @@ export class Game {
       // Pociones manteniendo apretado
       if (e.input.ph === 1 && e.hp < MAX_HP && e.potCd <= 0) {
         e.potCd = POTION_COOLDOWN_TOTAL;
-        e.hp = Math.min(MAX_HP, e.hp + POTION_HP_AMOUNT);
+        this.heal(e, POTION_HP_AMOUNT);
         this.ev(['po', r2(e.x), r2(e.y), 0]);
       } else if (e.input.ph === 2 && e.mp < MAX_MP && e.potCd <= 0) {
         e.potCd = POTION_COOLDOWN_TOTAL;
