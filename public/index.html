@@ -3796,8 +3796,8 @@ sfx('spell' + spellId, targetPos);
  // ===================== Controles reasignables =====================
  const DEFAULT_BINDINGS = {
  up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD',
- dash: 'Space', sword: 'KeyQ', shield: 'ShiftLeft',
- potHp: 'KeyV', potMp: 'KeyB',
+ dash: 'Space', sword: 'KeyR', shield: 'ShiftLeft',
+ potHp: 'KeyQ', potMp: 'KeyE',
  spell1: 'Digit1', spell2: 'Digit2', spell3: 'Digit3', spell4: 'Digit4'
  };
  const ACTION_LABELS = {
@@ -4647,7 +4647,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
 
  // Acceso para pruebas desde la consola del navegador
- window.__arcane = { setStarted(v) { gameStarted = v; }, fx: { potion: spawnPotionAura, petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
+ window.__arcane = { setStarted(v) { gameStarted = v; paused = !v; }, fx: { potion: spawnPotionAura, petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
 
  // ===================== Cambio de idioma: refresca lo que ya está dibujado =====================
  function refreshLangDependent() {
