@@ -595,7 +595,7 @@
  body.touch #minimap { width: 92px; height: 92px; }
  body.touch #killfeed { top: calc(112px + var(--sa-t)); right: calc(8px + var(--sa-r)); width: 170px; font-size: 11px; }
  /* Vida y maná: justo arriba de la fila de botones, del mismo ancho */
- body.touch #vitals { top: auto; left: auto; transform: none; right: calc(8px + var(--sa-r)); bottom: calc(var(--slot) + 24px + var(--sa-b)); width: calc(9 * var(--slot) + 42px); grid-template-columns: 1fr 1fr; gap: 6px; }
+ body.touch #vitals { top: auto; transform: none; left: calc(8px + var(--sa-l)); right: calc(2 * var(--slot) + 30px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); width: auto; grid-template-columns: 1fr; gap: 4px; }
  body.touch .bar-wrap { padding: 3px 8px; }
  body.touch .bar-label { font-size: 10px; }
  body.touch #toast { bottom: auto; top: calc(78px + var(--sa-t)); max-width: 80vw; text-align: center; }
@@ -610,9 +610,12 @@
  /* Botones de acción (abajo a la derecha): cuadrícula */
  body.touch #spellbar {
  left: auto; right: calc(8px + var(--sa-r)); bottom: calc(8px + var(--sa-b)); transform: none;
- display: flex; gap: 4px; padding: 5px; border-radius: 12px;
+ /* Dos columnas: afuera los 4 hechizos (se arrastran hasta el rival), adentro espada/escudo/pociones/dash */
+ display: grid; grid-template-columns: repeat(2, var(--slot)); grid-auto-flow: row dense; gap: 4px; padding: 5px; border-radius: 12px;
  touch-action: none;
  }
+ body.touch .spell-slot { grid-column: 2; }
+ body.touch .potion-slot { grid-column: 1; }
  body.touch .bar-divider { display: none; }
  body.touch .spell-slot, body.touch .potion-slot { width: var(--slot); height: var(--slot); padding: 0; border-radius: 9px; display: flex; flex-direction: column; justify-content: center; align-items: center; touch-action: none; }
  body.touch .spell-slot:hover, body.touch .potion-slot:hover { transform: none; }
@@ -626,22 +629,24 @@
 
  /* Horizontal: fila de 9 botones abajo a la derecha */
  @media (orientation: landscape) {
- body.touch { --slot: 46px; }
+ body.touch { --slot: min(50px, calc((100vh - 120px) / 5)); }
  body.touch #killfeed { display: none; }
+ body.touch #minimap { width: 70px; height: 70px; }
  body.touch #tutorial { top: calc(8px + var(--sa-t)); bottom: auto; width: 230px; left: 50%; transform: translateX(-50%); }
  body.touch #toast { top: calc(120px + var(--sa-t)); left: 50%; }
+ body.touch #vitals { left: calc(170px + var(--sa-l)); grid-template-columns: 1fr 1fr; }
  }
  @media (orientation: landscape) and (max-height: 480px) {
  body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
  body.touch #joystick { width: 130px; height: 130px; }
  }
- /* Vertical: la fila ocupa todo el ancho, el joystick queda arriba de las barras */
+ /* Vertical: columnas a la derecha, barras abajo a la izquierda, joystick arriba de las barras */
  @media (orientation: portrait) {
- body.touch { --slot: calc((100vw - 60px) / 9); }
+ body.touch { --slot: 52px; }
  body.touch #left-col { width: 140px; }
  body.touch #lb-rows .lb-row:nth-child(n+4) { display: none; }
- body.touch #joystick { bottom: calc(var(--slot) + 70px + var(--sa-b)); }
- body.touch #toast { top: auto; bottom: calc(var(--slot) + 240px + var(--sa-b)); }
+ body.touch #joystick { bottom: calc(76px + var(--sa-b)); }
+ body.touch #toast { top: auto; bottom: calc(5 * var(--slot) + 50px + var(--sa-b)); max-width: 60vw; }
  body.touch #tutorial { top: calc(204px + var(--sa-t)); bottom: auto; width: calc(100vw - 24px); }
  body.touch #death-title { font-size: 30px; letter-spacing: 3px; }
  }
@@ -2450,7 +2455,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const TUTORIAL_STEPS = IS_TOUCH ? [
  { event: 'move', text: () => 'Movete con el <b>joystick</b> (abajo a la izquierda). El botón <b>»</b> es un dash corto.' },
  { event: 'orb', text: () => 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.' },
- { event: 'spell', text: () => 'Tocá el rayo para elegir <b>Descarga Espectral</b> y tocá un rival (o arrastrá desde el botón y soltá sobre él).' },
+ { event: 'spell', text: () => 'Poné el dedo sobre el <b>rayo</b>, <b>arrastralo hasta un rival</b> y soltá: ahí le pega.' },
  { event: 'sword', text: () => 'Pegate a un rival y tocá la <b>espada</b>.' },
  { event: 'shield', text: () => 'Mantené el <b>escudo</b> apretado: recibís un 75% menos de daño.' },
  { event: 'potion', text: () => 'Las pociones curan vida y maná. Son infinitas.' }
@@ -2642,7 +2647,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  `<div class="g-title">CÓMO JUGAR</div>` +
  `<div class="g-label">MOVER</div><div class="g-foot" style="text-align:left">Joystick abajo a la izquierda · botón <b>»</b> = dash</div>` +
  `<div class="g-label">HECHIZOS</div><div class="g-cards">${spellTiles.replace(/<div class="t-keys">.*?<\/div>/g, '<div class="t-keys"></div>')}</div>` +
- `<div class="g-foot" style="text-align:left">Tocá un hechizo y después tocá el mapa, o arrastrá desde el botón y soltá donde querés lanzarlo (soltar sobre los botones cancela).</div>` +
+ `<div class="g-foot" style="text-align:left">Poné el dedo sobre un hechizo (columna de la derecha), arrastralo hasta el rival y soltá. Soltar sobre los botones cancela. También podés tocar el hechizo y después tocar el mapa.</div>` +
  `<div class="g-label">ACCIONES</div><div class="g-foot" style="text-align:left">Espada · Escudo (mantener) · Pociones · dos dedos = zoom</div>` +
  `<div class="g-foot">Juntá orbes y eliminá rivales para sumar puntos</div>`;
  return;
