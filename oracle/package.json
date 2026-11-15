@@ -1,0 +1,14 @@
+{
+  "name": "arcane-slash-oracle",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Servidor Node.js del juego para la maquina de Oracle (usa ../src y ../public)",
+  "scripts": {
+    "start": "node server.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ws": "^8.23.0"
+  }
+}
