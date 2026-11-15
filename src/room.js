@@ -8,7 +8,7 @@ import { TICK_DT, PROTOCOL_VERSION } from '../public/shared.js';
 const MAX_MESSAGE_BYTES = 2048;
 const MAX_MESSAGES_PER_SECOND = 90;
 const LEADERBOARD_EVERY_TICKS = 5;
-const IDLE_KICK_MS = 45000; // sin enviar movimiento durante 45 s (pestaña en segundo plano): se lo saca de la sala
+const IDLE_KICK_MS = 180000; // 3 minutos sin enviar movimiento (pestaña en segundo plano o minimizada): se lo saca de la sala
 
 export class GameRoom {
   constructor(state, env) {
