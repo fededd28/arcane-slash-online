@@ -4655,7 +4655,8 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  if (!IS_TOUCH && selectedSpellId !== null && playerDeadTimer <= 0 && playerImmobilized <= 0 && !(playerChar && playerChar.isBlocking)) {
  const sp = SPELLS[selectedSpellId];
  const colHex = '#' + sp.color.toString(16).padStart(6, '0');
- aimHintEl.innerHTML = `<span class="aim-dot" style="background:${colHex}"></span>` + t('aim.hint', { name: t('spell.' + sp.id), mana: sp.mana });
+ const aimHtml = `<span class="aim-dot" style="background:${colHex}"></span>` + t('aim.hint', { name: t('spell.' + sp.id), mana: sp.mana });
+ if (aimHintEl.__html !== aimHtml) { aimHintEl.__html = aimHtml; aimHintEl.innerHTML = aimHtml; } // solo si cambió (no reescribir el DOM en cada cuadro)
  aimHintEl.classList.add('visible');
  } else {
  aimHintEl.classList.remove('visible');
