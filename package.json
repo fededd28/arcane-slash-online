@@ -1,0 +1,14 @@
+{
+  "name": "arcane-slash-online",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node test/sim-test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}
