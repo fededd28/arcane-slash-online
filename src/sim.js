@@ -384,17 +384,17 @@ export class Game {
 
     if (sp.immobilize > 0 && target && target.imm > 0) return toast('targetPet', { name: target.name });
 
-    e.spellCd = SPELL_GLOBAL_INTERVAL;
     e.swingT = 0.2;
     e.dir = dirFromVector(wx - e.x, wy - e.y, e.dir);
 
-    // Si falla (no hay nadie bajo el cursor) NO se gasta maná; igual se respeta el intervalo entre hechizos
+    // Si falla (no hay nadie bajo el cursor) NO se gasta maná ni activa el intervalo entre hechizos
     if (!selfCast && !target) {
       this.ev(['ms', r2(wx), r2(wy), sp.id]);
       toast('missed');
       return;
     }
 
+    e.spellCd = SPELL_GLOBAL_INTERVAL;
     e.mp -= sp.mana;
     e.potCd = Math.max(e.potCd, POTION_COOLDOWN_TOTAL);
 

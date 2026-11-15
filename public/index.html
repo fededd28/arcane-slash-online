@@ -6,6 +6,13 @@
  <meta name="mobile-web-app-capable" content="yes" />
  <meta name="apple-mobile-web-app-capable" content="yes" />
  <title>Arcane Slash Online - Warlock Warriors</title>
+ <meta name="description" content="Multiplayer 3D arcane combat arena with real-time WebSocket simulation, bots, spells, and leaderboards." />
+ <meta property="og:title" content="Arcane Slash Online - Warlock Warriors" />
+ <meta property="og:description" content="Multiplayer 3D arcane combat arena with real-time WebSocket simulation, bots, spells, and leaderboards." />
+ <meta property="og:type" content="website" />
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
  <style>
  * {
  margin: 0;
@@ -15,12 +22,16 @@
  }
 
  :root {
- --panel: rgba(10, 13, 19, 0.88);
- --panel-border: #2a313c;
- --gold: #d4a64a;
- --gold-soft: rgba(212, 166, 74, 0.18);
- --steel: #8a96a6;
- --text: #e8e6e1;
+ --panel: rgba(11, 15, 22, 0.86);
+ --panel-strong: rgba(13, 17, 25, 0.94);
+ --panel-border: rgba(140, 160, 190, 0.18);
+ --gold: #dfb156;
+ --gold-bright: #f2cf7c;
+ --gold-soft: rgba(223, 177, 86, 0.16);
+ --steel: #8f9cad;
+ --text: #ece9e2;
+ --font-display: "Cinzel", Georgia, serif;
+ --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
  }
 
  html, body {
@@ -28,8 +39,14 @@
  height: 100%;
  overflow: hidden;
  background-color: #07090d;
- font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+ font-family: var(--font-sans);
  color: var(--text);
+ -webkit-font-smoothing: antialiased;
+ }
+
+ button:focus-visible, input:focus-visible {
+ outline: 2px solid var(--gold);
+ outline-offset: 2px;
  }
 
  /* Puntero por defecto: Mano con magia */
@@ -51,15 +68,29 @@
  pointer-events: none;
  z-index: 5;
  background:
- radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 52%, rgba(2, 3, 6, 0.62) 100%);
+ radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 54%, rgba(2, 3, 6, 0.64) 100%);
+ }
+
+ /* Pulso sutil de daño recibido / poca vida */
+ #dmg-vignette {
+ position: fixed;
+ inset: 0;
+ pointer-events: none;
+ z-index: 6;
+ opacity: 0;
+ transition: opacity 0.18s ease-out;
+ background: radial-gradient(ellipse at center, rgba(185, 28, 28, 0) 55%, rgba(185, 28, 28, 0.42) 100%);
+ }
+ #dmg-vignette.low-hp {
+ opacity: 0.45;
  }
 
  .panel {
  background: var(--panel);
  border: 1px solid var(--panel-border);
- border-radius: 10px;
- backdrop-filter: blur(8px);
- box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+ border-radius: 12px;
+ backdrop-filter: blur(10px);
+ box-shadow: 0 10px 28px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.05);
  }
 
  /* Columna izquierda: clasificación + estado */
@@ -162,47 +193,122 @@
  .cd-ready { color: #4cc063; font-weight: 600; }
  .cd-wait { color: #d29922; font-weight: 600; }
 
- .hud-btns { display: flex; gap: 8px; margin-top: 8px; }
+ .hud-btns { display: flex; gap: 6px; margin-top: 8px; }
  .hud-btns button, #menu-btn, #fullscreen-btn {
  background: rgba(255, 255, 255, 0.05);
  color: var(--text);
- border: 1px solid #3a4350;
- border-radius: 7px;
- padding: 4px 10px;
- font-size: 11px;
+ border: 1px solid rgba(140, 160, 190, 0.24);
+ border-radius: 8px;
+ min-height: 30px;
+ padding: 5px 10px;
+ font-family: var(--font-sans);
+ font-size: 11.5px;
  font-weight: 600;
  cursor: pointer;
+ transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
  }
  .hud-btns button:hover { border-color: var(--gold); background: var(--gold-soft); }
- #fullscreen-btn.locked { border-color: #3fb950; color: #3fb950; }
+ #fullscreen-btn.locked { border-color: #3fb950; color: #56d364; background: rgba(63, 185, 80, 0.12); }
+
+ /* Estado de combate (petrificado / bloqueo) y aviso de hechizo armado */
+ #combat-banner {
+ position: fixed;
+ bottom: 174px;
+ left: 50%;
+ transform: translateX(-50%);
+ z-index: 11;
+ pointer-events: none;
+ opacity: 0;
+ transition: opacity 0.16s ease;
+ padding: 5px 14px;
+ border-radius: 8px;
+ font-size: 12.5px;
+ font-weight: 700;
+ letter-spacing: 0.2px;
+ font-variant-numeric: tabular-nums;
+ white-space: nowrap;
+ background: rgba(14, 18, 26, 0.92);
+ border: 1px solid var(--panel-border);
+ box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+ }
+ #combat-banner.visible { opacity: 1; }
+ #combat-banner.petrified {
+ color: #f0f6fc;
+ border-color: rgba(158, 167, 179, 0.6);
+ background: rgba(28, 33, 42, 0.94);
+ }
+ #combat-banner.blocking {
+ color: #79c0ff;
+ border-color: rgba(88, 166, 255, 0.5);
+ background: rgba(14, 24, 40, 0.9);
+ }
+
+ #aim-hint {
+ position: fixed;
+ bottom: 174px;
+ left: 50%;
+ transform: translateX(-50%);
+ z-index: 11;
+ pointer-events: none;
+ opacity: 0;
+ transition: opacity 0.14s ease;
+ font-size: 12px;
+ font-weight: 600;
+ color: #e8e6e1;
+ text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+ white-space: nowrap;
+ }
+ #aim-hint.visible { opacity: 1; }
+ #aim-hint .aim-dot {
+ display: inline-block;
+ width: 8px;
+ height: 8px;
+ border-radius: 50%;
+ margin-right: 6px;
+ vertical-align: middle;
+ }
 
  /* Barras de vida y maná centradas sobre la barra de hechizos */
  #vitals {
  position: fixed;
- bottom: 112px;
+ bottom: 118px;
  left: 50%;
  transform: translateX(-50%);
- width: min(520px, 90vw);
+ width: min(560px, 92vw);
  display: grid;
  grid-template-columns: 1fr 1fr;
  gap: 10px;
  z-index: 10;
  }
- .bar-wrap { padding: 5px 9px; }
+ .bar-wrap { padding: 7px 11px; }
  .bar-label {
  display: flex;
  justify-content: space-between;
- font-size: 11px;
- font-weight: 700;
- letter-spacing: 1px;
- margin-bottom: 3px;
+ align-items: baseline;
+ font-size: 10.5px;
+ font-weight: 800;
+ letter-spacing: 1.2px;
+ margin-bottom: 5px;
  color: var(--steel);
  }
- .bar-label span:last-child { color: var(--text); font-variant-numeric: tabular-nums; }
- .bar-track { height: 9px; background: #06080b; border: 1px solid #1c222b; border-radius: 999px; overflow: hidden; }
- .bar-fill { height: 100%; width: 100%; transition: width 0.12s ease-out; }
- #hp-fill { background: linear-gradient(90deg, #8f1d1d, #e5484d); }
- #mp-fill { background: linear-gradient(90deg, #1b4f9c, #4aa3ff); }
+ .bar-label span:last-child { color: var(--text); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+ .bar-track {
+ position: relative;
+ height: 10px;
+ background: #06080c;
+ border: 1px solid rgba(255, 255, 255, 0.08);
+ border-radius: 999px;
+ overflow: hidden;
+ }
+ .bar-fill { height: 100%; width: 100%; transition: width 0.12s ease-out; position: relative; }
+ .bar-fill::after {
+ content: "";
+ position: absolute;
+ inset: 0 0 50% 0;
+ background: rgba(255, 255, 255, 0.16);
+ }
+ #hp-fill { background: linear-gradient(90deg, #991b1b, #ef4444); }
+ #mp-fill { background: linear-gradient(90deg, #1d4ed8, #38bdf8); }
 
  #minimap-box {
  position: fixed;
@@ -249,62 +355,100 @@
  gap: 7px;
  background: var(--panel);
  border: 1px solid var(--panel-border);
- border-radius: 12px;
+ border-radius: 14px;
  padding: 9px 12px;
- backdrop-filter: blur(8px);
- box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+ backdrop-filter: blur(10px);
+ box-shadow: 0 12px 34px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.05);
  z-index: 10;
  }
  .spell-slot, .potion-slot {
  position: relative;
- background: #12161d;
- border: 1.5px solid #2a313c;
- border-radius: 9px;
+ overflow: hidden;
+ background: #11161f;
+ border: 1.5px solid #2a3342;
+ border-radius: 10px;
  padding: 7px 6px;
  text-align: center;
- transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+ cursor: pointer;
+ transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
  }
  .spell-slot { width: 84px; }
  .potion-slot { width: 76px; }
+ #dash-slot { width: 84px; }
  .spell-slot:hover { border-color: var(--gold); transform: translateY(-2px); }
  .spell-slot.selected {
- border-color: var(--gold);
- background: var(--gold-soft);
- box-shadow: 0 0 14px rgba(212, 166, 74, 0.4);
+ border-color: var(--gold-bright);
+ background: rgba(223, 177, 86, 0.2);
+ box-shadow: 0 0 18px rgba(223, 177, 86, 0.42);
+ transform: translateY(-2px);
  }
- .bar-divider { width: 1px; background: var(--panel-border); margin: 2px 2px; }
- .potion-slot:hover { border-color: #3fb950; transform: translateY(-2px); }
+ .spell-slot.no-mana {
+ filter: saturate(0.3);
+ opacity: 0.52;
+ }
+ .bar-divider { width: 1px; background: var(--panel-border); margin: 3px 2px; }
+ .potion-slot:hover { border-color: #58a6ff; transform: translateY(-2px); }
  .potion-slot.active-shield {
  border-color: #58a6ff;
- background: rgba(88, 166, 255, 0.2);
- box-shadow: 0 0 14px rgba(88, 166, 255, 0.45);
+ background: rgba(88, 166, 255, 0.22);
+ box-shadow: 0 0 16px rgba(88, 166, 255, 0.45);
  }
- .potion-slot.on-cd { opacity: 0.5; }
- .spell-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--steel); margin-bottom: 2px; }
- .spell-key { background: #232a35; color: #f0f0f0; padding: 0 5px; border-radius: 4px; font-weight: 700; }
- .spell-mana { color: #58a6ff; font-weight: 600; }
- .potion-heal { color: #ff7b72; font-weight: 600; }
- .melee-dmg { color: #ffa657; font-weight: 600; }
- .shield-tag { color: #79c0ff; font-weight: 600; }
- .spell-icon { height: 32px; margin: 1px 0; display: flex; align-items: center; justify-content: center; }
+ .potion-slot.on-cd, .spell-slot.on-cd { border-color: #232a36; }
+
+ /* Overlay de cooldown por slot (encima del ícono y textos) */
+ .cd-mask {
+ position: absolute;
+ inset: 0;
+ z-index: 2;
+ pointer-events: none;
+ opacity: 0;
+ background: conic-gradient(rgba(5, 7, 12, 0.84) calc(var(--cd-p, 0) * 360deg), rgba(5, 7, 12, 0.32) 0deg);
+ transition: opacity 0.1s ease;
+ }
+ .cd-num {
+ position: absolute;
+ inset: 0;
+ z-index: 3;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ pointer-events: none;
+ opacity: 0;
+ font-size: 18px;
+ font-weight: 800;
+ color: #ffffff;
+ text-shadow: 0 2px 8px rgba(0, 0, 0, 1), 0 0 3px #000;
+ font-variant-numeric: tabular-nums;
+ }
+ .on-cd .cd-mask, .on-cd .cd-num { opacity: 1; }
+
+ .spell-top { display: flex; justify-content: space-between; align-items: center; gap: 3px; font-size: 10px; color: var(--steel); margin-bottom: 2px; position: relative; z-index: 1; }
+ .spell-key { background: #212936; color: #f0f2f5; padding: 0 4px; border-radius: 4px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+ .spell-mana { color: #58a6ff; font-weight: 700; flex-shrink: 0; }
+ .potion-heal { color: #ff7b72; font-weight: 700; flex-shrink: 0; }
+ .melee-dmg { color: #ffa657; font-weight: 700; flex-shrink: 0; }
+ .shield-tag { color: #79c0ff; font-weight: 700; flex-shrink: 0; }
+ .dash-tag { color: #9fc5ff; font-weight: 700; flex-shrink: 0; }
+ .spell-icon { height: 32px; margin: 1px 0; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
  .ico { width: 30px; height: 30px; display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55)); }
- .spell-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+ .spell-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 1; }
 
  #toast {
  position: fixed;
- bottom: 168px;
+ bottom: 204px;
  left: 50%;
  transform: translateX(-50%);
- background: rgba(14, 17, 24, 0.94);
- border: 1px solid var(--panel-border);
+ background: var(--panel-strong);
+ border: 1px solid rgba(223, 177, 86, 0.32);
  color: #f3efe6;
- padding: 6px 16px;
- border-radius: 999px;
+ padding: 7px 16px;
+ border-radius: 10px;
  font-size: 13px;
  font-weight: 600;
  opacity: 0;
  pointer-events: none;
  transition: opacity 0.2s ease;
+ box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
  z-index: 15;
  }
  #toast.show { opacity: 1; }
@@ -324,7 +468,7 @@
  transition: opacity 0.25s ease;
  }
  #death-overlay.visible { opacity: 1; pointer-events: auto; }
- #death-title { font-size: 44px; font-weight: 800; letter-spacing: 6px; color: #c9302c; text-shadow: 0 4px 24px rgba(200, 40, 40, 0.5); margin-bottom: 8px; }
+ #death-title { font-family: var(--font-display); font-size: 46px; font-weight: 800; letter-spacing: 6px; color: #e5484d; text-shadow: 0 4px 28px rgba(220, 40, 40, 0.55); margin-bottom: 8px; }
  #death-sub { font-size: 16px; color: #c9c5bb; font-variant-numeric: tabular-nums; }
  #death-by { font-size: 14px; color: var(--steel); margin-bottom: 6px; }
 
@@ -336,39 +480,44 @@
  display: flex;
  align-items: center;
  justify-content: center;
- background: radial-gradient(ellipse at center, rgba(14, 18, 26, 0.88), rgba(4, 5, 8, 0.97));
+ padding: 16px;
+ background: radial-gradient(ellipse at center, rgba(16, 22, 34, 0.84), rgba(4, 6, 10, 0.96));
  }
  #start-screen.hidden { display: none; }
- .start-card { width: min(440px, 92vw); text-align: center; padding: 30px 28px; }
- .start-title { font-size: 34px; font-weight: 800; letter-spacing: 6px; color: var(--gold); text-shadow: 0 0 24px rgba(212, 166, 74, 0.35); }
- .start-sub { margin: 4px 0 22px; font-size: 12px; letter-spacing: 5px; color: var(--steel); }
+ .start-title { font-family: var(--font-display); font-size: 32px; font-weight: 800; letter-spacing: 5px; color: var(--gold-bright); text-shadow: 0 0 28px rgba(223, 177, 86, 0.35); line-height: 1.1; margin-bottom: 18px; }
  #name-input {
  width: 100%;
  padding: 11px 14px;
- background: #0b0e14;
+ background: #090d14;
  color: var(--text);
- border: 1px solid #3a4350;
- border-radius: 8px;
- font-size: 16px;
+ border: 1px solid #323c4c;
+ border-radius: 9px;
+ font-family: var(--font-sans);
+ font-size: 15px;
+ font-weight: 600;
  text-align: center;
  outline: none;
  user-select: text;
+ transition: border-color 0.15s ease, box-shadow 0.15s ease;
  }
- #name-input:focus { border-color: var(--gold); }
+ #name-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(223, 177, 86, 0.15); }
  #play-btn {
  margin-top: 14px;
  width: 100%;
- padding: 11px;
- background: linear-gradient(180deg, #d4a64a, #a8791f);
- color: #14100a;
- border: none;
- border-radius: 8px;
- font-size: 15px;
+ padding: 12px 16px;
+ background: linear-gradient(180deg, #e2b75e, #b28024);
+ color: #161006;
+ border: 1px solid rgba(255, 232, 176, 0.35);
+ border-radius: 9px;
+ font-family: var(--font-sans);
+ font-size: 14px;
  font-weight: 800;
  letter-spacing: 2px;
  cursor: pointer;
+ transition: filter 0.15s ease, transform 0.1s ease;
  }
- #play-btn:hover { filter: brightness(1.1); }
+ #play-btn:hover { filter: brightness(1.08); }
+ #play-btn:active { transform: translateY(1px); }
  .start-rules { margin-top: 18px; text-align: left; font-size: 12px; line-height: 1.6; color: var(--steel); }
  .start-rules b { color: var(--text); }
 
@@ -438,11 +587,11 @@
  .mouse-note { margin-top: 10px; font-size: 12px; color: #8b949e; }
  .menu-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; }
 
- .menu-panel { background: #10141b; border-color: var(--panel-border); }
+ .menu-panel { background: #10151e; border-color: var(--panel-border); }
+ .menu-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 14px; color: var(--gold-bright); letter-spacing: 1px; }
  .menu-label { color: var(--gold); }
  .menu-btn:hover, .key-btn:hover { border-color: var(--gold); }
  .vol-row input[type=range] { accent-color: var(--gold); }
- .start-card { width: min(580px, 94vw); max-height: 94vh; overflow-y: auto; }
  .start-help { margin-top: 18px; text-align: left; font-size: 12.5px; }
  .sh-title { font-size: 11px; letter-spacing: 3px; font-weight: 800; color: var(--gold); border-bottom: 1px solid var(--panel-border); padding-bottom: 5px; margin-bottom: 7px; }
  .sh-grid { display: grid; grid-template-columns: 78px 1fr; gap: 4px 10px; line-height: 1.45; color: var(--steel); }
@@ -452,7 +601,7 @@
  /* Tutorial dentro del juego */
  #tutorial {
  position: fixed;
- bottom: 214px;
+ bottom: 240px;
  left: 50%;
  transform: translateX(-50%);
  width: min(440px, 92vw);
@@ -481,37 +630,65 @@
  .tut-dot.done { background: #4cc063; }
  .tut-dot.now { background: var(--gold); }
 
- /* ---- Pantalla de inicio: una sola columna ---- */
- .start-card { width: min(560px, 94vw); max-height: 94vh; overflow-y: auto; }
+ /* ---- Pantalla de inicio: 2 columnas en escritorio, 1 columna en móvil ---- */
+ .start-card {
+ width: min(920px, 94vw);
+ max-height: 94vh;
+ overflow-y: auto;
+ text-align: center;
+ padding: 26px 28px;
+ }
+ .start-grid {
+ display: grid;
+ grid-template-columns: 340px 1fr;
+ gap: 28px;
+ align-items: start;
+ }
+ .start-left {
+ display: flex;
+ flex-direction: column;
+ align-items: stretch;
+ }
+ .start-right {
+ text-align: left;
+ border-left: 1px solid var(--panel-border);
+ padding-left: 26px;
+ }
+ @media (max-width: 820px) {
+ .start-card { width: min(540px, 94vw); padding: 22px 20px; }
+ .start-grid { grid-template-columns: 1fr; gap: 20px; }
+ .start-right { border-left: none; border-top: 1px solid var(--panel-border); padding-left: 0; padding-top: 18px; }
+ }
 
- .start-section { margin-top: 22px; display: flex; flex-direction: column; align-items: center; }
+ .start-section { margin-top: 18px; display: flex; flex-direction: column; align-items: center; }
  .pick-label { font-size: 11px; letter-spacing: 3px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
  .pick-row { display: flex; align-items: center; gap: 10px; }
  #char-preview {
- width: 150px;
- height: 150px;
- background: radial-gradient(circle at 50% 74%, rgba(212, 166, 74, 0.18), rgba(0, 0, 0, 0) 70%), #0c1017;
+ width: 136px;
+ height: 136px;
+ background: radial-gradient(circle at 50% 74%, rgba(223, 177, 86, 0.2), rgba(0, 0, 0, 0) 70%), #0a0e15;
  border: 1px solid var(--panel-border);
  border-radius: 12px;
  }
  .arrow-btn {
  width: 38px;
- height: 54px;
+ height: 52px;
  background: rgba(255, 255, 255, 0.05);
  color: var(--text);
- border: 1px solid #3a4350;
+ border: 1px solid #323c4c;
  border-radius: 8px;
  font-size: 15px;
  cursor: pointer;
+ transition: border-color 0.15s ease, background-color 0.15s ease;
  }
  .arrow-btn:hover { border-color: var(--gold); background: var(--gold-soft); }
- .color-name { margin-top: 8px; font-weight: 700; font-size: 13px; letter-spacing: 2px; }
+ .color-name { margin-top: 8px; font-weight: 700; font-size: 12.5px; letter-spacing: 2px; }
  .color-dots { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
- .color-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #0a0d12; cursor: pointer; box-shadow: 0 0 0 1px #3a4350; }
+ .color-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #0a0d12; cursor: pointer; box-shadow: 0 0 0 1px #3a4350; transition: transform 0.12s ease; }
  .color-dot.sel { box-shadow: 0 0 0 2px var(--gold); transform: scale(1.18); }
 
  /* Controles: poca información, todo con el mismo formato */
- .start-guide { margin-top: 24px; text-align: left; }
+ .start-guide { margin-top: 0; text-align: left; }
  .g-title { font-size: 11px; letter-spacing: 3px; font-weight: 800; color: var(--gold); border-bottom: 1px solid var(--panel-border); padding-bottom: 6px; margin-bottom: 14px; }
  .g-move { display: flex; align-items: center; justify-content: center; gap: 28px; margin-bottom: 16px; }
  .g-dash { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--steel); font-size: 11px; }
@@ -564,10 +741,13 @@
  .net-title { font-size: 20px; font-weight: 800; color: #e5484d; }
  .net-msg { margin-top: 8px; min-height: 16px; font-size: 12px; color: #ff7b72; text-align: center; }
  #play-btn:disabled { opacity: 0.6; cursor: wait; }
- #ping { color: var(--steel); font-size: 11px; align-self: center; margin-left: 2px; font-variant-numeric: tabular-nums; }
+ #ping { color: var(--steel); font-size: 11px; font-weight: 600; align-self: center; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+ #ping.ping-good { color: #56d364; }
+ #ping.ping-warn { color: #e3b341; }
+ #ping.ping-bad { color: #ff7b72; }
  #hud { padding: 8px 10px; }
  #hud .hud-btns { margin-top: 0; flex-wrap: nowrap; align-items: center; }
- #hud .hud-btns button { white-space: nowrap; padding: 4px 9px; }
+ #hud .hud-btns button { white-space: nowrap; padding: 5px 10px; }
 
  /* ===================== Celular / tablet (body.touch) ===================== */
  .touch-only { display: none; }
@@ -600,6 +780,8 @@
  body.touch #vitals { pointer-events: none; }
  body.touch .bar-label { font-size: 10px; }
  body.touch #toast { bottom: auto; top: calc(78px + var(--sa-t)); max-width: 80vw; text-align: center; }
+ body.touch #combat-banner { bottom: auto; top: calc(46px + var(--sa-t)); font-size: 11px; max-width: 72vw; white-space: normal; text-align: center; }
+ body.touch #aim-hint { display: none; }
  body.touch #tutorial { bottom: auto; top: calc(100px + var(--sa-t)); width: min(340px, 60vw); padding: 7px 10px; }
  body.touch #tutorial-text { font-size: 12.5px; }
 
@@ -769,9 +951,15 @@
  <ellipse cx="24" cy="42" rx="3" ry="6" fill="#fff" opacity="0.35"/>
  <path d="M32 36 C36 41 38 44 38 47 C38 50 35 52 32 52 C29 52 26 50 26 47 C26 44 28 41 32 36 Z" fill="#e6f6ff" opacity="0.9"/>
  </symbol>
+ <!-- Dash -->
+ <symbol id="ico-dash" viewBox="0 0 64 64">
+ <path d="M10 22 H34 L27 14 L34 14 L52 32 L34 50 L27 50 L34 42 H10 Z" fill="url(#gBolt)" stroke="#173a73" stroke-width="2.2" stroke-linejoin="round"/>
+ <path d="M12 14 H24 M8 32 H22 M12 50 H24" stroke="#9fd4ff" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+ </symbol>
  </svg>
 
  <div id="vignette"></div>
+ <div id="dmg-vignette" aria-hidden="true"></div>
 
  <div id="left-col">
  <div id="leaderboard" class="panel">
@@ -808,6 +996,9 @@
  <div id="death-sub">Volviendo a aparecer en 5.0s...</div>
  </div>
 
+ <div id="combat-banner" aria-live="polite"></div>
+ <div id="aim-hint"></div>
+
  <div id="vitals">
  <div class="bar-wrap panel">
  <div class="bar-label"><span data-i18n="bar.hp">VIDA</span><span id="hp-text">300 / 300</span></div>
@@ -820,28 +1011,40 @@
  </div>
 
  <div id="spellbar">
+ <div class="potion-slot" id="dash-slot" title="Dash rápido" data-i18n-title="dash.title">
+ <div class="cd-mask"></div><div class="cd-num"></div>
+ <div class="spell-top"><span class="spell-key">Espacio</span><span class="dash-tag">10s</span></div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-dash"/></svg></div>
+ <div class="spell-name" data-i18n="dash">Dash</div>
+ </div>
+ <div class="bar-divider"></div>
  <div class="spell-slot" data-spell="1" id="slot-1">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">1</span><span class="spell-mana">60</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-petrify"/></svg></div>
  <div class="spell-name" data-i18n="spell.1">Petrificar</div>
  </div>
  <div class="spell-slot" data-spell="2" id="slot-2">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">2</span><span class="spell-mana">50</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-spectral"/></svg></div>
  <div class="spell-name" data-i18n="spell.2.short">Desc. Espectral</div>
  </div>
  <div class="spell-slot" data-spell="3" id="slot-3">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">3</span><span class="spell-mana">110</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-cataclysm"/></svg></div>
  <div class="spell-name" data-i18n="spell.3">Cataclismo</div>
  </div>
  <div class="spell-slot" data-spell="4" id="slot-4">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">4</span><span class="spell-mana">40</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-dispel"/></svg></div>
  <div class="spell-name" data-i18n="spell.4">Disipar</div>
  </div>
  <div class="bar-divider"></div>
  <div class="potion-slot" id="melee-slot" title="Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)" data-i18n-title="melee.title">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">Q</span><span class="melee-dmg">40</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-sword"/></svg></div>
  <div class="spell-name" data-i18n="melee">Espadazo</div>
@@ -852,18 +1055,16 @@
  <div class="spell-name" data-i18n="shield">Escudo</div>
  </div>
  <div class="potion-slot" id="pot-hp" title="Poción de Vida" data-i18n-title="potHp">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">V</span><span class="potion-heal">+30</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-potion-hp"/></svg></div>
  <div class="spell-name" data-i18n="potHp.short">Poción Vida</div>
  </div>
  <div class="potion-slot" id="pot-mp" title="Poción de Maná" data-i18n-title="potMp">
+ <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">B</span><span class="spell-mana">+30</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-potion-mp"/></svg></div>
  <div class="spell-name" data-i18n="potMp.short">Poción Maná</div>
- </div>
- <div class="potion-slot touch-only" id="dash-slot">
- <div class="spell-icon"><span class="dash-ico">»</span></div>
- <div class="spell-name" data-i18n="dash">Dash</div>
  </div>
  </div>
 
@@ -879,12 +1080,10 @@
 
  <div id="start-screen">
  <div class="start-card panel">
+ <div class="start-grid">
+ <div class="start-left">
  <div class="start-title">ARCANE SLASH</div>
- <div class="start-sub" data-i18n="start.sub">GUERREROS BRUJOS</div>
  <input id="name-input" type="text" maxlength="14" placeholder="Tu nombre" data-i18n-ph="start.name" autocomplete="off" spellcheck="false" />
- <button id="play-btn" type="button" data-i18n="start.play">ENTRAR A LA ARENA</button>
- <div id="net-msg" class="net-msg"></div>
-
  <div class="start-section">
  <div class="pick-label" data-i18n="start.pick">ELEGÍ TU GUERRERO</div>
  <div class="pick-row">
@@ -895,9 +1094,14 @@
  <div id="color-name" class="color-name"></div>
  <div id="color-dots" class="color-dots"></div>
  </div>
-
- <div id="start-help" class="start-guide"></div>
+ <button id="play-btn" type="button" data-i18n="start.play">ENTRAR A LA ARENA</button>
+ <div id="net-msg" class="net-msg"></div>
  <button class="lang-btn" type="button" id="lang-btn-start"></button>
+ </div>
+ <div class="start-right">
+ <div id="start-help" class="start-guide"></div>
+ </div>
+ </div>
  </div>
  </div>
 
@@ -930,7 +1134,8 @@
 <script type="module">
  import {
  PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
- SPELL_GLOBAL_INTERVAL, clamp, separatePair, stepPlayerMovement, dirFromVector
+ SPELL_GLOBAL_INTERVAL, DASH_COOLDOWN_TOTAL, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
+ clamp, separatePair, stepPlayerMovement, dirFromVector
  } from './shared.js';
  const THREE = window.THREE;
 
@@ -949,7 +1154,11 @@
  'spell.1': 'Petrificar', 'spell.2': 'Descarga Espectral', 'spell.2.short': 'Desc. Espectral', 'spell.3': 'Cataclismo', 'spell.4': 'Disipar',
  'melee': 'Espadazo', 'melee.title': 'Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)',
  'shield': 'Escudo', 'shield.title': 'Mantener la tecla de escudo para bloquear',
- 'potHp': 'Poción de Vida', 'potHp.short': 'Poción Vida', 'potMp': 'Poción de Maná', 'potMp.short': 'Poción Maná', 'dash': 'Dash',
+ 'potHp': 'Poción de Vida', 'potHp.short': 'Poción Vida', 'potMp': 'Poción de Maná', 'potMp.short': 'Poción Maná', 'dash': 'Dash', 'dash.title': 'Impulso rápido hacia tu dirección',
+ 'aim.hint': '{name} · {mana} maná · Clic izquierdo para lanzar · Clic derecho cancela',
+ 'banner.petrified': 'Petrificado ({s}s) — Usa {key} + clic sobre ti para Disipar',
+ 'banner.petrifiedTouch': 'Petrificado ({s}s) — Usa Disipar sobre ti',
+ 'banner.blocking': 'Escudo activo · -75% daño',
  'tut.skip': 'Saltar tutorial', 'tut.step': 'TUTORIAL · PASO {n}/{m}', 'tut.done': 'TUTORIAL · {n}/{m}', 'tut.complete': 'TUTORIAL COMPLETO', 'tut.ok': '✓ ¡Bien!',
  'tut.endBase': '¡Listo! Eliminá rivales para robarles puntos: al <b>líder</b> le sacás más. ',
  'tut.endTouch': '<b>☰ Menú</b> arriba a la derecha.', 'tut.endDesk': '<b>Esc</b> abre el menú.',
@@ -967,7 +1176,7 @@
  'net.lostTitle': 'Conexión perdida', 'net.lostText': 'Se cortó la conexión con el servidor.', 'net.reconnect': 'Volver a conectar',
  'net.full': 'La sala está llena, probá en un rato.', 'net.idle': 'Te sacamos de la sala por inactividad.', 'net.version': 'Hay una versión nueva: recargá la página.',
  'net.openFail': 'No se pudo abrir la conexión.', 'net.connectFail': 'No se pudo conectar con el servidor.',
- 'start.sub': 'GUERREROS BRUJOS', 'start.name': 'Tu nombre', 'start.play': 'ENTRAR A LA ARENA', 'start.connecting': 'CONECTANDO…',
+ 'start.name': 'Tu nombre', 'start.play': 'ENTRAR A LA ARENA', 'start.connecting': 'CONECTANDO…',
  'start.pick': 'ELEGÍ TU GUERRERO', 'start.prev': 'Color anterior', 'start.next': 'Color siguiente',
  'help.title': 'CÓMO JUGAR', 'help.move': 'MOVER', 'help.spells': 'HECHIZOS', 'help.actions': 'ACCIONES',
  'help.clickHold': 'clic, o mantener y soltar',
@@ -1011,7 +1220,11 @@
  'spell.1': 'Petrify', 'spell.2': 'Spectral Bolt', 'spell.2.short': 'Spectral Bolt', 'spell.3': 'Cataclysm', 'spell.4': 'Dispel',
  'melee': 'Sword Slash', 'melee.title': 'Melee sword slash (sword key or right click, next to the enemy)',
  'shield': 'Shield', 'shield.title': 'Hold the shield key to block',
- 'potHp': 'Health Potion', 'potHp.short': 'Health Pot.', 'potMp': 'Mana Potion', 'potMp.short': 'Mana Pot.', 'dash': 'Dash',
+ 'potHp': 'Health Potion', 'potHp.short': 'Health Pot.', 'potMp': 'Mana Potion', 'potMp.short': 'Mana Pot.', 'dash': 'Dash', 'dash.title': 'Quick dash in your movement direction',
+ 'aim.hint': '{name} · {mana} mana · Left click to cast · Right click cancels',
+ 'banner.petrified': 'Petrified ({s}s) — Use {key} + click on yourself to Dispel',
+ 'banner.petrifiedTouch': 'Petrified ({s}s) — Use Dispel on yourself',
+ 'banner.blocking': 'Shield active · -75% damage',
  'tut.skip': 'Skip tutorial', 'tut.step': 'TUTORIAL · STEP {n}/{m}', 'tut.done': 'TUTORIAL · {n}/{m}', 'tut.complete': 'TUTORIAL COMPLETE', 'tut.ok': '✓ Nice!',
  'tut.endBase': 'Done! Eliminate enemies to steal their points: you take more from the <b>leader</b>. ',
  'tut.endTouch': '<b>☰ Menu</b> at the top right.', 'tut.endDesk': '<b>Esc</b> opens the menu.',
@@ -1029,7 +1242,7 @@
  'net.lostTitle': 'Connection lost', 'net.lostText': 'The connection to the server was cut.', 'net.reconnect': 'Reconnect',
  'net.full': 'The room is full, try again in a bit.', 'net.idle': 'You were removed from the room for inactivity.', 'net.version': 'There is a new version: reload the page.',
  'net.openFail': 'Could not open the connection.', 'net.connectFail': 'Could not connect to the server.',
- 'start.sub': 'WARLOCK WARRIORS', 'start.name': 'Your name', 'start.play': 'ENTER THE ARENA', 'start.connecting': 'CONNECTING…',
+ 'start.name': 'Your name', 'start.play': 'ENTER THE ARENA', 'start.connecting': 'CONNECTING…',
  'start.pick': 'CHOOSE YOUR WARRIOR', 'start.prev': 'Previous color', 'start.next': 'Next color',
  'help.title': 'HOW TO PLAY', 'help.move': 'MOVE', 'help.spells': 'SPELLS', 'help.actions': 'ACTIONS',
  'help.clickHold': 'click, or hold and release',
@@ -1100,6 +1313,8 @@
  // En celular se limita a 1,5 para que ande más fluido
  renderer.setPixelRatio(Math.min(window.devicePixelRatio, (window.matchMedia && matchMedia('(pointer: coarse)').matches) ? 1.5 : 2));
  document.body.appendChild(renderer.domElement);
+ renderer.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); paused = true; });
+ renderer.domElement.addEventListener('webglcontextrestored', () => { paused = false; });
 
  // --- Cámara Ortográfica 2D ---
  // Celular / tablet: pantalla táctil (se activa también el diseño de botones en pantalla)
@@ -3062,7 +3277,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  r.className = 'lb-row' + (rank === 1 ? ' first' : '') + (id === net.myId ? ' me' : '') + (dead ? ' dead' : '');
  const rk = document.createElement('span');
  rk.className = 'lb-rank';
- rk.textContent = rank;
+ rk.textContent = (rank === 1 && score > 0) ? '♛' : rank;
  const dot = document.createElement('span');
  dot.className = 'lb-dot';
  const col = e ? e.dotColor : '#888888';
@@ -3188,6 +3403,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  case 'pong':
  net.rtt = performance.now() - m.c;
  pingEl.textContent = `${Math.round(net.rtt)} ms`;
+ pingEl.className = net.rtt < 80 ? 'ping-good' : net.rtt < 150 ? 'ping-warn' : 'ping-bad';
  break;
  case 'err':
  net.lastError = m.reason === 'full' ? 'net.full' : m.reason === 'idle' ? 'net.idle' : 'net.version';
@@ -3471,10 +3687,11 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const dySelf = worldPos.y - player.position.y;
  const self = spell.cleanse && dxSelf <= 0.44 && dySelf >= -0.35 && dySelf <= 1.02;
 
+ const hitTarget = self || !!findEnemyAt(worldPos);
  sendNet({ t: 'cast', id: spell.id, x: r2(worldPos.x), y: r2(worldPos.y), rt: Math.round(renderServerTime()), self: self ? 1 : 0 });
  if (!IS_TOUCH) setSpellCursor(null); // en celular queda elegido para tirarlo varias veces (se suelta tocando el botón de nuevo)
- // Se refleja enseguida el intervalo; el maná lo confirma el servidor (si falla, no se gasta)
- spellIntervalTimer = SPELL_GLOBAL_INTERVAL;
+ // Solo se anticipa el cooldown si apunta a un objetivo (si falla, no activa cooldown)
+ if (hitTarget) spellIntervalTimer = SPELL_GLOBAL_INTERVAL;
  if (playerChar) {
  playerChar.dir = DIR_NAMES[dirFromVector(worldPos.x - player.position.x, worldPos.y - player.position.y, 0)];
  playerChar.swingTimer = 0.2;
@@ -3502,6 +3719,12 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  });
  window.addEventListener('mouseup', () => { potionMouseHeld = null; });
  window.addEventListener('blur', () => { potionMouseHeld = null; });
+ document.getElementById('dash-slot').addEventListener('mousedown', (e) => {
+ e.stopPropagation();
+ if (IS_TOUCH || playerDeadTimer > 0 || !net.playing) return;
+ if (playerImmobilized > 0) showToast(t('toast.petrified', { key: keyName(bindings.spell4) }));
+ else if (dashCooldown <= 0) dashRequested = true;
+ });
 
 
  // --- Conversión de Pantalla a Mundo 2D ---
@@ -3642,6 +3865,7 @@ sfx('spell' + spellId, targetPos);
  document.querySelector('#shield-slot .spell-key').textContent = keyName(bindings.shield);
  document.querySelector('#pot-hp .spell-key').textContent = keyName(bindings.potHp);
  document.querySelector('#pot-mp .spell-key').textContent = keyName(bindings.potMp);
+ document.querySelector('#dash-slot .spell-key').textContent = keyName(bindings.dash);
 
  const k = (a) => keyName(bindings[a]);
  document.getElementById('hud-line1').innerHTML = t('hud.line1', { move: k('up') + k('left') + k('down') + k('right'), dash: k('dash'), sword: k('sword'), shield: k('shield') });
@@ -3905,9 +4129,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  e.preventDefault();
  if (playerImmobilized > 0) {
  showToast(t('toast.petrified', { key: keyName(bindings.spell4) }));
- } else if (dashCooldown > 0) {
- showToast(t('toast.dashCd', { s: dashCooldown.toFixed(1) }));
- } else {
+ } else if (dashCooldown <= 0) {
  dashRequested = true;
  }
  }
@@ -4215,17 +4437,35 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  mCtx.lineWidth = 2;
  mCtx.strokeRect(1, 1, size - 2, size - 2);
 
+ const topRow = ranking[0];
+ const leaderId = topRow && topRow[1] > 0 && !topRow[4] ? topRow[0] : 0;
  for (const e of ents.values()) {
  if (e.id === net.myId || e.dead || !e.seen) continue;
+ const mx = (e.x + HALF_MAP) * scale;
+ const my = (HALF_MAP - e.y) * scale;
  mCtx.fillStyle = e.dotColor;
  mCtx.beginPath();
- mCtx.arc((e.x + HALF_MAP) * scale, (HALF_MAP - e.y) * scale, 3.0, 0, Math.PI * 2);
+ mCtx.arc(mx, my, 3.0, 0, Math.PI * 2);
  mCtx.fill();
+ if (e.id === leaderId) {
+ mCtx.strokeStyle = '#f2cf7c';
+ mCtx.lineWidth = 1.4;
+ mCtx.beginPath();
+ mCtx.arc(mx, my, 5.2, 0, Math.PI * 2);
+ mCtx.stroke();
+ }
  }
  if (net.playing && playerDeadTimer <= 0) {
+ const px = (player.position.x + HALF_MAP) * scale;
+ const py = (HALF_MAP - player.position.y) * scale;
+ mCtx.strokeStyle = '#ffffff';
+ mCtx.lineWidth = 1.4;
+ mCtx.beginPath();
+ mCtx.arc(px, py, 5.6, 0, Math.PI * 2);
+ mCtx.stroke();
  mCtx.fillStyle = playerStats.dotColor;
  mCtx.beginPath();
- mCtx.arc((player.position.x + HALF_MAP) * scale, (HALF_MAP - player.position.y) * scale, 3.8, 0, Math.PI * 2);
+ mCtx.arc(px, py, 3.8, 0, Math.PI * 2);
  mCtx.fill();
  }
  }
@@ -4246,6 +4486,26 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  const potMpSlot = document.getElementById('pot-mp');
  const meleeSlot = document.getElementById('melee-slot');
  const shieldSlot = document.getElementById('shield-slot');
+ const combatBannerEl = document.getElementById('combat-banner');
+ const aimHintEl = document.getElementById('aim-hint');
+ const dmgVignetteEl = document.getElementById('dmg-vignette');
+ const spellSlots = [1, 2, 3, 4].map((i) => ({ id: i, el: document.getElementById(`slot-${i}`) }));
+ let prevHpVis = MAX_HP;
+ let dmgFlashT = 0;
+
+ function setSlotCd(el, rem, total) {
+ if (!el) return;
+ const on = rem > 0.02;
+ el.classList.toggle('on-cd', on);
+ const numEl = el.querySelector('.cd-num');
+ if (on) {
+ el.style.setProperty('--cd-p', Math.min(1, rem / total).toFixed(3));
+ if (numEl) numEl.textContent = rem >= 1 ? Math.ceil(rem) + 's' : rem.toFixed(1);
+ } else {
+ el.style.removeProperty('--cd-p');
+ if (numEl) numEl.textContent = '';
+ }
+ }
 
  function frame(dt) {
  gameTime += dt;
@@ -4314,18 +4574,44 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  hpFillEl.style.width = `${(playerHp / MAX_HP) * 100}%`;
  mpFillEl.style.width = `${(playerMp / MAX_MP) * 100}%`;
 
+ if (playerHp < prevHpVis - 1 && playerDeadTimer <= 0) dmgFlashT = 0.25;
+ prevHpVis = playerHp;
+ dmgFlashT = Math.max(0, dmgFlashT - dt);
+ const lowHp = playerDeadTimer <= 0 && playerHp > 0 && playerHp <= MAX_HP * 0.25;
+ dmgVignetteEl.classList.toggle('low-hp', lowHp);
+ dmgVignetteEl.style.opacity = dmgFlashT > 0 ? Math.min(0.85, 0.35 + dmgFlashT * 2).toFixed(2) : '';
+
  if (playerDeadTimer > 0) {
  statusBadgeEl.textContent = t('st.dead', { s: playerDeadTimer.toFixed(1) });
  statusBadgeEl.className = 'badge badge-inmo';
+ combatBannerEl.className = '';
+ combatBannerEl.textContent = '';
  } else if (playerImmobilized > 0) {
  statusBadgeEl.textContent = t('st.pet', { s: playerImmobilized.toFixed(1) });
  statusBadgeEl.className = 'badge badge-inmo';
+ combatBannerEl.className = 'visible petrified';
+ combatBannerEl.textContent = IS_TOUCH
+ ? t('banner.petrifiedTouch', { s: playerImmobilized.toFixed(1) })
+ : t('banner.petrified', { s: playerImmobilized.toFixed(1), key: keyName(bindings.spell4) });
  } else if (playerChar && playerChar.isBlocking) {
  statusBadgeEl.textContent = t('st.block');
  statusBadgeEl.className = 'badge badge-shield';
+ combatBannerEl.className = 'visible blocking';
+ combatBannerEl.textContent = t('banner.blocking');
  } else {
  statusBadgeEl.textContent = t('st.free');
  statusBadgeEl.className = 'badge badge-libre';
+ combatBannerEl.className = '';
+ combatBannerEl.textContent = '';
+ }
+
+ if (!IS_TOUCH && selectedSpellId !== null && playerDeadTimer <= 0 && playerImmobilized <= 0 && !(playerChar && playerChar.isBlocking)) {
+ const sp = SPELLS[selectedSpellId];
+ const colHex = '#' + sp.color.toString(16).padStart(6, '0');
+ aimHintEl.innerHTML = `<span class="aim-dot" style="background:${colHex}"></span>` + t('aim.hint', { name: t('spell.' + sp.id), mana: sp.mana });
+ aimHintEl.classList.add('visible');
+ } else {
+ aimHintEl.classList.remove('visible');
  }
 
  dashStatusEl.textContent = dashCooldown > 0 ? `${dashCooldown.toFixed(1)}s` : t('st.ready');
@@ -4334,12 +4620,17 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  spellIntervalStatusEl.className = spellIntervalTimer > 0 ? 'cd-wait' : 'cd-ready';
  meleeStatusEl.textContent = meleeCooldownTimer > 0 ? `${meleeCooldownTimer.toFixed(1)}s` : t('st.ready');
  meleeStatusEl.className = meleeCooldownTimer > 0 ? 'cd-wait' : 'cd-ready';
- meleeSlot.classList.toggle('on-cd', meleeCooldownTimer > 0);
  potionStatusEl.textContent = potionCooldownTimer > 0 ? `${potionCooldownTimer.toFixed(1)}s` : t('st.ready');
  potionStatusEl.className = potionCooldownTimer > 0 ? 'cd-wait' : 'cd-ready';
- potHpSlot.classList.toggle('on-cd', potionCooldownTimer > 0);
- potMpSlot.classList.toggle('on-cd', potionCooldownTimer > 0);
- dashSlotEl.classList.toggle('on-cd', dashCooldown > 0);
+
+ for (const { id, el } of spellSlots) {
+ setSlotCd(el, spellIntervalTimer, SPELL_GLOBAL_INTERVAL);
+ el.classList.toggle('no-mana', playerMp < SPELLS[id].mana);
+ }
+ setSlotCd(meleeSlot, meleeCooldownTimer, MELEE_INTERVAL);
+ setSlotCd(potHpSlot, potionCooldownTimer, POTION_COOLDOWN_TOTAL);
+ setSlotCd(potMpSlot, potionCooldownTimer, POTION_COOLDOWN_TOTAL);
+ setSlotCd(dashSlotEl, dashCooldown, DASH_COOLDOWN_TOTAL);
  }
  
  drawMinimap();

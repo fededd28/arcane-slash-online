@@ -76,7 +76,7 @@ console.log('Hechizos');
   g.handleCast(a.id, { id: 2, x: 12, y: 3, rt: g.time * 1000 });
   check('un clic fuera del cuerpo falla y no daña', b.hp === hp2 && g.events.some((e) => e[0] === 'ms'));
   check('un fallo NO gasta maná', a.mp === mpAntes, 'mp=' + a.mp + ' antes=' + mpAntes);
-  check('un fallo igual respeta el intervalo entre hechizos', a.spellCd > 1.3, 'spellCd=' + a.spellCd);
+  check('un fallo NO activa el intervalo entre hechizos', a.spellCd === 0, 'spellCd=' + a.spellCd);
   // sin maná
   a.mp = 10; run(g, 1.5);
   g.handleCast(a.id, { id: 3, x: 5, y: 0.3, rt: g.time * 1000 });
