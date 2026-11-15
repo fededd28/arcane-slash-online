@@ -4,7 +4,7 @@
 // así el servidor y el cliente calculan exactamente lo mismo.
 // ============================================================================
 
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 // --- Tiempos de la simulación ---
 export const TICK_RATE = 20; // el servidor actualiza el mundo 20 veces por segundo

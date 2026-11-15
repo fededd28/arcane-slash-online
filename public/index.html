@@ -5,7 +5,7 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
  <meta name="mobile-web-app-capable" content="yes" />
  <meta name="apple-mobile-web-app-capable" content="yes" />
- <title>Arcane Slash Online - Guerreros Brujos</title>
+ <title>Arcane Slash Online - Warlock Warriors</title>
  <style>
  * {
  margin: 0;
@@ -668,6 +668,9 @@
  body.touch .start-card { padding: 18px 16px; }
  body.touch .start-title { font-size: 26px; letter-spacing: 4px; }
  #hud-hidden[hidden] { display: none !important; }
+ .lang-btn { background: transparent; color: var(--steel); border: 1px solid #3a4350; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 14px; }
+ .lang-btn:hover { border-color: var(--gold); color: var(--text); }
+ .menu-btn.lang-btn { margin-top: 0; font-size: 13px; color: var(--text); }
  </style>
  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 </head>
@@ -772,17 +775,17 @@
 
  <div id="left-col">
  <div id="leaderboard" class="panel">
- <div class="lb-title"><span>CLASIFICACIÓN</span><small id="lb-count"></small></div>
+ <div class="lb-title"><span data-i18n="lb.title">CLASIFICACIÓN</span><small id="lb-count"></small></div>
  <div id="lb-rows"></div>
  <div id="lb-me">
- <span>Puntos <strong id="score-text">0</strong></span>
- <span>Bajas <strong id="kills-text">0</strong></span>
- <span>Racha <strong id="streak-text">0</strong></span>
+ <span><span data-i18n="lb.score">Puntos</span> <strong id="score-text">0</strong></span>
+ <span><span data-i18n="lb.kills">Bajas</span> <strong id="kills-text">0</strong></span>
+ <span><span data-i18n="lb.streak">Racha</span> <strong id="streak-text">0</strong></span>
  </div>
  </div>
 
  <div id="hud" class="panel">
- <div class="hud-btns"><button id="fullscreen-btn" type="button">⛶ Pantalla Completa</button><button id="menu-btn" type="button" title="Menú (Esc)">☰ Menú</button><span id="ping">— ms</span></div>
+ <div class="hud-btns"><button id="fullscreen-btn" type="button" data-i18n="fs.off">⛶ Pantalla Completa</button><button id="menu-btn" type="button" title="Menú (Esc)" data-i18n="menu.btn" data-i18n-title="menu.btnTitle">☰ Menú</button><span id="ping">— ms</span></div>
  <!-- Estos elementos siguen existiendo (el juego escribe en ellos) pero están ocultos -->
  <div id="hud-hidden" hidden>
  <div id="stats-row"><span id="coords">Pos: (0.0, 0.0)</span><span id="status-badge" class="badge badge-libre">Libre</span></div>
@@ -800,18 +803,18 @@
  <div id="toast"></div>
 
  <div id="death-overlay">
- <div id="death-title">HAS MUERTO</div>
+ <div id="death-title" data-i18n="death.title">HAS MUERTO</div>
  <div id="death-by"></div>
  <div id="death-sub">Volviendo a aparecer en 5.0s...</div>
  </div>
 
  <div id="vitals">
  <div class="bar-wrap panel">
- <div class="bar-label"><span>VIDA</span><span id="hp-text">300 / 300</span></div>
+ <div class="bar-label"><span data-i18n="bar.hp">VIDA</span><span id="hp-text">300 / 300</span></div>
  <div class="bar-track"><div id="hp-fill" class="bar-fill"></div></div>
  </div>
  <div class="bar-wrap panel">
- <div class="bar-label"><span>MANÁ</span><span id="mp-text">300 / 300</span></div>
+ <div class="bar-label"><span data-i18n="bar.mp">MANÁ</span><span id="mp-text">300 / 300</span></div>
  <div class="bar-track"><div id="mp-fill" class="bar-fill"></div></div>
  </div>
  </div>
@@ -820,89 +823,90 @@
  <div class="spell-slot" data-spell="1" id="slot-1">
  <div class="spell-top"><span class="spell-key">1</span><span class="spell-mana">60</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-petrify"/></svg></div>
- <div class="spell-name">Petrificar</div>
+ <div class="spell-name" data-i18n="spell.1">Petrificar</div>
  </div>
  <div class="spell-slot" data-spell="2" id="slot-2">
  <div class="spell-top"><span class="spell-key">2</span><span class="spell-mana">50</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-spectral"/></svg></div>
- <div class="spell-name">Desc. Espectral</div>
+ <div class="spell-name" data-i18n="spell.2.short">Desc. Espectral</div>
  </div>
  <div class="spell-slot" data-spell="3" id="slot-3">
  <div class="spell-top"><span class="spell-key">3</span><span class="spell-mana">110</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-cataclysm"/></svg></div>
- <div class="spell-name">Cataclismo</div>
+ <div class="spell-name" data-i18n="spell.3">Cataclismo</div>
  </div>
  <div class="spell-slot" data-spell="4" id="slot-4">
  <div class="spell-top"><span class="spell-key">4</span><span class="spell-mana">40</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-dispel"/></svg></div>
- <div class="spell-name">Disipar</div>
+ <div class="spell-name" data-i18n="spell.4">Disipar</div>
  </div>
  <div class="bar-divider"></div>
- <div class="potion-slot" id="melee-slot" title="Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)">
+ <div class="potion-slot" id="melee-slot" title="Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)" data-i18n-title="melee.title">
  <div class="spell-top"><span class="spell-key">Q</span><span class="melee-dmg">40</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-sword"/></svg></div>
- <div class="spell-name">Espadazo</div>
+ <div class="spell-name" data-i18n="melee">Espadazo</div>
  </div>
- <div class="potion-slot" id="shield-slot" title="Mantener la tecla de escudo para bloquear">
+ <div class="potion-slot" id="shield-slot" title="Mantener la tecla de escudo para bloquear" data-i18n-title="shield.title">
  <div class="spell-top"><span class="spell-key">Shift</span><span class="shield-tag">-75%</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-shield"/></svg></div>
- <div class="spell-name">Escudo</div>
+ <div class="spell-name" data-i18n="shield">Escudo</div>
  </div>
- <div class="potion-slot" id="pot-hp" title="Poción de Vida">
+ <div class="potion-slot" id="pot-hp" title="Poción de Vida" data-i18n-title="potHp">
  <div class="spell-top"><span class="spell-key">V</span><span class="potion-heal">+30</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-potion-hp"/></svg></div>
- <div class="spell-name">Poción Vida</div>
+ <div class="spell-name" data-i18n="potHp.short">Poción Vida</div>
  </div>
- <div class="potion-slot" id="pot-mp" title="Poción de Maná">
+ <div class="potion-slot" id="pot-mp" title="Poción de Maná" data-i18n-title="potMp">
  <div class="spell-top"><span class="spell-key">B</span><span class="spell-mana">+30</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-potion-mp"/></svg></div>
- <div class="spell-name">Poción Maná</div>
+ <div class="spell-name" data-i18n="potMp.short">Poción Maná</div>
  </div>
  <div class="potion-slot touch-only" id="dash-slot">
  <div class="spell-icon"><span class="dash-ico">»</span></div>
- <div class="spell-name">Dash</div>
+ <div class="spell-name" data-i18n="dash">Dash</div>
  </div>
  </div>
 
  <div id="joystick" class="touch-only"><div id="joy-base"><div id="joy-knob"></div></div></div>
 
  <div id="tutorial" class="panel hidden">
- <div class="tut-head"><span id="tutorial-title">TUTORIAL</span><button id="tutorial-skip" type="button">Saltar tutorial</button></div>
+ <div class="tut-head"><span id="tutorial-title">TUTORIAL</span><button id="tutorial-skip" type="button" data-i18n="tut.skip">Saltar tutorial</button></div>
  <div id="tutorial-text"></div>
  <div id="tutorial-dots"></div>
  </div>
 
- <div id="net-overlay"><div class="net-box panel"><div class="net-title">Conexión perdida</div><div>Se cortó la conexión con el servidor.</div><button id="net-reload" class="menu-btn primary" type="button">Volver a conectar</button></div></div>
+ <div id="net-overlay"><div class="net-box panel"><div class="net-title" data-i18n="net.lostTitle">Conexión perdida</div><div data-i18n="net.lostText">Se cortó la conexión con el servidor.</div><button id="net-reload" class="menu-btn primary" type="button" data-i18n="net.reconnect">Volver a conectar</button></div></div>
 
  <div id="start-screen">
  <div class="start-card panel">
  <div class="start-title">ARCANE SLASH</div>
- <div class="start-sub">GUERREROS BRUJOS</div>
- <input id="name-input" type="text" maxlength="14" placeholder="Tu nombre" autocomplete="off" spellcheck="false" />
- <button id="play-btn" type="button">ENTRAR A LA ARENA</button>
+ <div class="start-sub" data-i18n="start.sub">GUERREROS BRUJOS</div>
+ <input id="name-input" type="text" maxlength="14" placeholder="Tu nombre" data-i18n-ph="start.name" autocomplete="off" spellcheck="false" />
+ <button id="play-btn" type="button" data-i18n="start.play">ENTRAR A LA ARENA</button>
  <div id="net-msg" class="net-msg"></div>
 
  <div class="start-section">
- <div class="pick-label">ELEGÍ TU GUERRERO</div>
+ <div class="pick-label" data-i18n="start.pick">ELEGÍ TU GUERRERO</div>
  <div class="pick-row">
- <button id="color-prev" class="arrow-btn" type="button" aria-label="Color anterior">◀</button>
+ <button id="color-prev" class="arrow-btn" type="button" aria-label="Color anterior" data-i18n-aria="start.prev">◀</button>
  <canvas id="char-preview" width="128" height="128"></canvas>
- <button id="color-next" class="arrow-btn" type="button" aria-label="Color siguiente">▶</button>
+ <button id="color-next" class="arrow-btn" type="button" aria-label="Color siguiente" data-i18n-aria="start.next">▶</button>
  </div>
  <div id="color-name" class="color-name"></div>
  <div id="color-dots" class="color-dots"></div>
  </div>
 
  <div id="start-help" class="start-guide"></div>
+ <button class="lang-btn" type="button" id="lang-btn-start"></button>
  </div>
  </div>
 
 
  <div id="pause-menu">
  <div class="menu-panel">
- <div class="menu-title">⚙ Menú <small style="font-size:12px;font-weight:600;color:#8a96a6">· el juego sigue en marcha</small></div>
+ <div class="menu-title"><span data-i18n="menu.title">⚙ Menú</span> <small style="font-size:12px;font-weight:600;color:#8a96a6" data-i18n="menu.sub">· el juego sigue en marcha</small></div>
  <div class="menu-section">
- <div class="menu-label">Volumen</div>
+ <div class="menu-label" data-i18n="menu.volume">Volumen</div>
  <div class="vol-row">
  <button id="vol-down" class="menu-btn" type="button">−</button>
  <input id="vol-slider" type="range" min="0" max="100" step="5" value="60" />
@@ -911,13 +915,14 @@
  </div>
  </div>
  <div class="menu-section">
- <div class="menu-label">Controles <small>(clic en una tecla y presioná la nueva · Esc cancela)</small></div>
+ <div class="menu-label"><span data-i18n="menu.controls">Controles</span> <small data-i18n="menu.controlsHint">(clic en una tecla y presioná la nueva · Esc cancela)</small></div>
  <div id="controls-list"></div>
- <div class="mouse-note">Fijo: Clic izquierdo = lanzar hechizo (clic, o mantener y soltar sobre el rival) · Clic derecho = espadazo (o cancelar el hechizo elegido) · Rueda = zoom</div>
+ <div class="mouse-note" data-i18n="menu.mouseNote">Fijo: Clic izquierdo = lanzar hechizo (clic, o mantener y soltar sobre el rival) · Clic derecho = espadazo (o cancelar el hechizo elegido) · Rueda = zoom</div>
  </div>
  <div class="menu-actions">
- <button id="reset-controls" class="menu-btn" type="button">Restaurar controles</button>
- <button id="resume-btn" class="menu-btn primary" type="button">Continuar (Esc)</button>
+ <button id="reset-controls" class="menu-btn" type="button" data-i18n="menu.reset">Restaurar controles</button>
+ <button id="lang-btn-menu" class="menu-btn lang-btn" type="button"></button>
+ <button id="resume-btn" class="menu-btn primary" type="button" data-i18n="menu.resume">Continuar (Esc)</button>
  </div>
  </div>
  </div>
@@ -928,6 +933,162 @@
  SPELL_GLOBAL_INTERVAL, clamp, separatePair, stepPlayerMovement, dirFromVector
  } from './shared.js';
  const THREE = window.THREE;
+
+ // ===================== Idiomas (español / inglés) =====================
+ // Se elige solo según el idioma del navegador (es* = español, el resto = inglés). Se puede cambiar con el botón 🌐.
+ // Los textos van acá; en el HTML se marcan con data-i18n / data-i18n-title / data-i18n-ph / data-i18n-aria.
+ const I18N = {
+ es: {
+ 'doc.title': 'Arcane Slash Online - Guerreros Brujos',
+ 'lb.title': 'CLASIFICACIÓN', 'lb.score': 'Puntos', 'lb.kills': 'Bajas', 'lb.streak': 'Racha', 'lb.players': '{n} jugadores',
+ 'fs.off': '⛶ Pantalla Completa', 'fs.on': '✓ Pantalla Completa Activa',
+ 'fs.toastOn': 'Pantalla completa activada', 'fs.toastErr': 'No se pudo activar pantalla completa',
+ 'menu.btn': '☰ Menú', 'menu.btnTitle': 'Menú (Esc)',
+ 'death.title': 'HAS MUERTO', 'death.sub': 'Volviendo a aparecer en {s}s...', 'death.by': 'Te eliminó {by} · perdiste {lost} pts',
+ 'bar.hp': 'VIDA', 'bar.mp': 'MANÁ',
+ 'spell.1': 'Petrificar', 'spell.2': 'Descarga Espectral', 'spell.2.short': 'Desc. Espectral', 'spell.3': 'Cataclismo', 'spell.4': 'Disipar',
+ 'melee': 'Espadazo', 'melee.title': 'Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)',
+ 'shield': 'Escudo', 'shield.title': 'Mantener la tecla de escudo para bloquear',
+ 'potHp': 'Poción de Vida', 'potHp.short': 'Poción Vida', 'potMp': 'Poción de Maná', 'potMp.short': 'Poción Maná', 'dash': 'Dash',
+ 'tut.skip': 'Saltar tutorial', 'tut.step': 'TUTORIAL · PASO {n}/{m}', 'tut.done': 'TUTORIAL · {n}/{m}', 'tut.complete': 'TUTORIAL COMPLETO', 'tut.ok': '✓ ¡Bien!',
+ 'tut.endBase': '¡Listo! Eliminá rivales para robarles puntos: al <b>líder</b> le sacás más. ',
+ 'tut.endTouch': '<b>☰ Menú</b> arriba a la derecha.', 'tut.endDesk': '<b>Esc</b> abre el menú.',
+ 'tut.d.move': 'Movete con {wasd} (o las flechas). {dash} es un dash corto.',
+ 'tut.d.orb': 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.',
+ 'tut.d.spell': 'Apretá {k} para elegir <b>Descarga Espectral</b> y hacé <b>clic</b> sobre un rival (o mantené el clic y soltalo sobre él).',
+ 'tut.d.sword': 'Pegate a un rival y golpeá con {k} o <b>clic derecho</b>.',
+ 'tut.d.shield': 'Mantené {k} para cubrirte con el escudo: recibís un 75% menos de daño.',
+ 'tut.d.potion': '{hp} te cura y {mp} recupera maná. Las pociones son infinitas.',
+ 'tut.t.move': 'Movete con el <b>joystick</b> (abajo en el medio). Para un <b>dash</b>, deslizá el dedo por el mapa.',
+ 'tut.t.spell': 'Poné el dedo sobre el <b>rayo</b>, <b>arrastralo hasta un rival</b> y soltá: ahí le pega.',
+ 'tut.t.sword': 'Pegate a un rival y <b>tocá la pantalla</b>: golpeás con la espada.',
+ 'tut.t.shield': 'Mantené el <b>escudo</b> apretado: recibís un 75% menos de daño.',
+ 'tut.t.potion': 'Las pociones curan vida y maná. Son infinitas.',
+ 'net.lostTitle': 'Conexión perdida', 'net.lostText': 'Se cortó la conexión con el servidor.', 'net.reconnect': 'Volver a conectar',
+ 'net.full': 'La sala está llena, probá en un rato.', 'net.idle': 'Te sacamos de la sala por inactividad.', 'net.version': 'Hay una versión nueva: recargá la página.',
+ 'net.openFail': 'No se pudo abrir la conexión.', 'net.connectFail': 'No se pudo conectar con el servidor.',
+ 'start.sub': 'GUERREROS BRUJOS', 'start.name': 'Tu nombre', 'start.play': 'ENTRAR A LA ARENA', 'start.connecting': 'CONECTANDO…',
+ 'start.pick': 'ELEGÍ TU GUERRERO', 'start.prev': 'Color anterior', 'start.next': 'Color siguiente',
+ 'help.title': 'CÓMO JUGAR', 'help.move': 'MOVER', 'help.spells': 'HECHIZOS', 'help.actions': 'ACCIONES',
+ 'help.clickHold': 'clic, o mantener y soltar',
+ 'help.tMove': 'Joystick abajo en el medio · deslizá el dedo por el mapa = dash',
+ 'help.tSpell': 'Poné el dedo sobre un hechizo (columna de la izquierda), arrastralo hasta el rival y soltá. Soltar sobre los botones cancela. También podés tocar el hechizo y después tocar el mapa.',
+ 'help.tActions': 'Tocar la pantalla = espadazo · Escudo (mantener) · Pociones abajo de la columna · dos dedos = zoom',
+ 'help.foot': 'Juntá orbes y eliminá rivales para sumar puntos', 'help.footDesk': 'Juntá orbes y eliminá rivales para sumar puntos · {esc} menú',
+ 'help.sword': 'Espada', 'help.potHp': 'Poción vida', 'help.potMp': 'Poción maná',
+ 'menu.title': '⚙ Menú', 'menu.sub': '· el juego sigue en marcha', 'menu.volume': 'Volumen',
+ 'menu.controls': 'Controles', 'menu.controlsHint': '(clic en una tecla y presioná la nueva · Esc cancela)',
+ 'menu.mouseNote': 'Fijo: Clic izquierdo = lanzar hechizo (clic, o mantener y soltar sobre el rival) · Clic derecho = espadazo (o cancelar el hechizo elegido) · Rueda = zoom',
+ 'menu.reset': 'Restaurar controles', 'menu.resume': 'Continuar (Esc)', 'menu.pressKey': 'Presioná una tecla…',
+ 'act.up': 'Mover arriba', 'act.down': 'Mover abajo', 'act.left': 'Mover izquierda', 'act.right': 'Mover derecha',
+ 'act.dash': 'Dash', 'act.sword': 'Espadazo', 'act.shield': 'Escudo', 'act.potHp': 'Poción de Vida', 'act.potMp': 'Poción de Maná',
+ 'key.Space': 'Espacio', 'key.CapsLock': 'Bloq Mayús',
+ 'color.0': 'Azul', 'color.1': 'Carmesí', 'color.2': 'Esmeralda', 'color.3': 'Amatista', 'color.4': 'Ámbar',
+ 'color.5': 'Glaciar', 'color.6': 'Rosa', 'color.7': 'Dorado', 'color.8': 'Obsidiana', 'color.9': 'Marfil',
+ 'toast.petrified': '¡Estás petrificado! Usa {key} + Clic sobre ti para Disipar', 'toast.petrifiedTouch': '¡Estás petrificado! Usá Disipar sobre vos',
+ 'toast.petBy': '¡{by} te petrificó! Usa {key} + Clic sobre ti (Disipar)', 'toast.petByTouch': '¡{by} te petrificó! Usá Disipar sobre vos',
+ 'toast.dashCd': 'Dash en cooldown: {s}s',
+ 'srv.blocked': '¡Escudo bloqueó el golpe de {name}! (-{dmg} HP)',
+ 'srv.kill': '¡Eliminaste a {name}! +{pts} pts', 'srv.killLeader': '¡Eliminaste a {name}! +{pts} pts (era el líder)',
+ 'srv.respawn': '¡Has vuelto a aparecer!', 'srv.cdSpell': 'Intervalo entre habilidades: espera {s}s', 'srv.noMana': 'Maná insuficiente',
+ 'srv.targetPet': '¡{name} ya está petrificado!', 'srv.missed': '¡Fallaste! Apunta directo sobre el personaje (no gastó maná)',
+ 'srv.dispelled': '¡Petrificación disipada!', 'srv.cdMelee': 'Espada en espera: {s}s', 'srv.noTarget': 'Acércate a un rival para golpear con la espada',
+ 'kf.leader': 'derribó al líder', 'kf.kill': 'eliminó a',
+ 'st.dead': 'Muerto ({s}s)', 'st.pet': 'Petrificado ({s}s)', 'st.block': 'Bloqueando (Escudo)', 'st.free': 'Libre', 'st.ready': 'Listo',
+ 'hud.pos': 'Pos', 'player.default': 'Jugador',
+ 'hud.line1': '<strong>Mover:</strong> {move} / Flechas · <strong>Dash:</strong> {dash} · <strong>Espada:</strong> {sword} / Clic derecho · <strong>Escudo:</strong> {shield}',
+ 'hud.line2': '<strong>Hechizos:</strong> {s1}–{s4} + Clic sobre el personaje · <strong>Pociones:</strong> {hp} (Vida) · {mp} (Maná) · <strong>Menú:</strong> Esc',
+ 'lang.switch': '🌐 English'
+ },
+ en: {
+ 'doc.title': 'Arcane Slash Online - Warlock Warriors',
+ 'lb.title': 'LEADERBOARD', 'lb.score': 'Score', 'lb.kills': 'Kills', 'lb.streak': 'Streak', 'lb.players': '{n} players',
+ 'fs.off': '⛶ Fullscreen', 'fs.on': '✓ Fullscreen On',
+ 'fs.toastOn': 'Fullscreen enabled', 'fs.toastErr': 'Could not enter fullscreen',
+ 'menu.btn': '☰ Menu', 'menu.btnTitle': 'Menu (Esc)',
+ 'death.title': 'YOU DIED', 'death.sub': 'Respawning in {s}s...', 'death.by': 'Killed by {by} · you lost {lost} pts',
+ 'bar.hp': 'HEALTH', 'bar.mp': 'MANA',
+ 'spell.1': 'Petrify', 'spell.2': 'Spectral Bolt', 'spell.2.short': 'Spectral Bolt', 'spell.3': 'Cataclysm', 'spell.4': 'Dispel',
+ 'melee': 'Sword Slash', 'melee.title': 'Melee sword slash (sword key or right click, next to the enemy)',
+ 'shield': 'Shield', 'shield.title': 'Hold the shield key to block',
+ 'potHp': 'Health Potion', 'potHp.short': 'Health Pot.', 'potMp': 'Mana Potion', 'potMp.short': 'Mana Pot.', 'dash': 'Dash',
+ 'tut.skip': 'Skip tutorial', 'tut.step': 'TUTORIAL · STEP {n}/{m}', 'tut.done': 'TUTORIAL · {n}/{m}', 'tut.complete': 'TUTORIAL COMPLETE', 'tut.ok': '✓ Nice!',
+ 'tut.endBase': 'Done! Eliminate enemies to steal their points: you take more from the <b>leader</b>. ',
+ 'tut.endTouch': '<b>☰ Menu</b> at the top right.', 'tut.endDesk': '<b>Esc</b> opens the menu.',
+ 'tut.d.move': 'Move with {wasd} (or the arrow keys). {dash} is a short dash.',
+ 'tut.d.orb': 'Walk over a <b>glowing orb</b> to score points.',
+ 'tut.d.spell': 'Press {k} to pick <b>Spectral Bolt</b>, then <b>click</b> on an enemy (or hold the click and release on them).',
+ 'tut.d.sword': 'Get next to an enemy and strike with {k} or <b>right click</b>.',
+ 'tut.d.shield': 'Hold {k} to cover yourself with the shield: you take 75% less damage.',
+ 'tut.d.potion': '{hp} heals you and {mp} restores mana. Potions are unlimited.',
+ 'tut.t.move': 'Move with the <b>joystick</b> (bottom center). For a <b>dash</b>, swipe your finger across the map.',
+ 'tut.t.spell': 'Put your finger on the <b>bolt</b>, <b>drag it to an enemy</b> and release: it hits there.',
+ 'tut.t.sword': 'Get next to an enemy and <b>tap the screen</b>: you strike with the sword.',
+ 'tut.t.shield': 'Hold the <b>shield</b> button: you take 75% less damage.',
+ 'tut.t.potion': 'Potions restore health and mana. They are unlimited.',
+ 'net.lostTitle': 'Connection lost', 'net.lostText': 'The connection to the server was cut.', 'net.reconnect': 'Reconnect',
+ 'net.full': 'The room is full, try again in a bit.', 'net.idle': 'You were removed from the room for inactivity.', 'net.version': 'There is a new version: reload the page.',
+ 'net.openFail': 'Could not open the connection.', 'net.connectFail': 'Could not connect to the server.',
+ 'start.sub': 'WARLOCK WARRIORS', 'start.name': 'Your name', 'start.play': 'ENTER THE ARENA', 'start.connecting': 'CONNECTING…',
+ 'start.pick': 'CHOOSE YOUR WARRIOR', 'start.prev': 'Previous color', 'start.next': 'Next color',
+ 'help.title': 'HOW TO PLAY', 'help.move': 'MOVE', 'help.spells': 'SPELLS', 'help.actions': 'ACTIONS',
+ 'help.clickHold': 'click, or hold and release',
+ 'help.tMove': 'Joystick at the bottom center · swipe your finger across the map = dash',
+ 'help.tSpell': 'Put your finger on a spell (left column), drag it to the enemy and release. Releasing over the buttons cancels. You can also tap the spell and then tap the map.',
+ 'help.tActions': 'Tap the screen = sword slash · Shield (hold) · Potions at the bottom of the column · two fingers = zoom',
+ 'help.foot': 'Collect orbs and eliminate enemies to score points', 'help.footDesk': 'Collect orbs and eliminate enemies to score points · {esc} menu',
+ 'help.sword': 'Sword', 'help.potHp': 'Health potion', 'help.potMp': 'Mana potion',
+ 'menu.title': '⚙ Menu', 'menu.sub': '· the game keeps running', 'menu.volume': 'Volume',
+ 'menu.controls': 'Controls', 'menu.controlsHint': '(click a key and press the new one · Esc cancels)',
+ 'menu.mouseNote': 'Fixed: Left click = cast spell (click, or hold and release on the enemy) · Right click = sword slash (or cancel the selected spell) · Wheel = zoom',
+ 'menu.reset': 'Reset controls', 'menu.resume': 'Resume (Esc)', 'menu.pressKey': 'Press a key…',
+ 'act.up': 'Move up', 'act.down': 'Move down', 'act.left': 'Move left', 'act.right': 'Move right',
+ 'act.dash': 'Dash', 'act.sword': 'Sword Slash', 'act.shield': 'Shield', 'act.potHp': 'Health Potion', 'act.potMp': 'Mana Potion',
+ 'key.Space': 'Space', 'key.CapsLock': 'Caps Lock',
+ 'color.0': 'Blue', 'color.1': 'Crimson', 'color.2': 'Emerald', 'color.3': 'Amethyst', 'color.4': 'Amber',
+ 'color.5': 'Glacier', 'color.6': 'Pink', 'color.7': 'Gold', 'color.8': 'Obsidian', 'color.9': 'Ivory',
+ 'toast.petrified': 'You are petrified! Use {key} + Click on yourself to Dispel', 'toast.petrifiedTouch': 'You are petrified! Use Dispel on yourself',
+ 'toast.petBy': '{by} petrified you! Use {key} + Click on yourself (Dispel)', 'toast.petByTouch': '{by} petrified you! Use Dispel on yourself',
+ 'toast.dashCd': 'Dash on cooldown: {s}s',
+ 'srv.blocked': 'Shield blocked {name}\'s hit! (-{dmg} HP)',
+ 'srv.kill': 'You eliminated {name}! +{pts} pts', 'srv.killLeader': 'You eliminated {name}! +{pts} pts (was the leader)',
+ 'srv.respawn': 'You respawned!', 'srv.cdSpell': 'Spell cooldown: wait {s}s', 'srv.noMana': 'Not enough mana',
+ 'srv.targetPet': '{name} is already petrified!', 'srv.missed': 'Missed! Aim right at the character (no mana spent)',
+ 'srv.dispelled': 'Petrification dispelled!', 'srv.cdMelee': 'Sword on cooldown: {s}s', 'srv.noTarget': 'Get close to an enemy to strike with the sword',
+ 'kf.leader': 'took down the leader', 'kf.kill': 'eliminated',
+ 'st.dead': 'Dead ({s}s)', 'st.pet': 'Petrified ({s}s)', 'st.block': 'Blocking (Shield)', 'st.free': 'Free', 'st.ready': 'Ready',
+ 'hud.pos': 'Pos', 'player.default': 'Player',
+ 'hud.line1': '<strong>Move:</strong> {move} / Arrows · <strong>Dash:</strong> {dash} · <strong>Sword:</strong> {sword} / Right click · <strong>Shield:</strong> {shield}',
+ 'hud.line2': '<strong>Spells:</strong> {s1}–{s4} + Click on the character · <strong>Potions:</strong> {hp} (Health) · {mp} (Mana) · <strong>Menu:</strong> Esc',
+ 'lang.switch': '🌐 Español'
+ }
+ };
+
+ function detectLang() {
+ try {
+ const saved = localStorage.getItem('arena_lang');
+ if (saved === 'es' || saved === 'en') return saved;
+ } catch (err) { /* sin almacenamiento */ }
+ const nav = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
+ return /^es([-_]|$)/i.test(nav) ? 'es' : 'en';
+ }
+ let LANG = detectLang();
+ function t(key, vars) {
+ let s = I18N[LANG][key];
+ if (s === undefined) s = I18N.es[key];
+ if (s === undefined) return key;
+ if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] !== undefined ? vars[k] : m));
+ return s;
+ }
+ function applyStaticI18n() {
+ document.documentElement.lang = LANG;
+ document.title = t('doc.title');
+ document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+ document.querySelectorAll('[data-i18n-title]').forEach((el) => { el.title = t(el.dataset.i18nTitle); });
+ document.querySelectorAll('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
+ document.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+ document.querySelectorAll('.lang-btn').forEach((el) => { el.textContent = t('lang.switch'); });
+ }
 
 
  // --- Escena y Renderizador ---
@@ -2468,19 +2629,19 @@ sfx('block', pos);
 
 const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const TUTORIAL_STEPS = IS_TOUCH ? [
- { event: 'move', text: () => 'Movete con el <b>joystick</b> (abajo a la izquierda). Para un <b>dash</b>, deslizá el dedo por el mapa.' },
- { event: 'orb', text: () => 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.' },
- { event: 'spell', text: () => 'Poné el dedo sobre el <b>rayo</b>, <b>arrastralo hasta un rival</b> y soltá: ahí le pega.' },
- { event: 'sword', text: () => 'Pegate a un rival y <b>tocá la pantalla</b>: golpeás con la espada.' },
- { event: 'shield', text: () => 'Mantené el <b>escudo</b> apretado: recibís un 75% menos de daño.' },
- { event: 'potion', text: () => 'Las pociones curan vida y maná. Son infinitas.' }
+ { event: 'move', text: () => t('tut.t.move') },
+ { event: 'orb', text: () => t('tut.d.orb') },
+ { event: 'spell', text: () => t('tut.t.spell') },
+ { event: 'sword', text: () => t('tut.t.sword') },
+ { event: 'shield', text: () => t('tut.t.shield') },
+ { event: 'potion', text: () => t('tut.t.potion') }
  ] : [
- { event: 'move', text: () => `Movete con ${tk('up')}${tk('left')}${tk('down')}${tk('right')} (o las flechas). ${tk('dash')} es un dash corto.` },
- { event: 'orb', text: () => 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.' },
- { event: 'spell', text: () => `Apretá ${tk('spell2')} para elegir <b>Descarga Espectral</b> y hacé <b>clic</b> sobre un rival (o mantené el clic y soltalo sobre él).` },
- { event: 'sword', text: () => `Pegate a un rival y golpeá con ${tk('sword')} o <b>clic derecho</b>.` },
- { event: 'shield', text: () => `Mantené ${tk('shield')} para cubrirte con el escudo: recibís un 75% menos de daño.` },
- { event: 'potion', text: () => `${tk('potHp')} te cura y ${tk('potMp')} recupera maná. Las pociones son infinitas.` }
+ { event: 'move', text: () => t('tut.d.move', { wasd: tk('up') + tk('left') + tk('down') + tk('right'), dash: tk('dash') }) },
+ { event: 'orb', text: () => t('tut.d.orb') },
+ { event: 'spell', text: () => t('tut.d.spell', { k: tk('spell2') }) },
+ { event: 'sword', text: () => t('tut.d.sword', { k: tk('sword') }) },
+ { event: 'shield', text: () => t('tut.d.shield', { k: tk('shield') }) },
+ { event: 'potion', text: () => t('tut.d.potion', { hp: tk('potHp'), mp: tk('potMp') }) }
  ];
 
  function readTutorialRuns() {
@@ -2492,13 +2653,13 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
 
  function renderTutorial() {
  if (tutorialFinished) {
- tutorialTitleEl.textContent = 'TUTORIAL COMPLETO';
- tutorialTextEl.innerHTML = '¡Listo! Eliminá rivales para robarles puntos: al <b>líder</b> le sacás más. ' + (IS_TOUCH ? '<b>☰ Menú</b> arriba a la izquierda.' : '<b>Esc</b> abre el menú.');
+ tutorialTitleEl.textContent = t('tut.complete');
+ tutorialTextEl.innerHTML = t('tut.endBase') + (IS_TOUCH ? t('tut.endTouch') : t('tut.endDesk'));
  } else if (tutorialTimer > 0) {
- tutorialTitleEl.textContent = `TUTORIAL · ${tutorialStep}/${TUTORIAL_STEPS.length}`;
- tutorialTextEl.innerHTML = '✓ ¡Bien!';
+ tutorialTitleEl.textContent = t('tut.done', { n: tutorialStep, m: TUTORIAL_STEPS.length });
+ tutorialTextEl.innerHTML = t('tut.ok');
  } else {
- tutorialTitleEl.textContent = `TUTORIAL · PASO ${tutorialStep + 1}/${TUTORIAL_STEPS.length}`;
+ tutorialTitleEl.textContent = t('tut.step', { n: tutorialStep + 1, m: TUTORIAL_STEPS.length });
  tutorialTextEl.innerHTML = TUTORIAL_STEPS[tutorialStep].text();
  }
  tutorialDotsEl.innerHTML = '';
@@ -2601,14 +2762,14 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  }
 
  function renderColorPicker() {
- colorNameEl.textContent = PLAYER_COLORS[colorIndex].name.toUpperCase();
+ colorNameEl.textContent = t('color.' + colorIndex).toUpperCase();
  colorNameEl.style.color = PLAYER_COLORS[colorIndex].trim;
  colorDotsEl.innerHTML = '';
  PLAYER_COLORS.forEach((c, i) => {
  const d = document.createElement('span');
  d.className = 'color-dot' + (i === colorIndex ? ' sel' : '');
  d.style.background = c.trim;
- d.title = c.name;
+ d.title = t('color.' + i);
  d.addEventListener('click', () => setColor(i));
  colorDotsEl.appendChild(d);
  });
@@ -2651,38 +2812,38 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  `<div class="t" style="--accent:${accent || '#2a313c'}"><div class="t-ico">${icon}</div><div class="t-keys">${keysHtml}</div><div class="t-name">${name}</div></div>`;
 
  const spellTiles = [
- [ico('petrify'), 'Petrificar', 'spell1', 1],
- [ico('spectral'), 'Descarga Espectral', 'spell2', 2],
- [ico('cataclysm'), 'Cataclismo', 'spell3', 3],
- [ico('dispel'), 'Disipar', 'spell4', 4]
+ [ico('petrify'), t('spell.1'), 'spell1', 1],
+ [ico('spectral'), t('spell.2'), 'spell2', 2],
+ [ico('cataclysm'), t('spell.3'), 'spell3', 3],
+ [ico('dispel'), t('spell.4'), 'spell4', 4]
  ].map(([ico, name, act, id]) => tile(ico, name, kc(act), hex(SPELLS[id].color))).join('');
 
  if (IS_TOUCH) {
  el.innerHTML =
- `<div class="g-title">CÓMO JUGAR</div>` +
- `<div class="g-label">MOVER</div><div class="g-foot" style="text-align:left">Joystick abajo a la izquierda · deslizá el dedo por el mapa = dash</div>` +
- `<div class="g-label">HECHIZOS</div><div class="g-cards">${spellTiles.replace(/<div class="t-keys">.*?<\/div>/g, '<div class="t-keys"></div>')}</div>` +
- `<div class="g-foot" style="text-align:left">Poné el dedo sobre un hechizo (columna de la derecha), arrastralo hasta el rival y soltá. Soltar sobre los botones cancela. También podés tocar el hechizo y después tocar el mapa.</div>` +
- `<div class="g-label">ACCIONES</div><div class="g-foot" style="text-align:left">Tocar la pantalla = espadazo · Escudo (mantener) · Pociones abajo de la columna · dos dedos = zoom</div>` +
- `<div class="g-foot">Juntá orbes y eliminá rivales para sumar puntos</div>`;
+ `<div class="g-title">${t('help.title')}</div>` +
+ `<div class="g-label">${t('help.move')}</div><div class="g-foot" style="text-align:left">${t('help.tMove')}</div>` +
+ `<div class="g-label">${t('help.spells')}</div><div class="g-cards">${spellTiles.replace(/<div class="t-keys">.*?<\/div>/g, '<div class="t-keys"></div>')}</div>` +
+ `<div class="g-foot" style="text-align:left">${t('help.tSpell')}</div>` +
+ `<div class="g-label">${t('help.actions')}</div><div class="g-foot" style="text-align:left">${t('help.tActions')}</div>` +
+ `<div class="g-foot">${t('help.foot')}</div>`;
  return;
  }
  el.innerHTML =
- `<div class="g-title">CÓMO JUGAR</div>` +
+ `<div class="g-title">${t('help.title')}</div>` +
  `<div class="g-move">` +
  `<div class="wasd"><span class="up">${kc('up')}</span>${kc('left')}${kc('down')}${kc('right')}</div>` +
- `<div class="g-dash">${kc('dash', 'kc-wide')}<span>Dash</span></div>` +
+ `<div class="g-dash">${kc('dash', 'kc-wide')}<span>${t('dash')}</span></div>` +
  `</div>` +
- `<div class="g-label">HECHIZOS <span class="g-note">${mouse('left')} clic, o mantener y soltar</span></div>` +
+ `<div class="g-label">${t('help.spells')} <span class="g-note">${mouse('left')} ${t('help.clickHold')}</span></div>` +
  `<div class="g-cards">${spellTiles}</div>` +
- `<div class="g-label">ACCIONES</div>` +
+ `<div class="g-label">${t('help.actions')}</div>` +
  `<div class="g-cards">` +
- tile(ico('sword'), 'Espada', `${kc('sword')}${mouse('right')}`) +
- tile(ico('shield'), 'Escudo', kc('shield')) +
- tile(ico('potion-hp'), 'Poción vida', kc('potHp')) +
- tile(ico('potion-mp'), 'Poción maná', kc('potMp')) +
+ tile(ico('sword'), t('help.sword'), `${kc('sword')}${mouse('right')}`) +
+ tile(ico('shield'), t('shield'), kc('shield')) +
+ tile(ico('potion-hp'), t('help.potHp'), kc('potHp')) +
+ tile(ico('potion-mp'), t('help.potMp'), kc('potMp')) +
  `</div>` +
- `<div class="g-foot">Juntá orbes y eliminá rivales para sumar puntos · <span class="kc kc-s">Esc</span> menú</div>`;
+ `<div class="g-foot">${t('help.footDesk', { esc: '<span class="kc kc-s">Esc</span>' })}</div>`;
  }
 
  renderColorPicker();
@@ -2867,7 +3028,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const p = document.createElement('span');
  p.className = 'kf-pts';
  p.textContent = `+${pts}`;
- el.append(k, document.createTextNode(wasLeader ? ' derribó al líder ' : ' eliminó a '), v, p);
+ el.append(k, document.createTextNode(' ' + t(wasLeader ? 'kf.leader' : 'kf.kill') + ' '), v, p);
  killfeedEl.appendChild(el);
  killfeedItems.push({ el, t: gameTime });
  while (killfeedItems.length > 5) killfeedItems.shift().el.remove();
@@ -2925,7 +3086,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  lbRowsEl.appendChild(sep);
  addRow(ranking[myIdx], myIdx + 1);
  }
- lbCountEl.textContent = `${ranking.length} jugadores`;
+ lbCountEl.textContent = t('lb.players', { n: ranking.length });
  // La corona va sobre el líder (si ya tiene puntos)
  for (const e of ents.values()) e.charObj.crown.visible = false;
  const top = ranking[0];
@@ -2978,10 +3139,10 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  }
 
  function handleDirect(m) {
- if (m.t === 'toast') showToast(m.text);
- else if (m.t === 'pet') showToast(`¡${m.by} te petrificó! Usa ${keyName(bindings.spell4)} + Clic sobre ti (Disipar)`);
+ if (m.t === 'toast') showToast(m.k ? t('srv.' + m.k, m.a) : m.text);
+ else if (m.t === 'pet') showToast(IS_TOUCH ? t('toast.petByTouch', { by: m.by }) : t('toast.petBy', { by: m.by, key: keyName(bindings.spell4) }));
  else if (m.t === 'death') {
- document.getElementById('death-by').textContent = m.by ? `Te eliminó ${m.by} · perdiste ${m.lost} pts` : '';
+ document.getElementById('death-by').textContent = m.by ? t('death.by', { by: m.by, lost: m.lost }) : '';
  setSpellCursor(null);
  }
  }
@@ -3029,7 +3190,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  pingEl.textContent = `${Math.round(net.rtt)} ms`;
  break;
  case 'err':
- net.lastError = m.reason === 'full' ? 'La sala está llena, probá en un rato.' : m.reason === 'idle' ? 'Te sacamos de la sala por inactividad.' : 'Hay una versión nueva: recargá la página.';
+ net.lastError = m.reason === 'full' ? 'net.full' : m.reason === 'idle' ? 'net.idle' : 'net.version';
  break;
  default: break;
  }
@@ -3037,19 +3198,21 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
 
  // ---------- Conexión ----------
  function connectFailed(text) {
- netMsgEl.textContent = text;
+ netMsgEl.dataset.k = text;
+ netMsgEl.textContent = t(text);
  playBtnEl.disabled = false;
- playBtnEl.textContent = 'ENTRAR A LA ARENA';
+ playBtnEl.textContent = t('start.play');
  net.state = 'idle';
  }
 
  function beginConnect() {
  if (net.state === 'connecting' || net.state === 'open') return;
- const name = (nameInputEl.value.trim() || 'Jugador').slice(0, 14);
+ const name = (nameInputEl.value.trim() || t('player.default')).slice(0, 14);
  try { localStorage.setItem('arena_name', name); } catch (err) { /* ignorar */ }
+ netMsgEl.dataset.k = '';
  netMsgEl.textContent = '';
  playBtnEl.disabled = true;
- playBtnEl.textContent = 'CONECTANDO…';
+ playBtnEl.textContent = t('start.connecting');
  ensureAudio();
  net.lastError = '';
  let ws;
@@ -3057,7 +3220,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  const override = new URLSearchParams(location.search).get('ws'); // solo para pruebas locales
  ws = new WebSocket(override || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
  } catch (err) {
- connectFailed('No se pudo abrir la conexión.');
+ connectFailed('net.openFail');
  return;
  }
  net.ws = ws;
@@ -3080,7 +3243,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  net.lost = true;
  netOverlayEl.classList.add('visible');
  } else {
- connectFailed(net.lastError || 'No se pudo conectar con el servidor.');
+ connectFailed(net.lastError || 'net.connectFail');
  }
  };
  ws.onerror = () => {};
@@ -3297,11 +3460,11 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  if (!spell) return;
 
  // Estas comprobaciones solo dan aviso rápido; el servidor es el que decide
- if (spellIntervalTimer > 0) return showToast(`Intervalo entre habilidades: espera ${spellIntervalTimer.toFixed(1)}s`);
- if (playerMp < spell.mana) return showToast('Maná insuficiente');
+ if (spellIntervalTimer > 0) return showToast(t('srv.cdSpell', { s: spellIntervalTimer.toFixed(1) }));
+ if (playerMp < spell.mana) return showToast(t('srv.noMana'));
  if (spell.immobilize > 0) {
- const t = findEnemyAt(worldPos);
- if (t && t.flags & 2) return showToast(`¡${t.name} ya está petrificado!`);
+ const tgt = findEnemyAt(worldPos);
+ if (tgt && tgt.flags & 2) return showToast(t('srv.targetPet', { name: tgt.name }));
  }
 
  const dxSelf = Math.abs(worldPos.x - player.position.x);
@@ -3320,7 +3483,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
 
  function sendMelee() {
  if (playerDeadTimer > 0 || !net.playing) return;
- if (meleeCooldownTimer > 0) return showToast(`Espada en espera: ${meleeCooldownTimer.toFixed(1)}s`);
+ if (meleeCooldownTimer > 0) return showToast(t('srv.cdMelee', { s: meleeCooldownTimer.toFixed(1) }));
  sendNet({ t: 'melee' });
  }
 
@@ -3373,9 +3536,9 @@ sfx('spell' + spellId, targetPos);
  if (navigator.keyboard && navigator.keyboard.lock) {
  await navigator.keyboard.lock(['ControlLeft', 'ControlRight', 'KeyW', 'KeyS', 'KeyA', 'KeyD', 'Escape']);
  }
- fullscreenBtn.textContent = '✓ Pantalla Completa Activa';
+ fullscreenBtn.textContent = t('fs.on');
  fullscreenBtn.classList.add('locked');
- showToast('Pantalla completa activada');
+ showToast(t('fs.toastOn'));
  } else {
  if (navigator.keyboard && navigator.keyboard.unlock) {
  navigator.keyboard.unlock();
@@ -3383,7 +3546,7 @@ sfx('spell' + spellId, targetPos);
  await document.exitFullscreen();
  }
  } catch (err) {
- showToast('No se pudo activar pantalla completa');
+ showToast(t('fs.toastErr'));
  }
  }
 
@@ -3397,7 +3560,7 @@ sfx('spell' + spellId, targetPos);
  if (navigator.keyboard && navigator.keyboard.unlock) {
  navigator.keyboard.unlock();
  }
- fullscreenBtn.textContent = '⛶ Pantalla Completa';
+ fullscreenBtn.textContent = t('fs.off');
  fullscreenBtn.classList.remove('locked');
  }
  });
@@ -3464,9 +3627,9 @@ sfx('spell' + spellId, targetPos);
  if (code.startsWith('Digit')) return code.slice(5);
  if (code.startsWith('Numpad')) return 'Num ' + code.slice(6);
  const map = {
- Space: 'Espacio', ShiftLeft: 'Shift', ShiftRight: 'Shift', ControlLeft: 'Ctrl', ControlRight: 'Ctrl',
+ Space: t('key.Space'), ShiftLeft: 'Shift', ShiftRight: 'Shift', ControlLeft: 'Ctrl', ControlRight: 'Ctrl',
  AltLeft: 'Alt', AltRight: 'Alt', ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→',
- Tab: 'Tab', Enter: 'Enter', Backspace: '⌫', CapsLock: 'Bloq Mayús'
+ Tab: 'Tab', Enter: 'Enter', Backspace: '⌫', CapsLock: t('key.CapsLock')
  };
  return map[code] || code;
  }
@@ -3481,10 +3644,8 @@ sfx('spell' + spellId, targetPos);
  document.querySelector('#pot-mp .spell-key').textContent = keyName(bindings.potMp);
 
  const k = (a) => keyName(bindings[a]);
- document.getElementById('hud-line1').innerHTML =
- `<strong>Mover:</strong> ${k('up')}${k('left')}${k('down')}${k('right')} / Flechas · <strong>Dash:</strong> ${k('dash')} · <strong>Espada:</strong> ${k('sword')} / Clic derecho · <strong>Escudo:</strong> ${k('shield')}`;
- document.getElementById('hud-line2').innerHTML =
- `<strong>Hechizos:</strong> ${k('spell1')}–${k('spell4')} + Clic sobre el personaje · <strong>Pociones:</strong> ${k('potHp')} (Vida) · ${k('potMp')} (Maná) · <strong>Menú:</strong> Esc`;
+ document.getElementById('hud-line1').innerHTML = t('hud.line1', { move: k('up') + k('left') + k('down') + k('right'), dash: k('dash'), sword: k('sword'), shield: k('shield') });
+ document.getElementById('hud-line2').innerHTML = t('hud.line2', { s1: k('spell1'), s4: k('spell4'), hp: k('potHp'), mp: k('potMp') });
  refreshStartHelp();
  }
 
@@ -3628,12 +3789,12 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  const row = document.createElement('div');
  row.className = 'ctrl-row';
  const label = document.createElement('span');
- label.textContent = ACTION_LABELS[action];
+ label.textContent = action.startsWith('spell') ? t('spell.' + action.slice(5)) : t('act.' + action);
  const btn = document.createElement('button');
  btn.type = 'button';
  const waiting = rebindingAction === action;
  btn.className = 'key-btn' + (waiting ? ' waiting' : '');
- btn.textContent = waiting ? 'Presioná una tecla…' : keyName(bindings[action]);
+ btn.textContent = waiting ? t('menu.pressKey') : keyName(bindings[action]);
  btn.addEventListener('click', () => {
  rebindingAction = waiting ? null : action;
  renderControlsList();
@@ -3743,9 +3904,9 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  } else if (action === 'dash') {
  e.preventDefault();
  if (playerImmobilized > 0) {
- showToast(`¡Estás petrificado! Usa ${keyName(bindings.spell4)} + Clic sobre ti para Disipar`);
+ showToast(t('toast.petrified', { key: keyName(bindings.spell4) }));
  } else if (dashCooldown > 0) {
- showToast(`Dash en cooldown: ${dashCooldown.toFixed(1)}s`);
+ showToast(t('toast.dashCd', { s: dashCooldown.toFixed(1) }));
  } else {
  dashRequested = true;
  }
@@ -3904,8 +4065,8 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  bindHold(document.getElementById('pot-mp'), () => { potionMouseHeld = 'mp'; potPulse = 2; tutorialEvent('potion'); }, () => { potionMouseHeld = null; });
  // Dash: deslizar el dedo por el mapa (sin tocar ningún botón), hacia donde se desliza
  function requestDash(dxScreen, dyScreen) {
- if (playerImmobilized > 0) return showToast('¡Estás petrificado! Usá Disipar sobre vos');
- if (dashCooldown > 0) return showToast(`Dash en cooldown: ${dashCooldown.toFixed(1)}s`);
+ if (playerImmobilized > 0) return showToast(t('toast.petrifiedTouch'));
+ if (dashCooldown > 0) return showToast(t('toast.dashCd', { s: dashCooldown.toFixed(1) }));
  const d = Math.hypot(dxScreen, dyScreen) || 1;
  touchInput.dashDir = { mx: dxScreen / d, my: -dyScreen / d };
  dashRequested = true;
@@ -4112,7 +4273,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  updateMe(dt);
  updateReticle();
  deathOverlayEl.classList.toggle('visible', playerDeadTimer > 0);
- if (playerDeadTimer > 0) deathSubEl.textContent = `Volviendo a aparecer en ${playerDeadTimer.toFixed(1)}s...`;
+ if (playerDeadTimer > 0) deathSubEl.textContent = t('death.sub', { s: playerDeadTimer.toFixed(1) });
  shieldSlot.classList.toggle('active-shield', !!playerChar && playerChar.isBlocking);
  }
 
@@ -4144,7 +4305,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
 
  if (net.playing) {
  // HUD
- coordsEl.textContent = `Pos: (${player.position.x.toFixed(1)}, ${player.position.y.toFixed(1)})`;
+ coordsEl.textContent = `${t('hud.pos')}: (${player.position.x.toFixed(1)}, ${player.position.y.toFixed(1)})`;
  scoreTextEl.textContent = fmtScore(playerStats.score);
  streakTextEl.textContent = playerStats.streak;
  killsEl.textContent = playerStats.kills;
@@ -4154,27 +4315,27 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  mpFillEl.style.width = `${(playerMp / MAX_MP) * 100}%`;
 
  if (playerDeadTimer > 0) {
- statusBadgeEl.textContent = `Muerto (${playerDeadTimer.toFixed(1)}s)`;
+ statusBadgeEl.textContent = t('st.dead', { s: playerDeadTimer.toFixed(1) });
  statusBadgeEl.className = 'badge badge-inmo';
  } else if (playerImmobilized > 0) {
- statusBadgeEl.textContent = `Petrificado (${playerImmobilized.toFixed(1)}s)`;
+ statusBadgeEl.textContent = t('st.pet', { s: playerImmobilized.toFixed(1) });
  statusBadgeEl.className = 'badge badge-inmo';
  } else if (playerChar && playerChar.isBlocking) {
- statusBadgeEl.textContent = 'Bloqueando (Escudo)';
+ statusBadgeEl.textContent = t('st.block');
  statusBadgeEl.className = 'badge badge-shield';
  } else {
- statusBadgeEl.textContent = 'Libre';
+ statusBadgeEl.textContent = t('st.free');
  statusBadgeEl.className = 'badge badge-libre';
  }
 
- dashStatusEl.textContent = dashCooldown > 0 ? `${dashCooldown.toFixed(1)}s` : 'Listo';
+ dashStatusEl.textContent = dashCooldown > 0 ? `${dashCooldown.toFixed(1)}s` : t('st.ready');
  dashStatusEl.className = dashCooldown > 0 ? 'cd-wait' : 'cd-ready';
- spellIntervalStatusEl.textContent = spellIntervalTimer > 0 ? `${spellIntervalTimer.toFixed(1)}s` : 'Listo';
+ spellIntervalStatusEl.textContent = spellIntervalTimer > 0 ? `${spellIntervalTimer.toFixed(1)}s` : t('st.ready');
  spellIntervalStatusEl.className = spellIntervalTimer > 0 ? 'cd-wait' : 'cd-ready';
- meleeStatusEl.textContent = meleeCooldownTimer > 0 ? `${meleeCooldownTimer.toFixed(1)}s` : 'Listo';
+ meleeStatusEl.textContent = meleeCooldownTimer > 0 ? `${meleeCooldownTimer.toFixed(1)}s` : t('st.ready');
  meleeStatusEl.className = meleeCooldownTimer > 0 ? 'cd-wait' : 'cd-ready';
  meleeSlot.classList.toggle('on-cd', meleeCooldownTimer > 0);
- potionStatusEl.textContent = potionCooldownTimer > 0 ? `${potionCooldownTimer.toFixed(1)}s` : 'Listo';
+ potionStatusEl.textContent = potionCooldownTimer > 0 ? `${potionCooldownTimer.toFixed(1)}s` : t('st.ready');
  potionStatusEl.className = potionCooldownTimer > 0 ? 'cd-wait' : 'cd-ready';
  potHpSlot.classList.toggle('on-cd', potionCooldownTimer > 0);
  potMpSlot.classList.toggle('on-cd', potionCooldownTimer > 0);
@@ -4192,6 +4353,35 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
 
  // Acceso para pruebas desde la consola del navegador
  window.__arcane = { setStarted(v) { gameStarted = v; }, fx: { potion: spawnPotionAura, petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
+
+ // ===================== Cambio de idioma: refresca lo que ya está dibujado =====================
+ function refreshLangDependent() {
+ refreshKeyLabels(); // también rehace la guía de inicio y las líneas del HUD
+ renderColorPicker();
+ renderControlsList();
+ updateLeaderboard();
+ if (netMsgEl.dataset.k) netMsgEl.textContent = t(netMsgEl.dataset.k);
+ if (net.state === 'connecting') playBtnEl.textContent = t('start.connecting');
+ else if (!playBtnEl.disabled) playBtnEl.textContent = t('start.play');
+ fullscreenBtn.textContent = document.fullscreenElement ? t('fs.on') : t('fs.off');
+ if (tutorialActive) renderTutorial();
+ }
+ function applyLang() {
+ applyStaticI18n();
+ refreshLangDependent();
+ }
+ function setLang(l) {
+ if (l !== 'es' && l !== 'en') return;
+ LANG = l;
+ try { localStorage.setItem('arena_lang', l); } catch (err) { /* ignorar */ }
+ applyLang();
+ }
+ document.querySelectorAll('.lang-btn').forEach((b) => {
+ b.addEventListener('click', (e) => { e.stopPropagation(); setLang(LANG === 'es' ? 'en' : 'es'); });
+ });
+ window.__arcane.setLang = setLang;
+ Object.defineProperty(window.__arcane, 'lang', { get() { return LANG; } });
+ applyLang();
 
  animate();
 

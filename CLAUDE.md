@@ -46,6 +46,7 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
   Los demás se dibujan 100 ms atrás, interpolando. Los hechizos usan compensación de retraso (`rt`, hasta 300 ms).
 - Los **bots** viven en el servidor; con 8 jugadores reales o más no queda ninguno. Con menos de 8 personajes se completan.
 - Si cambian los mensajes cliente↔servidor: subir `PROTOCOL_VERSION` en `shared.js`.
+- **Idiomas (es/en):** todos los textos están en la tabla `I18N` de `public/index.html` (función `t(clave)`; en el HTML, `data-i18n`). Se elige por el idioma del navegador y hay botón 🌐. Los avisos del servidor (`toast`) mandan una clave (`k`) y datos (`a`), no texto: la traducción `srv.<clave>` está en la tabla. Todo texto nuevo va en los dos idiomas.
 
 ## Reglas vigentes que NO hay que romper sin preguntar
 - Un hechizo que **falla no gasta maná** (sí respeta el intervalo de 1,4 s). No se puede **petrificar a un petrificado**.

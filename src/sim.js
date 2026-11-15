@@ -222,7 +222,7 @@ export class Game {
       dmg = Math.max(1, Math.round(dmg * 0.25));
       this.ev(['bk', r2(target.x), r2(target.y)]);
       if (!target.isBot) {
-        this.msg(target.id, { t: 'toast', text: `¡Escudo bloqueó el golpe de ${attacker ? attacker.name : '?'}! (-${dmg} HP)` });
+        this.msg(target.id, { t: 'toast', k: 'blocked', a: { name: attacker ? attacker.name : '?', dmg } });
       }
     }
     target.hp = Math.max(0, target.hp - dmg);
@@ -274,7 +274,7 @@ export class Game {
     killer.streak += 1;
 
     this.ev(['kl', killer.id, victim.id, stolen + bonus, wasLeader ? 1 : 0]);
-    if (!killer.isBot) this.msg(killer.id, { t: 'toast', text: `¡Eliminaste a ${victim.name}! +${stolen + bonus} pts${wasLeader ? ' (era el líder)' : ''}` });
+    if (!killer.isBot) this.msg(killer.id, { t: 'toast', k: wasLeader ? 'killLeader' : 'kill', a: { name: victim.name, pts: stolen + bonus } });
     if (!victim.isBot) this.msg(victim.id, { t: 'death', by: killer.name, lost: stolen, secs: RESPAWN_TIME });
     this.updateLeader();
   }
@@ -298,7 +298,7 @@ export class Game {
     const sp = this.pickSpawn();
     e.x = sp.x; e.y = sp.y;
     this.ev(['rs', r2(e.x), r2(e.y)]);
-    if (!e.isBot) this.msg(e.id, { t: 'toast', text: '¡Has vuelto a aparecer!' });
+    if (!e.isBot) this.msg(e.id, { t: 'toast', k: 'respawn' });
   }
 
   // ---------- Entrada del jugador ----------
@@ -370,10 +370,10 @@ export class Game {
     const wx = Number(m.x);
     const wy = Number(m.y);
     if (!Number.isFinite(wx) || !Number.isFinite(wy)) return;
-    const toast = (text) => this.msg(id, { t: 'toast', text });
+    const toast = (k, a) => this.msg(id, { t: 'toast', k, a });
 
-    if (e.spellCd > 0) return toast(`Intervalo entre habilidades: espera ${e.spellCd.toFixed(1)}s`);
-    if (e.mp < sp.mana) return toast('Maná insuficiente');
+    if (e.spellCd > 0) return toast('cdSpell', { s: e.spellCd.toFixed(1) });
+    if (e.mp < sp.mana) return toast('noMana');
 
     // Tiempo al que el cliente vio el mundo (compensación de retraso)
     let t = Number.isFinite(m.rt) ? m.rt / 1000 : this.time;
@@ -382,7 +382,7 @@ export class Game {
     const selfCast = !!m.self && sp.cleanse;
     const target = selfCast ? null : this.findTargetAt(e, wx, wy, t);
 
-    if (sp.immobilize > 0 && target && target.imm > 0) return toast(`¡${target.name} ya está petrificado!`);
+    if (sp.immobilize > 0 && target && target.imm > 0) return toast('targetPet', { name: target.name });
 
     e.spellCd = SPELL_GLOBAL_INTERVAL;
     e.swingT = 0.2;
@@ -391,7 +391,7 @@ export class Game {
     // Si falla (no hay nadie bajo el cursor) NO se gasta maná; igual se respeta el intervalo entre hechizos
     if (!selfCast && !target) {
       this.ev(['ms', r2(wx), r2(wy), sp.id]);
-      toast('¡Fallaste! Apunta directo sobre el personaje (no gastó maná)');
+      toast('missed');
       return;
     }
 
@@ -401,7 +401,7 @@ export class Game {
     if (selfCast) {
       this.ev(['sp', e.id, sp.id, r2(e.x), r2(e.y), r2(e.x), r2(e.y)]);
       e.imm = 0;
-      toast('¡Petrificación disipada!');
+      toast('dispelled');
       return;
     }
     this.ev(['sp', e.id, sp.id, r2(e.x), r2(e.y), r2(target.x), r2(target.y)]);
@@ -411,7 +411,7 @@ export class Game {
   handleMelee(id) {
     const e = this.entities.get(id);
     if (!e || e.isBot || e.dead) return;
-    if (e.meleeCd > 0) return this.msg(id, { t: 'toast', text: `Espada en espera: ${e.meleeCd.toFixed(1)}s` });
+    if (e.meleeCd > 0) return this.msg(id, { t: 'toast', k: 'cdMelee', a: { s: e.meleeCd.toFixed(1) } });
     const range = CHARACTER_RADIUS * 2 + 0.65;
     let best = null;
     let bestD = Infinity;
@@ -420,7 +420,7 @@ export class Game {
       const d = Math.hypot(o.x - e.x, o.y - e.y);
       if (d <= range && d < bestD) { bestD = d; best = o; }
     }
-    if (!best) return this.msg(id, { t: 'toast', text: 'Acércate a un rival para golpear con la espada' });
+    if (!best) return this.msg(id, { t: 'toast', k: 'noTarget' });
     e.meleeCd = MELEE_INTERVAL;
     e.swingT = 0.24;
     e.dir = dirFromVector(best.x - e.x, best.y - e.y, e.dir);
