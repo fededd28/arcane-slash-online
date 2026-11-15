@@ -284,7 +284,8 @@
  .potion-heal { color: #ff7b72; font-weight: 600; }
  .melee-dmg { color: #ffa657; font-weight: 600; }
  .shield-tag { color: #79c0ff; font-weight: 600; }
- .spell-icon { font-size: 20px; line-height: 1.2; margin: 2px 0; }
+ .spell-icon { height: 32px; margin: 1px 0; display: flex; align-items: center; justify-content: center; }
+ .ico { width: 30px; height: 30px; display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55)); }
  .spell-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
  #toast {
@@ -525,7 +526,8 @@
  align-items: center;
  gap: 5px;
  }
- .t-ico { font-size: 22px; line-height: 1; }
+ .t-ico { height: 28px; display: flex; align-items: center; justify-content: center; }
+ .t-ico .ico { width: 28px; height: 28px; }
  .t-keys { display: flex; align-items: center; gap: 4px; }
  .t-name { font-size: 10.5px; color: var(--steel); text-align: center; line-height: 1.1; }
  .g-foot { margin-top: 2px; padding-top: 10px; border-top: 1px solid var(--panel-border); font-size: 11.5px; color: var(--steel); text-align: center; }
@@ -568,6 +570,102 @@
  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 </head>
 <body class="cursor-mano">
+ <!-- Íconos de hechizos y acciones (se usan con <use href="#ico-...">) -->
+ <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+ <defs>
+ <linearGradient id="gStone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6ebf2"/><stop offset="0.5" stop-color="#95a1b2"/><stop offset="1" stop-color="#4b5666"/></linearGradient>
+ <linearGradient id="gStoneD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#aab4c2"/><stop offset="1" stop-color="#394251"/></linearGradient>
+ <radialGradient id="gAura" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#7fd0ff" stop-opacity="0.7"/><stop offset="1" stop-color="#7fd0ff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gBolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#8fd6ff"/><stop offset="1" stop-color="#4a8dff"/></linearGradient>
+ <radialGradient id="gCore" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#fff6b8"/><stop offset="0.35" stop-color="#ffb62e"/><stop offset="0.75" stop-color="#e8431a"/><stop offset="1" stop-color="#7a1608"/></radialGradient>
+ <linearGradient id="gTail" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a1f" stop-opacity="0"/><stop offset="1" stop-color="#ffa03a" stop-opacity="1"/></linearGradient>
+ <radialGradient id="gHalo" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#eaffd6" stop-opacity="0.95"/><stop offset="0.6" stop-color="#6ee08a" stop-opacity="0.45"/><stop offset="1" stop-color="#3fb950" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffbd0"/><stop offset="1" stop-color="#f2c04a"/></linearGradient>
+ <linearGradient id="gBlade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f7fb"/><stop offset="0.55" stop-color="#b9c3d0"/><stop offset="1" stop-color="#7d8896"/></linearGradient>
+ <linearGradient id="gShield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6f86b8"/><stop offset="1" stop-color="#26324f"/></linearGradient>
+ <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a80"/><stop offset="1" stop-color="#c41e2a"/></linearGradient>
+ <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#1c63c9"/></linearGradient>
+ </defs>
+
+ <!-- Petrificar: cristales de piedra -->
+ <symbol id="ico-petrify" viewBox="0 0 64 64">
+ <ellipse cx="32" cy="56" rx="21" ry="4.5" fill="#000" opacity="0.35"/>
+ <path d="M15 54 L8 34 L20 42 L23 54 Z" fill="url(#gStoneD)" stroke="#1d232d" stroke-width="2" stroke-linejoin="round"/>
+ <path d="M49 54 L56 32 L44 42 L41 54 Z" fill="url(#gStoneD)" stroke="#1d232d" stroke-width="2" stroke-linejoin="round"/>
+ <path d="M32 5 L45 24 L41 54 L23 54 L19 24 Z" fill="url(#gStone)" stroke="#1d232d" stroke-width="2.2" stroke-linejoin="round"/>
+ <path d="M32 5 L45 24 L32 30 Z" fill="#fff" opacity="0.55"/>
+ <path d="M32 30 L41 54 L32 54 Z" fill="#000" opacity="0.2"/>
+ <path d="M32 13 L29 26 L35 35 L31 47" stroke="#1d232d" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ <circle cx="38" cy="16" r="2" fill="#cdeeff"/>
+ </symbol>
+
+ <!-- Descarga Espectral: rayo con aura fantasmal -->
+ <symbol id="ico-spectral" viewBox="0 0 64 64">
+ <circle cx="32" cy="32" r="30" fill="url(#gAura)"/>
+ <path d="M10 18 Q5 27 12 35" stroke="#c4ecff" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.85"/>
+ <path d="M54 30 Q59 40 52 50" stroke="#c4ecff" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.85"/>
+ <path d="M38 3 L15 37 H29 L23 61 L51 25 H35 Z" fill="url(#gBolt)" stroke="#173a73" stroke-width="2.4" stroke-linejoin="round"/>
+ <path d="M38 3 L30 15 L36 15 Z" fill="#fff" opacity="0.8"/>
+ <circle cx="13" cy="11" r="2.4" fill="#e2f6ff"/><circle cx="53" cy="12" r="1.8" fill="#e2f6ff"/><circle cx="50" cy="56" r="2" fill="#bfe6ff"/>
+ </symbol>
+
+ <!-- Cataclismo: meteorito en llamas -->
+ <symbol id="ico-cataclysm" viewBox="0 0 64 64">
+ <path d="M62 3 C48 8 40 16 33 25 L24 31 L34 40 L40 31 C50 23 59 14 62 3 Z" fill="url(#gTail)"/>
+ <path d="M46 6 C42 14 38 19 30 27" stroke="#ffd36b" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.8"/>
+ <path d="M54 18 C48 22 44 27 38 34" stroke="#ffb02e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+ <circle cx="27" cy="38" r="17" fill="url(#gCore)" stroke="#5a1206" stroke-width="2.4"/>
+ <path d="M17 30 Q22 25 29 26" stroke="#7a1608" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.65"/>
+ <path d="M24 49 Q31 52 37 46" stroke="#7a1608" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.55"/>
+ <circle cx="21" cy="32" r="3.2" fill="#fff6c8" opacity="0.8"/>
+ <circle cx="9" cy="54" r="1.8" fill="#ffcf5a"/><circle cx="16" cy="58" r="1.4" fill="#ff8a1f"/><circle cx="48" cy="48" r="1.6" fill="#ffcf5a"/>
+ </symbol>
+
+ <!-- Disipar: estallido de luz purificadora -->
+ <symbol id="ico-dispel" viewBox="0 0 64 64">
+ <circle cx="32" cy="32" r="30" fill="url(#gHalo)"/>
+ <circle cx="32" cy="32" r="23" fill="none" stroke="#8cf0a0" stroke-width="2.2" stroke-dasharray="3 4.5" stroke-linecap="round"/>
+ <path d="M32 5 L38.5 25.5 L59 32 L38.5 38.5 L32 59 L25.5 38.5 L5 32 L25.5 25.5 Z" fill="url(#gStar)" stroke="#6b5412" stroke-width="2" stroke-linejoin="round"/>
+ <circle cx="32" cy="32" r="5.5" fill="#fff"/>
+ <circle cx="14" cy="14" r="2" fill="#f4ffd8"/><circle cx="51" cy="13" r="1.6" fill="#f4ffd8"/><circle cx="50" cy="51" r="2" fill="#f4ffd8"/><circle cx="13" cy="50" r="1.5" fill="#f4ffd8"/>
+ </symbol>
+
+ <!-- Espada -->
+ <symbol id="ico-sword" viewBox="0 0 64 64">
+ <path d="M52 6 L58 6 L58 12 L26 44 L20 38 Z" fill="url(#gBlade)" stroke="#2a313c" stroke-width="2" stroke-linejoin="round"/>
+ <path d="M54 8 L24 40" stroke="#fff" stroke-width="1.6" opacity="0.6"/>
+ <path d="M14 36 L28 50 L24 54 L10 40 Z" fill="#d4a64a" stroke="#4a3610" stroke-width="2" stroke-linejoin="round"/>
+ <path d="M18 46 L9 55" stroke="#5a3a20" stroke-width="5.5" stroke-linecap="round"/>
+ <circle cx="7" cy="57" r="3.4" fill="#d4a64a" stroke="#4a3610" stroke-width="1.6"/>
+ </symbol>
+
+ <!-- Escudo -->
+ <symbol id="ico-shield" viewBox="0 0 64 64">
+ <path d="M32 4 L55 12 V32 C55 46 44 55 32 60 C20 55 9 46 9 32 V12 Z" fill="url(#gShield)" stroke="#d4a64a" stroke-width="3" stroke-linejoin="round"/>
+ <path d="M32 9 L50 15 V32 C50 43 42 50 32 55 Z" fill="#fff" opacity="0.1"/>
+ <path d="M32 16 V47 M19 28 H45" stroke="#d4a64a" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+ <circle cx="32" cy="28" r="5" fill="#9fd4ff" stroke="#1b2540" stroke-width="2"/>
+ </symbol>
+
+ <!-- Poción de vida -->
+ <symbol id="ico-potion-hp" viewBox="0 0 64 64">
+ <path d="M26 6 H38 V10 H36 V22 C46 27 52 36 50 46 C48 55 41 59 32 59 C23 59 16 55 14 46 C12 36 18 27 28 22 V10 H26 Z" fill="#1c2531" stroke="#0a0f16" stroke-width="2.2" stroke-linejoin="round"/>
+ <path d="M16 44 C16 36 22 31 32 31 C42 31 48 36 48 44 C48 52 42 56 32 56 C22 56 16 52 16 44 Z" fill="url(#gRed)"/>
+ <rect x="26" y="4" width="12" height="6" rx="2" fill="#a06a3a" stroke="#3a2412" stroke-width="2"/>
+ <ellipse cx="24" cy="42" rx="3" ry="6" fill="#fff" opacity="0.35"/>
+ <path d="M32 40 V50 M27 45 H37" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity="0.9"/>
+ </symbol>
+
+ <!-- Poción de maná -->
+ <symbol id="ico-potion-mp" viewBox="0 0 64 64">
+ <path d="M26 6 H38 V10 H36 V22 C46 27 52 36 50 46 C48 55 41 59 32 59 C23 59 16 55 14 46 C12 36 18 27 28 22 V10 H26 Z" fill="#1c2531" stroke="#0a0f16" stroke-width="2.2" stroke-linejoin="round"/>
+ <path d="M16 44 C16 36 22 31 32 31 C42 31 48 36 48 44 C48 52 42 56 32 56 C22 56 16 52 16 44 Z" fill="url(#gBlue)"/>
+ <rect x="26" y="4" width="12" height="6" rx="2" fill="#a06a3a" stroke="#3a2412" stroke-width="2"/>
+ <ellipse cx="24" cy="42" rx="3" ry="6" fill="#fff" opacity="0.35"/>
+ <path d="M32 36 C36 41 38 44 38 47 C38 50 35 52 32 52 C29 52 26 50 26 47 C26 44 28 41 32 36 Z" fill="#e6f6ff" opacity="0.9"/>
+ </symbol>
+ </svg>
+
  <div id="vignette"></div>
 
  <div id="left-col">
@@ -619,43 +717,43 @@
  <div id="spellbar">
  <div class="spell-slot" data-spell="1" id="slot-1">
  <div class="spell-top"><span class="spell-key">1</span><span class="spell-mana">60</span></div>
- <div class="spell-icon">⛓️</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-petrify"/></svg></div>
  <div class="spell-name">Petrificar</div>
  </div>
  <div class="spell-slot" data-spell="2" id="slot-2">
  <div class="spell-top"><span class="spell-key">2</span><span class="spell-mana">50</span></div>
- <div class="spell-icon">⚡</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-spectral"/></svg></div>
  <div class="spell-name">Desc. Espectral</div>
  </div>
  <div class="spell-slot" data-spell="3" id="slot-3">
  <div class="spell-top"><span class="spell-key">3</span><span class="spell-mana">110</span></div>
- <div class="spell-icon">🔥</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-cataclysm"/></svg></div>
  <div class="spell-name">Cataclismo</div>
  </div>
  <div class="spell-slot" data-spell="4" id="slot-4">
  <div class="spell-top"><span class="spell-key">4</span><span class="spell-mana">40</span></div>
- <div class="spell-icon">✨</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-dispel"/></svg></div>
  <div class="spell-name">Disipar</div>
  </div>
  <div class="bar-divider"></div>
  <div class="potion-slot" id="melee-slot" title="Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)">
  <div class="spell-top"><span class="spell-key">Q</span><span class="melee-dmg">40</span></div>
- <div class="spell-icon">⚔️</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-sword"/></svg></div>
  <div class="spell-name">Espadazo</div>
  </div>
  <div class="potion-slot" id="shield-slot" title="Mantener la tecla de escudo para bloquear">
  <div class="spell-top"><span class="spell-key">Shift</span><span class="shield-tag">-75%</span></div>
- <div class="spell-icon">🛡️</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-shield"/></svg></div>
  <div class="spell-name">Escudo</div>
  </div>
  <div class="potion-slot" id="pot-hp" title="Poción de Vida">
  <div class="spell-top"><span class="spell-key">V</span><span class="potion-heal">+30</span></div>
- <div class="spell-icon">🧪</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-potion-hp"/></svg></div>
  <div class="spell-name">Poción Vida</div>
  </div>
  <div class="potion-slot" id="pot-mp" title="Poción de Maná">
  <div class="spell-top"><span class="spell-key">B</span><span class="spell-mana">+30</span></div>
- <div class="spell-icon">💧</div>
+ <div class="spell-icon"><svg class="ico"><use href="#ico-potion-mp"/></svg></div>
  <div class="spell-name">Poción Maná</div>
  </div>
  </div>
@@ -1658,197 +1756,394 @@
  // --- Sistema de Animaciones Detalladas de Habilidades ---
  const activeFX = [];
 
- // 1. Descarga Espectral: Rayo quebrado desde el lanzador + arcos eléctricos alrededor del objetivo
+ // ===================== Animaciones de hechizos (versión nueva) =====================
+ const fxTex = {
+ gray: makeGlowTexture(205, 212, 226),
+ blue: makeGlowTexture(110, 190, 255),
+ white: makeGlowTexture(255, 255, 255),
+ fire: makeGlowTexture(255, 140, 40),
+ gold: makeGlowTexture(255, 226, 120),
+ green: makeGlowTexture(110, 240, 140),
+ violet: makeGlowTexture(175, 145, 255)
+ };
+ const scorchTex = (() => {
+ const c = makeCanvas(128, 128);
+ const g = c.getContext('2d');
+ const grad = g.createRadialGradient(64, 64, 4, 64, 64, 62);
+ grad.addColorStop(0, 'rgba(10,4,2,0.95)');
+ grad.addColorStop(0.55, 'rgba(25,10,4,0.6)');
+ grad.addColorStop(1, 'rgba(25,10,4,0)');
+ g.fillStyle = grad;
+ g.fillRect(0, 0, 128, 128);
+ return new THREE.CanvasTexture(c);
+ })();
+ let camShake = 0;
+
+ const fxLerp = (a, b, t) => a + (b - a) * t;
+ const easeOut = (t) => 1 - (1 - t) * (1 - t);
+
+ function fxSprite(tex, size, x, y, z, opacity, additive = true) {
+ const m = new THREE.Mesh(
+ new THREE.PlaneGeometry(size, size),
+ new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity, blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, depthWrite: false })
+ );
+ m.position.set(x, y, z);
+ return m;
+ }
+ function fxRing(inner, outer, color, opacity, segs = 40) {
+ return new THREE.Mesh(
+ new THREE.RingGeometry(inner, outer, segs),
+ new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })
+ );
+ }
+ function fxQuad(w, h, color, opacity, additive = true) {
+ return new THREE.Mesh(
+ new THREE.PlaneGeometry(w, h),
+ new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, depthWrite: false, blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending })
+ );
+ }
+ // Anillo que crece sin engordar: se recrea con el radio y grosor del momento
+ function setRing(m, r, w) {
+ m.geometry.dispose();
+ m.geometry = new THREE.RingGeometry(Math.max(0.01, r), Math.max(0.02, r + w), 48);
+ }
+ function addFX(group, life, update) {
+ scene.add(group);
+ activeFX.push({ group, life, maxLife: life, update });
+ }
+ // Esquirla de cristal: una cara clara y otra oscura, con la base en el suelo
+ function makeShard(h, w, light, dark) {
+ const g = new THREE.Group();
+ const l = new THREE.Shape();
+ l.moveTo(-w, 0); l.lineTo(0, h); l.lineTo(0, 0); l.closePath();
+ const d = new THREE.Shape();
+ d.moveTo(0, 0); d.lineTo(0, h); d.lineTo(w, 0); d.closePath();
+ g.add(new THREE.Mesh(new THREE.ShapeGeometry(l), new THREE.MeshBasicMaterial({ color: light, transparent: true, depthWrite: false })));
+ g.add(new THREE.Mesh(new THREE.ShapeGeometry(d), new THREE.MeshBasicMaterial({ color: dark, transparent: true, depthWrite: false })));
+ return g;
+ }
+
+ // 1. Descarga Espectral: rayo grueso con ramas, orbes fantasma y onda de impacto
+ function boltPath(a, b, segs, jit) {
+ const dx = b.x - a.x;
+ const dy = b.y - a.y;
+ const len = Math.hypot(dx, dy) || 1;
+ const nx = -dy / len;
+ const ny = dx / len;
+ const pts = [];
+ for (let i = 0; i <= segs; i++) {
+ const t = i / segs;
+ const j = i === 0 || i === segs ? 0 : (Math.random() - 0.5) * jit;
+ pts.push({ x: a.x + dx * t + nx * j, y: a.y + dy * t + ny * j });
+ }
+ return pts;
+ }
+ function makeRibbon(n, width, color, z) {
+ const arr = [];
+ for (let i = 0; i < n; i++) {
+ const m = new THREE.Mesh(
+ new THREE.PlaneGeometry(1, width),
+ new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false })
+ );
+ m.position.z = z;
+ arr.push(m);
+ }
+ return arr;
+ }
+ function layoutRibbon(meshes, pts) {
+ for (let i = 0; i < meshes.length; i++) {
+ const p0 = pts[i];
+ const p1 = pts[i + 1];
+ const dx = p1.x - p0.x;
+ const dy = p1.y - p0.y;
+ meshes[i].position.x = (p0.x + p1.x) / 2;
+ meshes[i].position.y = (p0.y + p1.y) / 2;
+ meshes[i].rotation.z = Math.atan2(dy, dx);
+ meshes[i].scale.x = Math.hypot(dx, dy) + 0.06;
+ }
+ }
+
  function spawnLightningFX(startPos, targetPos) {
  const group = new THREE.Group();
  group.position.z = 1.5;
-
- // Generar 2 rayos principales en zigzag entre startPos y targetPos
- for (let b = 0; b < 2; b++) {
- const pts = [];
- const segments = 9;
- for (let i = 0; i <= segments; i++) {
- const t = i / segments;
- const baseX = THREE.MathUtils.lerp(startPos.x, targetPos.x, t);
- const baseY = THREE.MathUtils.lerp(startPos.y + 0.4, targetPos.y + 0.4, t);
- const jitter = i === 0 || i === segments ? 0 : (Math.random() - 0.5) * 0.85;
- pts.push(new THREE.Vector3(baseX + jitter, baseY + jitter, 0));
- }
- const geo = new THREE.BufferGeometry().setFromPoints(pts);
- const mat = new THREE.LineBasicMaterial({
- color: b === 0 ? 0xffffff : 0x58a6ff,
- transparent: true,
- opacity: 1
+ const A = { x: startPos.x, y: startPos.y + 0.45 };
+ const B = { x: targetPos.x, y: targetPos.y + 0.45 };
+ const SEG = 10;
+ let pts = boltPath(A, B, SEG, 0.9);
+ const outer = makeRibbon(SEG, 0.28, 0x4d9bff, 0);
+ const mid = makeRibbon(SEG, 0.14, 0x9fd8ff, 0.01);
+ const core = makeRibbon(SEG, 0.055, 0xffffff, 0.02);
+ const branches = [3, 6].map((fromIdx) => {
+ const ang = Math.random() * Math.PI * 2;
+ return { fromIdx, off: { x: Math.cos(ang) * 1.3, y: Math.sin(ang) * 1.3 }, ribbons: makeRibbon(4, 0.1, 0xb79bff, 0.005), pts: null };
  });
- group.add(new THREE.Line(geo, mat));
+ [outer, mid, core, ...branches.map((b) => b.ribbons)].forEach((arr) => arr.forEach((m) => group.add(m)));
+ const relayout = () => {
+ layoutRibbon(outer, pts);
+ layoutRibbon(mid, pts);
+ layoutRibbon(core, pts);
+ for (const b of branches) {
+ const s = pts[b.fromIdx];
+ b.pts = boltPath(s, { x: s.x + b.off.x, y: s.y + b.off.y }, 4, 0.5);
+ layoutRibbon(b.ribbons, b.pts);
  }
+ };
+ relayout();
 
- // Anillo y chispas eléctricas sobre el personaje impactado
- const sparkRing = new THREE.Mesh(
- new THREE.RingGeometry(0.25, 0.72, 12),
- new THREE.MeshBasicMaterial({ color: 0x79c0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.95 })
- );
- sparkRing.position.set(targetPos.x, targetPos.y + 0.45, 0.05);
- group.add(sparkRing);
-
- // Chispas radiales
+ const castGlow = fxSprite(fxTex.blue, 1.5, A.x, A.y, 0.05, 0.95);
+ const hitGlow = fxSprite(fxTex.white, 2.4, B.x, B.y, 0.05, 1);
+ const hitRing = fxRing(0.2, 0.3, 0x7fd0ff, 1);
+ hitRing.position.set(B.x, B.y, 0.02);
+ const ghostRing = fxRing(0.2, 0.27, 0xb79bff, 0.8);
+ ghostRing.position.set(B.x, B.y, 0.02);
+ group.add(castGlow, hitGlow, hitRing, ghostRing);
+ const wisps = [];
+ for (let i = 0; i < 6; i++) {
+ const w = fxSprite(fxTex.violet, 0.5, A.x, A.y, 0.06, 0.9);
+ group.add(w);
+ wisps.push(w);
+ }
  const sparks = [];
- for (let s = 0; s < 8; s++) {
- const ang = (s / 8) * Math.PI * 2 + Math.random() * 0.4;
- const spark = new THREE.Mesh(
- new THREE.PlaneGeometry(0.12, 0.32),
- new THREE.MeshBasicMaterial({ color: s % 2 === 0 ? 0xf2cc60 : 0x79c0ff, transparent: true, opacity: 1 })
- );
- spark.position.set(targetPos.x, targetPos.y + 0.45, 0.1);
- spark.rotation.z = ang;
- group.add(spark);
- sparks.push({ mesh: spark, vx: Math.cos(ang) * 3.8, vy: Math.sin(ang) * 3.8 });
+ for (let i = 0; i < 12; i++) {
+ const a = (i / 12) * Math.PI * 2 + Math.random() * 0.4;
+ const s = fxQuad(0.07, 0.3, i % 2 ? 0xfff2a8 : 0x9fd8ff, 1);
+ s.position.set(B.x, B.y, 0.07);
+ s.rotation.z = a - Math.PI / 2;
+ group.add(s);
+ sparks.push({ mesh: s, vx: Math.cos(a) * (3 + Math.random() * 2), vy: Math.sin(a) * (3 + Math.random() * 2) });
  }
 
- scene.add(group);
- activeFX.push({
- group,
- life: 0.36,
- maxLife: 0.36,
- update(dt, alpha) {
- sparkRing.scale.setScalar(1 + (1 - alpha) * 0.45);
- sparkRing.rotation.z += dt * 14;
- for (const sp of sparks) {
- sp.mesh.position.x += sp.vx * dt;
- sp.mesh.position.y += sp.vy * dt;
- sp.mesh.material.opacity = alpha;
+ let acc = 0;
+ addFX(group, 0.55, (dt, alpha) => {
+ const p = 1 - alpha;
+ acc += dt;
+ if (acc > 0.045 && p < 0.5) {
+ acc = 0;
+ pts = boltPath(A, B, SEG, 0.9);
+ relayout();
  }
- group.children.forEach((c) => {
- if (c.material) c.material.opacity = alpha;
+ const flick = p < 0.55 ? 0.6 + Math.random() * 0.4 : 1;
+ const fade = Math.min(1, alpha * 2.2) * flick;
+ for (const arr of [outer, mid, core, ...branches.map((b) => b.ribbons)]) arr.forEach((m) => { m.material.opacity = fade; });
+ castGlow.scale.setScalar(1 + p * 0.7);
+ castGlow.material.opacity = Math.max(0, 1 - p * 2.2);
+ hitGlow.scale.setScalar(0.8 + p * 1.6);
+ hitGlow.material.opacity = Math.max(0, 1 - p * 2.6);
+ setRing(hitRing, 0.25 + easeOut(p) * 1.6, 0.03 + 0.12 * alpha);
+ hitRing.material.opacity = alpha;
+ const gp = Math.max(0, p - 0.12);
+ setRing(ghostRing, 0.22 + easeOut(Math.min(1, gp * 1.4)) * 1.2, 0.02 + 0.08 * alpha);
+ ghostRing.material.opacity = Math.max(0, alpha * 0.9);
+ wisps.forEach((w, i) => {
+ const t = Math.min(1, p * 2.2 + i * 0.08);
+ const k = Math.min(SEG, t * SEG);
+ const i0 = Math.min(SEG - 1, Math.floor(k));
+ const f = k - i0;
+ w.position.x = pts[i0].x + (pts[i0 + 1].x - pts[i0].x) * f;
+ w.position.y = pts[i0].y + (pts[i0 + 1].y - pts[i0].y) * f;
+ w.material.opacity = Math.max(0, alpha * 1.2) * (t >= 1 ? 0.4 : 0.95);
  });
- }
+ sparks.forEach((s) => {
+ s.mesh.position.x += s.vx * dt;
+ s.mesh.position.y += s.vy * dt;
+ s.mesh.material.opacity = Math.max(0, alpha * 1.4 - 0.2);
+ });
  });
  }
 
- // 2. Cataclismo: Explosión de fuego con núcleo incandescente, onda expansiva y brasas
+ // 2. Cataclismo: un meteorito cae desde arriba, impacta con onda de fuego y deja una marca quemada
  function spawnApocalypseFX(targetPos) {
  const group = new THREE.Group();
- group.position.set(targetPos.x, targetPos.y + 0.35, 1.6);
+ group.position.set(targetPos.x, targetPos.y + 0.2, 1.6);
+ const LIFE = 1.15;
+ const FALL = 0.4;
 
- const coreFire = new THREE.Mesh(
- new THREE.CircleGeometry(0.75, 24),
- new THREE.MeshBasicMaterial({ color: 0xffd33d, transparent: true, opacity: 0.95 })
- );
- group.add(coreFire);
+ const scorch = fxSprite(scorchTex, 1, 0, -0.05, -0.04, 0, false);
+ group.add(scorch);
 
- const outerFlame = new THREE.Mesh(
- new THREE.RingGeometry(0.35, 0.95, 24),
- new THREE.MeshBasicMaterial({ color: 0xff4500, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
- );
- group.add(outerFlame);
+ const meteor = new THREE.Group();
+ meteor.add(fxSprite(fxTex.fire, 3.1, 0, 0, 0, 0.95), fxSprite(fxTex.gold, 1.6, 0, 0, 0.01, 1), fxSprite(fxTex.white, 0.75, 0, 0, 0.02, 1));
+ group.add(meteor);
+ const trail = [];
+ for (let i = 0; i < 8; i++) {
+ const t = fxSprite(fxTex.fire, 1.9 - i * 0.15, 0, 0, -0.01 - i * 0.001, 0.8 - i * 0.08);
+ group.add(t);
+ trail.push(t);
+ }
 
+ const boom = fxSprite(fxTex.fire, 1, 0, 0.1, 0.03, 0);
+ const boomCore = fxSprite(fxTex.gold, 1, 0, 0.1, 0.04, 0);
+ const r1 = fxRing(0.5, 0.64, 0xff9a3c, 0);
+ const r2 = fxRing(0.3, 0.38, 0xffe28a, 0);
+ r1.position.z = 0.02;
+ r2.position.z = 0.025;
+ const impactFlash = fxSprite(fxTex.white, 5.5, 0, 0.1, 0.05, 0);
+ group.add(boom, boomCore, r1, r2, impactFlash);
  const embers = [];
- for (let i = 0; i < 14; i++) {
- const ang = Math.random() * Math.PI * 2;
- const spd = 2.0 + Math.random() * 3.5;
- const ember = new THREE.Mesh(
- new THREE.CircleGeometry(0.11 + Math.random() * 0.08, 8),
- new THREE.MeshBasicMaterial({
- color: i % 3 === 0 ? 0xffd33d : i % 3 === 1 ? 0xff7b72 : 0xff4500,
- transparent: true,
- opacity: 1
- })
- );
- group.add(ember);
- embers.push({ mesh: ember, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd + 1.5 });
+ for (let i = 0; i < 28; i++) {
+ const a = Math.random() * Math.PI * 2;
+ const sp = 2 + Math.random() * 4.5;
+ const e = fxQuad(0.1 + Math.random() * 0.08, 0.1 + Math.random() * 0.08, i % 3 === 0 ? 0xffd54a : i % 3 === 1 ? 0xff7a2a : 0xff4a1a, 1);
+ e.visible = false;
+ e.position.z = 0.05;
+ group.add(e);
+ embers.push({ mesh: e, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp * 0.8 + 1.2, rot: (Math.random() - 0.5) * 12 });
  }
 
- scene.add(group);
- activeFX.push({
- group,
- life: 0.55,
- maxLife: 0.55,
- update(dt, alpha) {
- const grow = 1 + (1 - alpha) * 0.85;
- coreFire.scale.setScalar(alpha * 1.2);
- coreFire.material.opacity = alpha;
- outerFlame.scale.setScalar(grow);
- outerFlame.material.opacity = alpha * 0.85;
- for (const em of embers) {
- em.mesh.position.x += em.vx * dt;
- em.mesh.position.y += em.vy * dt;
- em.mesh.scale.setScalar(alpha);
- em.mesh.material.opacity = alpha;
+ let hit = false;
+ addFX(group, LIFE, (dt, alpha) => {
+ const t = (1 - alpha) * LIFE;
+ if (t < FALL) {
+ const k = t / FALL;
+ const e = k * k;
+ const mx = fxLerp(1.1, 0, e);
+ const my = fxLerp(9, 0.15, e);
+ meteor.position.set(mx, my, 0.1);
+ meteor.scale.setScalar(fxLerp(0.7, 1.15, e));
+ scorch.scale.setScalar(1.0 + k * 1.2);
+ scorch.material.opacity = k * 0.45;
+ trail.forEach((s, i) => {
+ s.position.set(mx + 0.2 * (i + 1), my + 0.55 * (i + 1), -0.01 - i * 0.001);
+ s.material.opacity = Math.max(0, (0.8 - i * 0.09) * (1 - Math.min(1, (i * 0.15) / Math.max(0.05, k + 0.2)) * 0.4));
+ });
+ } else {
+ if (!hit) {
+ hit = true;
+ meteor.visible = false;
+ trail.forEach((s) => { s.visible = false; });
+ embers.forEach((e) => { e.mesh.visible = true; });
+ camShake = 0.4;
  }
+ const p = (t - FALL) / (LIFE - FALL);
+ boom.scale.setScalar(1.8 + easeOut(p) * 4.6);
+ boom.material.opacity = Math.max(0, 1 - p * 1.4);
+ boomCore.scale.setScalar(1.1 + easeOut(p) * 2.6);
+ boomCore.material.opacity = Math.max(0, 1 - p * 2.6);
+ impactFlash.material.opacity = Math.max(0, 1 - p * 7);
+ setRing(r1, 0.5 + easeOut(p) * 3.6, 0.04 + 0.2 * (1 - p));
+ r1.material.opacity = Math.max(0, 1 - p);
+ setRing(r2, 0.3 + easeOut(Math.min(1, p * 1.3)) * 2.3, 0.03 + 0.1 * (1 - p));
+ r2.material.opacity = Math.max(0, (1 - p) * 0.9);
+ scorch.scale.setScalar(2.7);
+ scorch.material.opacity = 0.55 * (1 - p * 0.85);
+ embers.forEach((e) => {
+ e.mesh.position.x += e.vx * dt;
+ e.mesh.position.y += e.vy * dt;
+ e.vy -= 3.2 * dt;
+ e.mesh.rotation.z += e.rot * dt;
+ e.mesh.material.opacity = Math.max(0, 1 - p * 1.25);
+ });
  }
  });
  }
 
- // 3. Petrificar: Rocas/grilletes grises cerrándose sobre el objetivo
+ // 3. Petrificar: cristales de piedra brotan alrededor, un anillo se cierra y sube polvo
  function spawnImmobilizeFX(targetPos) {
  const group = new THREE.Group();
- group.position.set(targetPos.x, targetPos.y + 0.25, 1.55);
-
- const ring = new THREE.Mesh(
- new THREE.RingGeometry(0.65, 0.92, 6),
- new THREE.MeshBasicMaterial({ color: 0xc9d1d9, side: THREE.DoubleSide, transparent: true, opacity: 0.95 })
- );
- group.add(ring);
-
- scene.add(group);
- activeFX.push({
- group,
- life: 0.42,
- maxLife: 0.42,
- update(dt, alpha) {
- ring.scale.setScalar(0.65 + alpha * 0.55);
- ring.rotation.z += dt * 6;
- ring.material.opacity = alpha;
+ group.position.set(targetPos.x, targetPos.y + 0.15, 1.55);
+ const flash = fxSprite(fxTex.gray, 3.8, 0, 0.25, 0.1, 0.9);
+ const ring = fxRing(0.6, 0.72, 0xdfe6ee, 0.95);
+ const hexRing = fxRing(0.28, 0.34, 0x9aa5b5, 0.9, 6);
+ hexRing.position.y = 0.1;
+ group.add(flash, ring, hexRing);
+ const shards = [];
+ const N = 10;
+ for (let i = 0; i < N; i++) {
+ const a = (i / N) * Math.PI * 2 + Math.random() * 0.25;
+ const sh = makeShard(0.75 + Math.random() * 0.55, 0.15 + Math.random() * 0.07, 0xe9eef5, 0x8794a6);
+ sh.position.set(Math.cos(a) * 0.8, Math.sin(a) * 0.42 - 0.12, 0.02 + (Math.sin(a) < 0 ? 0.03 : 0));
+ sh.rotation.z = -Math.cos(a) * 0.35;
+ sh.scale.y = 0.01;
+ group.add(sh);
+ shards.push(sh);
  }
+ const puffs = [];
+ for (let i = 0; i < 8; i++) {
+ const a = Math.random() * Math.PI * 2;
+ const m = new THREE.Mesh(
+ new THREE.CircleGeometry(0.08 + Math.random() * 0.08, 10),
+ new THREE.MeshBasicMaterial({ color: 0xaab3c0, transparent: true, opacity: 0.5, depthWrite: false })
+ );
+ m.position.set(Math.cos(a) * 0.4, Math.sin(a) * 0.2, 0.03);
+ group.add(m);
+ puffs.push({ mesh: m, vx: Math.cos(a) * 1.1, vy: Math.sin(a) * 0.6 + 0.5 });
+ }
+ addFX(group, 0.85, (dt, alpha) => {
+ const p = 1 - alpha;
+ flash.material.opacity = Math.max(0, 0.9 - p * 3.2);
+ setRing(ring, 1.5 - 0.6 * easeOut(Math.min(1, p / 0.3)), 0.12);
+ ring.material.opacity = Math.min(1, alpha * 1.6);
+ hexRing.rotation.z += dt * 5;
+ hexRing.material.opacity = alpha;
+ const grow = Math.max(0.01, easeOut(Math.min(1, p / 0.22)));
+ const op = Math.min(1, alpha * 1.8);
+ shards.forEach((s) => {
+ s.scale.y = grow;
+ s.children.forEach((c) => { c.material.opacity = op; });
+ });
+ puffs.forEach((pf) => {
+ pf.mesh.position.x += pf.vx * dt;
+ pf.mesh.position.y += pf.vy * dt;
+ pf.mesh.material.opacity = alpha * 0.5;
+ pf.mesh.scale.setScalar(1 + p * 1.2);
+ });
  });
  }
 
- // 4. Disipar: Columna de luz purificadora y destellos que quitan el gris
+ // 4. Disipar: columna de luz, anillos dorados y verdes, destellos en espiral y cadenas que se rompen
  function spawnCleanseFX(targetPos) {
  const group = new THREE.Group();
- group.position.set(targetPos.x, targetPos.y + 0.3, 1.6);
-
- const pillar = new THREE.Mesh(
- new THREE.PlaneGeometry(0.95, 2.4),
- new THREE.MeshBasicMaterial({ color: 0x56d364, transparent: true, opacity: 0.55 })
- );
- pillar.position.y = 0.5;
- group.add(pillar);
-
- const aura = new THREE.Mesh(
- new THREE.RingGeometry(0.4, 0.82, 24),
- new THREE.MeshBasicMaterial({ color: 0xf2cc60, side: THREE.DoubleSide, transparent: true, opacity: 0.95 })
- );
- group.add(aura);
-
- const stars = [];
- for (let i = 0; i < 10; i++) {
- const star = new THREE.Mesh(
- new THREE.CircleGeometry(0.09, 6),
- new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x7ee787 : 0xf2cc60, transparent: true, opacity: 1 })
- );
- star.position.set((Math.random() - 0.5) * 1.1, (Math.random() - 0.5) * 0.6, 0.1);
- group.add(star);
- stars.push({ mesh: star, vy: 2.2 + Math.random() * 2.0 });
+ group.position.set(targetPos.x, targetPos.y + 0.25, 1.6);
+ const pillar = fxSprite(fxTex.green, 1, 0, 0.7, 0.02, 0);
+ pillar.scale.set(2.1, 4.4, 1);
+ const beam = fxQuad(0.42, 3.4, 0xeaffd6, 0);
+ beam.position.set(0, 0.7, 0.03);
+ const halo = fxSprite(fxTex.white, 3.2, 0, 0.2, 0.04, 0.95);
+ const ringG = fxRing(0.4, 0.5, 0x7ee787, 0.9);
+ const ringY = fxRing(0.3, 0.36, 0xf2cc60, 0.9);
+ group.add(pillar, beam, halo, ringG, ringY);
+ const sparkles = [];
+ for (let i = 0; i < 14; i++) {
+ const s = fxSprite(i % 2 ? fxTex.gold : fxTex.green, 0.4, 0, 0, 0.06, 1);
+ group.add(s);
+ sparkles.push({ mesh: s, ang: (i / 14) * Math.PI * 2, rad: 0.35 + Math.random() * 0.25, spd: 1.4 + Math.random() * 1.4, y0: Math.random() * 0.3 });
  }
-
- scene.add(group);
- activeFX.push({
- group,
- life: 0.5,
- maxLife: 0.5,
- update(dt, alpha) {
- pillar.scale.x = alpha;
- pillar.material.opacity = alpha * 0.55;
- aura.scale.setScalar(1 + (1 - alpha) * 0.6);
- aura.material.opacity = alpha;
- for (const st of stars) {
- st.mesh.position.y += st.vy * dt;
- st.mesh.material.opacity = alpha;
+ const links = [];
+ for (let i = 0; i < 7; i++) {
+ const a = (i / 7) * Math.PI * 2 + Math.random() * 0.4;
+ const q = fxQuad(0.16, 0.06, 0x9aa5b5, 1, false);
+ q.position.set(Math.cos(a) * 0.2, Math.sin(a) * 0.12, 0.05);
+ group.add(q);
+ links.push({ mesh: q, vx: Math.cos(a) * 2.4, vy: Math.sin(a) * 1.5 + 0.8, rot: (Math.random() - 0.5) * 14 });
  }
- }
+ addFX(group, 0.85, (dt, alpha) => {
+ const p = 1 - alpha;
+ pillar.material.opacity = 1.0 * Math.sin(Math.min(1, p * 1.5) * Math.PI) * (p > 0.66 ? alpha * 3 : 1);
+ beam.material.opacity = Math.max(0, 0.9 - p * 1.2);
+ halo.scale.setScalar(1 + p * 0.8);
+ halo.material.opacity = Math.max(0, 0.9 - p * 2.4);
+ setRing(ringG, 0.45 + easeOut(p) * 1.8, 0.03 + 0.1 * alpha);
+ ringG.material.opacity = alpha;
+ const q = Math.max(0, p - 0.15);
+ setRing(ringY, 0.33 + easeOut(Math.min(1, q * 1.3)) * 1.4, 0.02 + 0.07 * alpha);
+ ringY.material.opacity = Math.max(0, alpha * 0.9);
+ sparkles.forEach((s) => {
+ s.ang += dt * s.spd * 3;
+ const r = s.rad * (1 - p * 0.35);
+ s.mesh.position.x = Math.cos(s.ang) * r;
+ s.mesh.position.y = s.y0 + p * 2.2 * s.spd * 0.7;
+ s.mesh.material.opacity = Math.min(1, alpha * 1.6);
+ });
+ links.forEach((l) => {
+ l.mesh.position.x += l.vx * dt;
+ l.mesh.position.y += l.vy * dt;
+ l.vy -= 3.0 * dt;
+ l.mesh.rotation.z += l.rot * dt;
+ l.mesh.material.opacity = Math.max(0, alpha * 1.5 - 0.1);
+ });
  });
  }
+
 
  // 5. Efecto cuando fallás el clic del hechizo
  function spawnMissFX(targetPos, color) {
@@ -2230,14 +2525,15 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  : `<path d="M10 1.5 V11 H18.5 V10 A8.5 8.5 0 0 0 10 1.5 Z" fill="#d4a64a"/>`) +
  `<path d="M10 1.5 V11 M1.5 11 H18.5" stroke="#4b5566" stroke-width="1" fill="none"/></svg>`;
  const hex = (n) => '#' + n.toString(16).padStart(6, '0');
+ const ico = (name) => `<svg class="ico"><use href="#ico-${name}"/></svg>`;
  const tile = (icon, name, keysHtml, accent) =>
  `<div class="t" style="--accent:${accent || '#2a313c'}"><div class="t-ico">${icon}</div><div class="t-keys">${keysHtml}</div><div class="t-name">${name}</div></div>`;
 
  const spellTiles = [
- ['⛓️', 'Petrificar', 'spell1', 1],
- ['⚡', 'Descarga Espectral', 'spell2', 2],
- ['🔥', 'Cataclismo', 'spell3', 3],
- ['✨', 'Disipar', 'spell4', 4]
+ [ico('petrify'), 'Petrificar', 'spell1', 1],
+ [ico('spectral'), 'Descarga Espectral', 'spell2', 2],
+ [ico('cataclysm'), 'Cataclismo', 'spell3', 3],
+ [ico('dispel'), 'Disipar', 'spell4', 4]
  ].map(([ico, name, act, id]) => tile(ico, name, kc(act), hex(SPELLS[id].color))).join('');
 
  el.innerHTML =
@@ -2250,10 +2546,10 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  `<div class="g-cards">${spellTiles}</div>` +
  `<div class="g-label">ACCIONES</div>` +
  `<div class="g-cards">` +
- tile('⚔️', 'Espada', `${kc('sword')}${mouse('right')}`) +
- tile('🛡️', 'Escudo', kc('shield')) +
- tile('🧪', 'Poción vida', kc('potHp')) +
- tile('💧', 'Poción maná', kc('potMp')) +
+ tile(ico('sword'), 'Espada', `${kc('sword')}${mouse('right')}`) +
+ tile(ico('shield'), 'Escudo', kc('shield')) +
+ tile(ico('potion-hp'), 'Poción vida', kc('potHp')) +
+ tile(ico('potion-mp'), 'Poción maná', kc('potMp')) +
  `</div>` +
  `<div class="g-foot">Juntá orbes y eliminá rivales para sumar puntos · <span class="kc kc-s">Esc</span> menú</div>`;
  }
@@ -3467,6 +3763,11 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  const camSmooth = 1 - Math.exp(-10 * dt);
  camera.position.x = THREE.MathUtils.lerp(camera.position.x, player.position.x, camSmooth);
  camera.position.y = THREE.MathUtils.lerp(camera.position.y, player.position.y, camSmooth);
+ if (camShake > 0) {
+ camera.position.x += (Math.random() - 0.5) * camShake;
+ camera.position.y += (Math.random() - 0.5) * camShake;
+ camShake = Math.max(0, camShake - dt * 1.4);
+ }
 
  if (net.playing) {
  // HUD
@@ -3516,7 +3817,7 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
 
  // Acceso para pruebas desde la consola del navegador
- window.__arcane = { frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
+ window.__arcane = { fx: { petrify: spawnImmobilizeFX, spectral: spawnLightningFX, cataclysm: spawnApocalypseFX, dispel: spawnCleanseFX }, frame, net, ents, orbs, pred, pending, sendNet, castSelectedSpell, setSpellCursor, get hp() { return playerHp; }, get mp() { return playerMp; } };
 
  animate();
 
