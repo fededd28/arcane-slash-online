@@ -14,7 +14,7 @@ corto y claro.
 
 ## Comandos (desde `E:\arcane-slash-online`)
 ```
-npm test          # 49 pruebas de las reglas del servidor (deben dar 0 fallas)
+npm test          # 51 pruebas de las reglas del servidor (deben dar 0 fallas)
 npm run dev       # servidor local en http://localhost:8787 (reiniciar para ver cambios de public/)
 node test/e2e.mjs [ws://127.0.0.1:8787/ws]   # prueba de punta a punta (con npm run dev andando)
 git add . && git commit -m "..." && git push
@@ -49,8 +49,12 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
 - **Idiomas (es/en):** todos los textos están en la tabla `I18N` de `public/index.html` (función `t(clave)`; en el HTML, `data-i18n`). Se elige por el idioma del navegador y hay botón 🌐. Los avisos del servidor (`toast`) mandan una clave (`k`) y datos (`a`), no texto: la traducción `srv.<clave>` está en la tabla. Todo texto nuevo va en los dos idiomas.
 
 ## Reglas vigentes que NO hay que romper sin preguntar
-- Un hechizo que **falla no gasta maná** (sí respeta el intervalo de 1,4 s). No se puede **petrificar a un petrificado**.
+- Un hechizo que **falla no gasta maná**, pero deja una **espera corta de 0,4 s** (`SPELL_MISS_INTERVAL`; si fuera 0 se podría ametrallar:
+  80 efectos/s para todos y apuntar gratis a fuerza bruta). Acertar sí activa el intervalo de 1,4 s. No se puede **petrificar a un petrificado**.
 - Los hechizos **no esperan** a la poción; tras un hechizo la poción espera 0,3 s. Un petrificado **no se empuja**.
+- **Celular:** hay controles táctiles (joystick, botones, arrastrar el hechizo hasta el rival). Se activan con `IS_TOUCH` (puntero principal
+  táctil; una notebook con pantalla táctil y mouse usa la interfaz de escritorio). Cada botón de la barra (hechizos, espada, pociones, dash)
+  muestra su espera con `setSlotCd`.
 - El menú (Esc) **no pausa** el juego. El **maná solo se ve en el propio personaje**. Los efectos visuales son **chicos y cortos**.
 - Panel de arriba a la izquierda: solo **Pantalla Completa, Menú y ping** (los demás elementos existen ocultos: el código escribe en ellos,
   **no los borres**). Valores y fórmulas completos: `public/shared.js` y `HISTORIAL.md`.
@@ -64,6 +68,10 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
 - En PowerShell/Git Bash las rutas cambian (`E:\...` vs `/e/...`); `node -e` con comillas complicadas falla: usá un archivo `.mjs`.
 - **No matar procesos por nombre** (el sistema lo bloquea): para procesos propios usá `TaskStop`. Pueden quedar `workerd` huérfanos de
   pruebas viejas en puertos 8787/8790/8792; usá otro puerto.
+- **Los archivos de trabajo usan fin de línea de Windows (CRLF).** Al parchear con scripts, convertí a LF antes de buscar texto de varias
+  líneas y escribí con el formato original; si no, la búsqueda no coincide. No lo compruebes con `grep` en Git Bash (no lo detecta bien):
+  leé el archivo con `node` y fijate si contiene el par de caracteres retorno de carro + salto de línea. No escribas esos caracteres
+  en los textos que insertás (rompe el archivo: Git lo toma como binario).
 - **No instalar `node_modules` dentro de OneDrive.** Esta carpeta (`E:`) está fuera de OneDrive a propósito.
 
 ## Dónde está lo demás
