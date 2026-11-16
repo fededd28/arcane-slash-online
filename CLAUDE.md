@@ -60,7 +60,7 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
   1–4 hechizos, **Q** poción de vida y **E** poción de maná, Esc menú. Quien ya guardó sus teclas conserva las suyas hasta usar
   "Restaurar controles" en el menú.
 - El menú (Esc) **no pausa** el juego. El **maná solo se ve en el propio personaje**. Los efectos visuales son **chicos y cortos**.
-- Panel de arriba a la izquierda: solo **Pantalla Completa, Menú y ping** (los demás elementos existen ocultos: el código escribe en ellos,
+- Panel de arriba a la izquierda: solo **Pantalla Completa y Menú**; el **ping** se muestra adentro del menú (los demás elementos existen ocultos: el código escribe en ellos,
   **no los borres**). Valores y fórmulas completos: `public/shared.js` y `HISTORIAL.md`.
 
 ## Pruebas y trampas conocidas

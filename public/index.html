@@ -590,7 +590,7 @@
  .menu-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; }
 
  .menu-panel { background: #10151e; border-color: var(--panel-border); }
- .menu-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 14px; color: var(--gold-bright); letter-spacing: 1px; }
+ .menu-title { display: flex; align-items: baseline; gap: 6px; font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 14px; color: var(--gold-bright); letter-spacing: 1px; }
  .menu-label { color: var(--gold); }
  .menu-btn:hover, .key-btn:hover { border-color: var(--gold); }
  .vol-row input[type=range] { accent-color: var(--gold); }
@@ -743,13 +743,13 @@
  .net-title { font-size: 20px; font-weight: 800; color: #e5484d; }
  .net-msg { margin-top: 8px; min-height: 16px; font-size: 12px; color: #ff7b72; text-align: center; }
  #play-btn:disabled { opacity: 0.6; cursor: wait; }
- #ping { color: var(--steel); font-size: 11px; font-weight: 600; align-self: center; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+ #ping { color: var(--steel); font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
  #ping.ping-good { color: #56d364; }
  #ping.ping-warn { color: #e3b341; }
  #ping.ping-bad { color: #ff7b72; }
  #hud { padding: 8px 10px; }
  #hud .hud-btns { margin-top: 0; flex-wrap: nowrap; align-items: center; }
- #hud .hud-btns button { white-space: nowrap; padding: 5px 10px; }
+ #hud .hud-btns button { flex: 1; white-space: nowrap; padding: 5px 10px; }
 
  /* ===================== Celular / tablet (body.touch) ===================== */
  .touch-only { display: none; }
@@ -975,7 +975,7 @@
  </div>
 
  <div id="hud" class="panel">
- <div class="hud-btns"><button id="fullscreen-btn" type="button" data-i18n="fs.off">⛶ Pantalla Completa</button><button id="menu-btn" type="button" title="Menú (Esc)" data-i18n="menu.btn" data-i18n-title="menu.btnTitle">☰ Menú</button><span id="ping">— ms</span></div>
+ <div class="hud-btns"><button id="fullscreen-btn" type="button" data-i18n="fs.off">⛶ Pantalla Completa</button><button id="menu-btn" type="button" title="Menú (Esc)" data-i18n="menu.btn" data-i18n-title="menu.btnTitle">☰ Menú</button></div>
  <!-- Estos elementos siguen existiendo (el juego escribe en ellos) pero están ocultos -->
  <div id="hud-hidden" hidden>
  <div id="stats-row"><span id="coords">Pos: (0.0, 0.0)</span><span id="status-badge" class="badge badge-libre">Libre</span></div>
@@ -1111,7 +1111,7 @@
 
  <div id="pause-menu">
  <div class="menu-panel">
- <div class="menu-title"><span data-i18n="menu.title">⚙ Menú</span> <small style="font-size:12px;font-weight:600;color:#8a96a6" data-i18n="menu.sub">· el juego sigue en marcha</small></div>
+ <div class="menu-title"><span data-i18n="menu.title">⚙ Menú</span> <small style="font-size:12px;font-weight:600;color:#8a96a6" data-i18n="menu.sub">· el juego sigue en marcha</small><span id="ping">— ms</span></div>
  <div class="menu-section">
  <div class="menu-label" data-i18n="menu.volume">Volumen</div>
  <div class="vol-row">
