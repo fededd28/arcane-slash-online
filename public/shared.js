@@ -38,8 +38,8 @@ export const DASH_SPEED = 16.5;
 export const SPELLS = {
   1: { id: 1, name: 'Petrificar', mana: 60, color: 0x9ea7b3, damage: 10, immobilize: 6.0 },
   2: { id: 2, name: 'Descarga Espectral', mana: 50, color: 0x58a6ff, damage: 45, immobilize: 0 },
-  3: { id: 3, name: 'Cataclismo', mana: 200, color: 0xff6b35, damage: 85, immobilize: 0 },
-  4: { id: 4, name: 'Disipar', mana: 150, color: 0x3fb950, damage: 0, cleanse: true }
+  3: { id: 3, name: 'Cataclismo', mana: 180, color: 0xff6b35, damage: 85, immobilize: 0 },
+  4: { id: 4, name: 'Disipar', mana: 140, color: 0x3fb950, damage: 0, cleanse: true }
 };
 
 // --- Puntos ---
