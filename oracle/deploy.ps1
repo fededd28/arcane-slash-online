@@ -2,7 +2,7 @@
 # Uso (desde la carpeta del proyecto):  .\oracle\deploy.ps1
 param(
   [string]$Ip  = "146.181.34.17",
-  [string]$Key = "$env:USERPROFILE\Downloads\ssh-key-2026-11-15.key"
+  [string]$Key = "$env:USERPROFILE\.ssh\ssh-key-2026-11-15.key"
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path $PSScriptRoot -Parent
