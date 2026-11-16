@@ -3,7 +3,7 @@
 // No depende de Cloudflare: se puede probar directo con Node.
 // ============================================================================
 import {
-  TICK_DT, MAX_HP, MAX_MP, SPELLS, SCORE, OBSTACLES, HALF_MAP, ORB_COUNT, SPAWN_POINTS, PLAYER_COLORS,
+  TICK_DT, MAX_HP, MAX_MP, LEADER_HP_BONUS, LEADER_MP_BONUS, SPELLS, SCORE, OBSTACLES, HALF_MAP, ORB_COUNT, SPAWN_POINTS, PLAYER_COLORS,
   SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, MELEE_INTERVAL, MELEE_DAMAGE, POTION_COOLDOWN_TOTAL, POTION_HP_AMOUNT,
   POTION_MP_AMOUNT, RESPAWN_TIME, BOT_POTION_INTERVAL, CHARACTER_RADIUS, BASE_SPEED,
   clamp, resolveEnvironmentCollisions, separatePair, stepPlayerMovement, dirFromVector
@@ -71,7 +71,7 @@ export class Game {
   makeEntity(name, color, isBot) {
     return {
       id: this.nextId++, name, color, isBot,
-      x: 0, y: 0, dir: 0, hp: MAX_HP, mp: MAX_MP,
+      x: 0, y: 0, dir: 0, hp: MAX_HP, mp: MAX_MP, maxHp: MAX_HP, maxMp: MAX_MP,
       score: 0, kills: 0, deaths: 0, streak: 0, lastKills: {},
       imm: 0, dead: false, deadT: 0, blocking: false, moving: false,
       dashT: 0, dashCd: 0, shieldT: 0, shieldCd: 0, lastDx: 0, lastDy: -1,
@@ -208,7 +208,7 @@ export class Game {
       e.score += o.big ? SCORE.orbBig : SCORE.orbSmall;
       this.ev(['oc', i, e.id]);
       if (wasLeader) {
-        const amount = Math.round(MAX_HP * (o.big ? SCORE.leaderOrbHealBig : SCORE.leaderOrbHealSmall));
+        const amount = Math.round(e.maxHp * (o.big ? SCORE.leaderOrbHealBig : SCORE.leaderOrbHealSmall));
         this.heal(e, amount, true);
         this.ev(['po', r2(e.x), r2(e.y), 2]);
       }
@@ -233,7 +233,7 @@ export class Game {
   }
 
   heal(e, amount, show = false) {
-    const got = Math.min(MAX_HP, e.hp + amount) - e.hp;
+    const got = Math.min(e.maxHp, e.hp + amount) - e.hp;
     e.hp += got;
     if (got > 0 && show) this.ev(['hl', r2(e.x), r2(e.y), Math.round(got), e.id]);
   }
@@ -312,12 +312,28 @@ export class Game {
       if (!best || e.score > best.score || (e.score === best.score && e.deaths < best.deaths)) best = e;
     }
     this.leaderId = best && best.score > 0 ? best.id : 0;
+    for (const e of this.entities.values()) this.applyLeaderLimits(e, e.id === this.leaderId);
+  }
+
+  // El líder tiene más vida/maná máximos. Al subir se escalan los valores actuales
+  // (mismo porcentaje); al bajar solo se recortan si pasan el nuevo máximo.
+  applyLeaderLimits(e, isLeader) {
+    const maxHp = MAX_HP + (isLeader ? LEADER_HP_BONUS : 0);
+    const maxMp = MAX_MP + (isLeader ? LEADER_MP_BONUS : 0);
+    if (e.maxHp === maxHp && e.maxMp === maxMp) return;
+    if (!e.dead) {
+      if (maxHp > e.maxHp) e.hp = Math.min(maxHp, e.hp * maxHp / e.maxHp);
+      if (maxMp > e.maxMp) e.mp = Math.min(maxMp, e.mp * maxMp / e.maxMp);
+    }
+    e.maxHp = maxHp; e.maxMp = maxMp;
+    e.hp = Math.min(e.hp, maxHp);
+    e.mp = Math.min(e.mp, maxMp);
   }
 
   respawn(e) {
     e.dead = false;
-    e.hp = MAX_HP;
-    e.mp = MAX_MP;
+    e.hp = e.maxHp;
+    e.mp = e.maxMp;
     e.imm = 0;
     e.dir = 0;
     e.blocking = false;
@@ -484,13 +500,13 @@ export class Game {
 
     // Pociones
     if (ai.potionCooldown <= 0) {
-      if (b.hp < MAX_HP * 0.4) {
+      if (b.hp < b.maxHp * 0.4) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
         this.heal(b, POTION_HP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 0]);
       } else if (b.mp < 70) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
-        b.mp = Math.min(MAX_MP, b.mp + POTION_MP_AMOUNT);
+        b.mp = Math.min(b.maxMp, b.mp + POTION_MP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 1]);
       }
     }
@@ -594,13 +610,13 @@ export class Game {
       e.shieldCd = Math.max(0, e.shieldCd - dt);
       if (e.imm > 0) e.blocking = false;
       // Pociones manteniendo apretado
-      if (e.input.ph === 1 && e.hp < MAX_HP && e.potCd <= 0) {
+      if (e.input.ph === 1 && e.hp < e.maxHp && e.potCd <= 0) {
         e.potCd = POTION_COOLDOWN_TOTAL;
         this.heal(e, POTION_HP_AMOUNT);
         this.ev(['po', r2(e.x), r2(e.y), 0]);
-      } else if (e.input.ph === 2 && e.mp < MAX_MP && e.potCd <= 0) {
+      } else if (e.input.ph === 2 && e.mp < e.maxMp && e.potCd <= 0) {
         e.potCd = POTION_COOLDOWN_TOTAL;
-        e.mp = Math.min(MAX_MP, e.mp + POTION_MP_AMOUNT);
+        e.mp = Math.min(e.maxMp, e.mp + POTION_MP_AMOUNT);
         this.ev(['po', r2(e.x), r2(e.y), 1]);
       }
     }
@@ -655,7 +671,7 @@ export class Game {
       const flags = (e.blocking ? 1 : 0) | (e.imm > 0 ? 2 : 0) | (e.dead ? 4 : 0) | (e.swingT > 0 ? 8 : 0) | (e.moving ? 16 : 0);
       p.push([e.id, r2(e.x), r2(e.y), e.dir, Math.ceil(e.hp), e === me ? Math.floor(e.mp) : -1, flags]);
     }
-    const snap = { t: 's', tk: this.tick, st: Math.round(this.time * 1000), p, ev: this.events };
+    const snap = { t: 's', ld: this.leaderId, tk: this.tick, st: Math.round(this.time * 1000), p, ev: this.events };
     if (me) {
       snap.me = {
         ack: me.ack, hp: Math.ceil(me.hp), mp: Math.floor(me.mp),

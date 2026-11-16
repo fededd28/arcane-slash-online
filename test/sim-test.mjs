@@ -1,6 +1,6 @@
 // Pruebas de las reglas del servidor (sin Cloudflare): node test/sim-test.mjs
 import { Game, sanitizeName } from '../src/sim.js';
-import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME } from '../public/shared.js';
+import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME, LEADER_HP_BONUS, LEADER_MP_BONUS } from '../public/shared.js';
 
 let failed = 0;
 let passed = 0;
@@ -141,7 +141,7 @@ console.log('Espada, muertes y puntos');
   c.score = 0; b.score = 2000; b.streak = 5; a.score = 0;
   g.update(TICK_DT);
   g.handleMelee(a.id);
-  check('la espada hace 70 de daño a un rival pegado', b.hp === MAX_HP - MELEE_DAMAGE, `hp=${b.hp}`);
+  check('la espada hace 70 de daño a un rival pegado', b.hp === b.maxHp - MELEE_DAMAGE, `hp=${b.hp}`);
   b.hp = 10; run(g, 1.6);
   g.handleMelee(a.id);
   check('al morir el rival queda muerto', b.dead === true);
@@ -150,7 +150,7 @@ console.log('Espada, muertes y puntos');
   check('se registra la baja y la racha', a.kills === 1 && a.streak === 1 && b.streak === 0);
   check('hay un evento de baja', g.events.some((e) => e[0] === 'kl' && e[1] === a.id && e[2] === b.id));
   run(g, RESPAWN_TIME + 0.2);
-  check('el muerto reaparece con vida completa', b.dead === false && b.hp === MAX_HP);
+  check('el muerto reaparece con vida completa', b.dead === false && b.hp === b.maxHp);
 }
 
 console.log('Escudo');
@@ -199,7 +199,7 @@ console.log('Orbes y ventaja del líder');
   a.hp = 100;
   g.orbs[2].x = 0; g.orbs[2].y = 0; g.orbs[2].active = true; g.orbs[2].big = true;
   g.update(TICK_DT);
-  check('el líder se cura 15% con un orbe dorado', a.hp === 100 + 45, `hp=${a.hp}`);
+  check('el líder se cura 15% (de su vida máxima) con un orbe dorado', a.hp === 100 + Math.round(a.maxHp * 0.15), `hp=${a.hp}`);
   const b = g.addPlayer('B', 1); place(b, 20, 0); b.hp = 100;
   g.orbs[3].x = 20; g.orbs[3].y = 0; g.orbs[3].active = true; g.orbs[3].big = true;
   g.update(TICK_DT);

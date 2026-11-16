@@ -1136,7 +1136,7 @@
 
 <script type="module">
  import {
- PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
+ PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, LEADER_HP_BONUS, LEADER_MP_BONUS, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
  SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, DASH_COOLDOWN_TOTAL, SHIELD_COOLDOWN, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
  clamp, separatePair, stepPlayerMovement, dirFromVector
  } from './shared.js';
@@ -3210,7 +3210,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  c.dir = DIR_NAMES[b.dir] || 'front';
  c.isBlocking = !!(b.flags & 1);
  c.root.visible = !e.dead && e.seen;
- c.hpBar.scale.x = Math.max(0.001, b.hp / MAX_HP);
+ c.hpBar.scale.x = Math.max(0.001, b.hp / maxHpOf(e.id));
  updateWarlockVisuals(c, dt, !!(b.flags & 16), !!(b.flags & 2));
  }
  }
@@ -3402,7 +3402,12 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  }
 
  // ---------- Mensajes de la red ----------
- function onSnapshot(s) {
+ // Máximos de vida/maná: el líder (#1) tiene un extra
+let snapLeaderId = 0;
+const maxHpOf = (id) => MAX_HP + (id === snapLeaderId ? LEADER_HP_BONUS : 0);
+const maxMpOf = (id) => MAX_MP + (id === snapLeaderId ? LEADER_MP_BONUS : 0);
+function onSnapshot(s) {
+ snapLeaderId = s.ld || 0;
  net.offset = net.offset === null ? s.st - performance.now() : net.offset * 0.9 + (s.st - performance.now()) * 0.1;
  // Primero los eventos (pueden crear personajes), después las posiciones
  for (const ev of s.ev) handleEvent(ev);
@@ -3708,8 +3713,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  playerChar.isBlocking = !dead && !frozen && pred.shieldT > 0;
  if (!dead && !frozen && hasDir) playerChar.dir = DIR_NAMES[dirFromVector(currentInput.mx, currentInput.my, 0)];
  player.visible = !dead;
- playerChar.hpBar.scale.x = Math.max(0.001, playerHp / MAX_HP);
- playerChar.mpBar.scale.x = Math.max(0.001, playerMp / MAX_MP);
+ playerChar.hpBar.scale.x = Math.max(0.001, playerHp / maxHpOf(net.myId));
+ playerChar.mpBar.scale.x = Math.max(0.001, playerMp / maxMpOf(net.myId));
  updateWarlockVisuals(playerChar, dt, !dead && !frozen && (hasDir || pred.dashT > 0), frozen);
  }
 
@@ -4634,15 +4639,15 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  scoreTextEl.textContent = fmtScore(playerStats.score);
  streakTextEl.textContent = playerStats.streak;
  killsEl.textContent = playerStats.kills;
- hpTextEl.textContent = `${Math.ceil(playerHp)} / ${MAX_HP}`;
- mpTextEl.textContent = `${Math.floor(playerMp)} / ${MAX_MP}`;
- hpFillEl.style.width = `${(playerHp / MAX_HP) * 100}%`;
- mpFillEl.style.width = `${(playerMp / MAX_MP) * 100}%`;
+ hpTextEl.textContent = `${Math.ceil(playerHp)} / ${maxHpOf(net.myId)}`;
+ mpTextEl.textContent = `${Math.floor(playerMp)} / ${maxMpOf(net.myId)}`;
+ hpFillEl.style.width = `${(playerHp / maxHpOf(net.myId)) * 100}%`;
+ mpFillEl.style.width = `${(playerMp / maxMpOf(net.myId)) * 100}%`;
 
  if (playerHp < prevHpVis - 1 && playerDeadTimer <= 0) dmgFlashT = 0.25;
  prevHpVis = playerHp;
  dmgFlashT = Math.max(0, dmgFlashT - dt);
- const lowHp = playerDeadTimer <= 0 && playerHp > 0 && playerHp <= MAX_HP * 0.25;
+ const lowHp = playerDeadTimer <= 0 && playerHp > 0 && playerHp <= maxHpOf(net.myId) * 0.25;
  dmgVignetteEl.classList.toggle('low-hp', lowHp);
  dmgVignetteEl.style.opacity = dmgFlashT > 0 ? Math.min(0.85, 0.35 + dmgFlashT * 2).toFixed(2) : '';
 

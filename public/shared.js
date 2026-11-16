@@ -4,7 +4,7 @@
 // así el servidor y el cliente calculan exactamente lo mismo.
 // ============================================================================
 
-export const PROTOCOL_VERSION = 3;
+export const PROTOCOL_VERSION = 4;
 
 // --- Tiempos de la simulación ---
 export const TICK_RATE = 20; // el servidor actualiza el mundo 20 veces por segundo
@@ -27,6 +27,8 @@ export const POTION_MP_AMOUNT = 30;
 export const RESPAWN_TIME = 5.0;
 export const MAX_HP = 300;
 export const MAX_MP = 300;
+export const LEADER_HP_BONUS = 100; // el líder (#1) tiene +100 de vida máxima
+export const LEADER_MP_BONUS = 50;  // y +50 de maná máximo
 export const BOT_POTION_INTERVAL = 2.2;
 
 export const CHARACTER_RADIUS = 0.38;
