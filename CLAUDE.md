@@ -21,6 +21,9 @@ git add . && git commit -m "..." && git push
 npm run deploy    # publica en Cloudflare (también hace falta si solo cambió el navegador)
 .\oracle\deploy.ps1   # publica en la máquina de Oracle (https://arcaneslash.duckdns.org); es otro deploy, independiente del de Cloudflare
 ```
+**Publicar "en ambos"** (cuando lo pida): no hace falta leer los scripts, ya están revisados. Desde una rama de trabajo: `git push origin HEAD:main`,
+después en `E:\arcane-slash-online` (ahí está `node_modules`): `git pull --ff-only`, `npm run deploy` y `.\oracle\deploy.ps1` (empaqueta `public/` y `src/`,
+lo sube por SSH y reinicia el servicio; termina con `active` y `ok`). Para comprobar: bajar `/shared.js` de los dos sitios y ver el valor cambiado.
 Repo: `https://github.com/fededd28/arcane-slash-online` (rama `main`). Identidad de Git configurada **solo en este repo**.
 Los commits llevan al final: `Co-Authored-By: Claude <noreply@anthropic.com>` (usá el modelo que corresponda).
 
