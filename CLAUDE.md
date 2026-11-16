@@ -85,5 +85,5 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
 - `C:\Users\fede_\OneDrive\Documents\juego en 2d\arcane-slash-online` es una **copia de apoyo** vieja de este repo (puede ir atrasada).
 - **Servidor de Oracle** (VM gratis en Chile; mismo juego pero con servidor Node: `oracle/server.ts` + `src/room-node.js`, comparten `public/` y `src/sim.js`).
   Se sube con `.\oracle\deploy.ps1` (hay que pedirlo: no publicar sin que lo pida). Si cambia `src/room.js` (Cloudflare), revisar si `src/room-node.js` necesita lo mismo.
-  Cómo está armada la máquina, los firewalls y cómo agregar otro juego: `oracle/LEEME-VM.md` (solo local, tiene IP y rutas; copia en `juego en 2d\Guia - Servidor Oracle.md`).
+  Cómo está armada la máquina, los firewalls y cómo agregar otro juego: `oracle/LEEME-VM.md` (ahora va en git; sin claves; copia en `juego en 2d\Guia - Servidor Oracle.md`).
 - Guía de comandos de Git y Cloudflare para juegos nuevos: `Guia de comandos - Git y Cloudflare.md` (carpeta `juego en 2d`).
