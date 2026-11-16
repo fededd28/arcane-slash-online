@@ -206,6 +206,19 @@ console.log('Orbes y ventaja del líder');
   check('quien no es líder no se cura', b.hp === 100);
 }
 
+console.log('Los bots toman la poción de vida apenas les pegan');
+{
+  const g = new Game();
+  const bot = [...g.entities.values()].find((e) => e.isBot);
+  bot.hp = 250; // le pegaron (no está bajo 40%)
+  const antes = bot.hp;
+  run(g, 0.2);
+  check('el bot empieza a curarse enseguida (menos de 0,2 s)', bot.hp > antes || bot.dead, 'hp=' + bot.hp);
+  bot.hp = 100; const h0 = bot.hp;
+  run(g, 1.5);
+  check('y sigue tomando mientras le falte vida (como mantener la tecla)', bot.hp >= h0 + 90 || bot.dead, 'hp=' + bot.hp);
+}
+
 console.log('Bots y población');
 {
   const g = new Game();

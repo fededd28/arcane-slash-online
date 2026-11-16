@@ -499,12 +499,14 @@ export class Game {
     }
 
     // Pociones
-    if (ai.potionCooldown <= 0) {
-      if (b.hp < b.maxHp * 0.4) {
-        ai.potionCooldown = BOT_POTION_INTERVAL;
-        this.heal(b, POTION_HP_AMOUNT);
-        this.ev(['po', r2(b.x), r2(b.y), 0]);
-      } else if (b.mp < 70) {
+    // Vida: como un jugador que mantiene apretada la tecla; en cuanto le pegan empieza a tomar (cada POTION_COOLDOWN_TOTAL)
+    ai.hpPotCd = Math.max(0, (ai.hpPotCd || 0) - dt);
+    if (b.hp < b.maxHp && ai.hpPotCd <= 0) {
+      ai.hpPotCd = POTION_COOLDOWN_TOTAL;
+      this.heal(b, POTION_HP_AMOUNT);
+      this.ev(['po', r2(b.x), r2(b.y), 0]);
+    } else if (ai.potionCooldown <= 0) {
+      if (b.mp < 70) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
         b.mp = Math.min(b.maxMp, b.mp + POTION_MP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 1]);
