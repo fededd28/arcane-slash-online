@@ -20,7 +20,7 @@ export const MELEE_INTERVAL = 1.5;
 // Escudo: un golpe corto (no se mantiene). Dura SHIELD_TIME y después espera SHIELD_COOLDOWN
 export const SHIELD_TIME = 0.8;
 export const SHIELD_COOLDOWN = 8.0;
-export const MELEE_DAMAGE = 100;
+export const MELEE_DAMAGE = 125;
 export const POTION_COOLDOWN_TOTAL = 0.3;
 export const POTION_HP_AMOUNT = 30;
 export const POTION_MP_AMOUNT = 30;

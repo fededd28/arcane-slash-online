@@ -141,7 +141,7 @@ console.log('Espada, muertes y puntos');
   c.score = 0; b.score = 2000; b.streak = 5; a.score = 0;
   g.update(TICK_DT);
   g.handleMelee(a.id);
-  check('la espada hace 100 de daño a un rival pegado', b.hp === b.maxHp - MELEE_DAMAGE, `hp=${b.hp}`);
+  check('la espada hace 125 de daño a un rival pegado', b.hp === b.maxHp - MELEE_DAMAGE, `hp=${b.hp}`);
   b.hp = 10; run(g, 1.6);
   g.handleMelee(a.id);
   check('al morir el rival queda muerto', b.dead === true);
