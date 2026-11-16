@@ -1,6 +1,6 @@
 // Pruebas de las reglas del servidor (sin Cloudflare): node test/sim-test.mjs
 import { Game, sanitizeName } from '../src/sim.js';
-import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME } from '../public/shared.js';
+import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME, LEADER_HP_BONUS, LEADER_MP_BONUS } from '../public/shared.js';
 
 let failed = 0;
 let passed = 0;
@@ -51,7 +51,7 @@ console.log('Hechizos');
   place(a, 0, 0); place(b, 5, 0);
   g.update(TICK_DT);
   g.handleCast(a.id, { id: 2, x: 5, y: 0.3, rt: g.time * 1000 });
-  check('Descarga Espectral hace 45 de daño', b.hp === MAX_HP - 45, `hp=${b.hp}`);
+  check('Descarga Espectral hace 64 de daño', b.hp === MAX_HP - 64, `hp=${b.hp}`);
   check('gasta maná y empieza el intervalo', a.mp === MAX_MP - 50 && a.spellCd > 1.3);
   const hp1 = b.hp;
   g.handleCast(a.id, { id: 2, x: 5, y: 0.3, rt: g.time * 1000 });
@@ -69,8 +69,8 @@ console.log('Hechizos');
   run(g, 1.5);
   g.handleCast(a.id, { id: 4, x: 5, y: 0.3, rt: g.time * 1000 });
   check('Disipar le saca la petrificación', b.imm === 0);
-  // fallar
-  run(g, 1.5);
+  // fallar (se repone el maná: Descarga + Petrificar + Disipar ya gastaron casi todo)
+  run(g, 1.5); a.mp = MAX_MP;
   const hp2 = b.hp;
   const mpAntes = a.mp;
   g.handleCast(a.id, { id: 2, x: 12, y: 3, rt: g.time * 1000 });
@@ -141,7 +141,7 @@ console.log('Espada, muertes y puntos');
   c.score = 0; b.score = 2000; b.streak = 5; a.score = 0;
   g.update(TICK_DT);
   g.handleMelee(a.id);
-  check('la espada hace 70 de daño a un rival pegado', b.hp === MAX_HP - MELEE_DAMAGE, `hp=${b.hp}`);
+  check('la espada hace 125 de daño a un rival pegado', b.hp === b.maxHp - MELEE_DAMAGE, `hp=${b.hp}`);
   b.hp = 10; run(g, 1.6);
   g.handleMelee(a.id);
   check('al morir el rival queda muerto', b.dead === true);
@@ -150,7 +150,7 @@ console.log('Espada, muertes y puntos');
   check('se registra la baja y la racha', a.kills === 1 && a.streak === 1 && b.streak === 0);
   check('hay un evento de baja', g.events.some((e) => e[0] === 'kl' && e[1] === a.id && e[2] === b.id));
   run(g, RESPAWN_TIME + 0.2);
-  check('el muerto reaparece con vida completa', b.dead === false && b.hp === MAX_HP);
+  check('el muerto reaparece con vida completa', b.dead === false && b.hp === b.maxHp);
 }
 
 console.log('Escudo');
@@ -161,7 +161,7 @@ console.log('Escudo');
   inp(g, b.id, { bl: 1 });
   place(a, 4.5, 0);
   g.handleMelee(a.id);
-  check('bloquear con escudo reduce el daño al 25%', b.hp === MAX_HP - Math.round(MELEE_DAMAGE * 0.25), `hp=${b.hp}`);
+  check('bloquear con escudo reduce el daño un 25%', b.hp === MAX_HP - Math.round(MELEE_DAMAGE * 0.75), `hp=${b.hp}`);
   // Al activar el escudo se aparta un poco al de al lado, sin daño
   const g2 = arena(); g2.__seq = 0;
   const c = g2.addPlayer('C', 0); const d = g2.addPlayer('D', 1);
@@ -199,11 +199,34 @@ console.log('Orbes y ventaja del líder');
   a.hp = 100;
   g.orbs[2].x = 0; g.orbs[2].y = 0; g.orbs[2].active = true; g.orbs[2].big = true;
   g.update(TICK_DT);
-  check('el líder se cura 15% con un orbe dorado', a.hp === 100 + 45, `hp=${a.hp}`);
+  check('el líder se cura 15% (de su vida máxima) con un orbe dorado', a.hp === 100 + Math.round(a.maxHp * 0.15), `hp=${a.hp}`);
   const b = g.addPlayer('B', 1); place(b, 20, 0); b.hp = 100;
   g.orbs[3].x = 20; g.orbs[3].y = 0; g.orbs[3].active = true; g.orbs[3].big = true;
   g.update(TICK_DT);
   check('quien no es líder no se cura', b.hp === 100);
+}
+
+console.log('Los bots toman la poción de vida apenas les pegan');
+{
+  const g = arena(); g.__seq = 0;
+  const p = g.addPlayer('P', 0); place(p, -40, -40);
+  const bot = g.addBot(); bot.x = 40; bot.y = 40; bot.mp = 300;
+  bot.ai.spellCooldown = 999; bot.ai.meleeCooldown = 999; bot.ai.blockTimer = 0;
+  g.damage(bot, 100, p);
+  const h1 = bot.hp;
+  run(g, 0.6);
+  check('el bot NO toma poción antes de 0,7 s del primer golpe', bot.hp === h1, 'hp=' + bot.hp);
+  run(g, 0.3);
+  check('a los ~0,7 s empieza a tomar la poción de vida', bot.hp > h1, 'hp=' + bot.hp);
+  run(g, 1.5);
+  check('y sigue tomando mientras le falte vida (como mantener la tecla)', bot.hp >= h1 + 90, 'hp=' + bot.hp);
+  run(g, 0.5); // ya está lleno (pasaron menos de 4 s desde el golpe: sigue el combo)
+  check('queda con la vida llena', bot.hp === bot.maxHp, 'hp=' + bot.hp);
+  g.damage(bot, 100, p); const h2 = bot.hp;
+  run(g, 0.3);
+  check('si le vuelven a pegar en el mismo combo, todavía no toma a los 0,3 s', bot.hp === h2, 'hp=' + bot.hp);
+  run(g, 0.2);
+  check('pero toma a los ~0,4 s (más rápido que la primera vez)', bot.hp > h2, 'hp=' + bot.hp);
 }
 
 console.log('Bots y población');

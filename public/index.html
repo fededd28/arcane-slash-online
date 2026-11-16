@@ -1040,7 +1040,7 @@
  </div>
  <div class="spell-slot" data-spell="4" id="slot-4">
  <div class="cd-mask"></div><div class="cd-num"></div>
- <div class="spell-top"><span class="spell-key">4</span><span class="spell-mana">80</span></div>
+ <div class="spell-top"><span class="spell-key">4</span><span class="spell-mana">100</span></div>
  <div class="spell-icon"><svg class="ico"><use href="#ico-dispel"/></svg></div>
  <div class="spell-name" data-i18n="spell.4">Disipar</div>
  </div>
@@ -1136,7 +1136,7 @@
 
 <script type="module">
  import {
- PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
+ PROTOCOL_VERSION, TICK_DT, MAX_HP, MAX_MP, LEADER_HP_BONUS, LEADER_MP_BONUS, SPELLS, MAP_SIZE, HALF_MAP, WALL_THICKNESS, OBSTACLES, PLAYER_COLORS,
  SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, DASH_COOLDOWN_TOTAL, SHIELD_COOLDOWN, MELEE_INTERVAL, POTION_COOLDOWN_TOTAL,
  clamp, separatePair, stepPlayerMovement, dirFromVector
  } from './shared.js';
@@ -1161,7 +1161,7 @@
  'aim.hint': '{name} · {mana} maná · Clic izquierdo para lanzar · Clic derecho cancela',
  'banner.petrified': 'Petrificado ({s}s) — Usa {key} + clic sobre ti para Disipar',
  'banner.petrifiedTouch': 'Petrificado ({s}s) — Usa Disipar sobre ti',
- 'banner.blocking': 'Escudo activo · -75% daño',
+ 'banner.blocking': 'Escudo activo · -25% daño',
  'tut.skip': 'Saltar tutorial', 'tut.step': 'TUTORIAL · PASO {n}/{m}', 'tut.done': 'TUTORIAL · {n}/{m}', 'tut.complete': 'TUTORIAL COMPLETO', 'tut.ok': '✓ ¡Bien!',
  'tut.endBase': '¡Listo! Eliminá rivales para robarles puntos: al <b>líder</b> le sacás más. ',
  'tut.endTouch': '<b>☰ Menú</b> arriba a la derecha.', 'tut.endDesk': '<b>Esc</b> abre el menú.',
@@ -1169,12 +1169,12 @@
  'tut.d.orb': 'Caminá sobre un <b>orbe brillante</b> para sumar puntos.',
  'tut.d.spell': 'Apretá {k} para elegir <b>Descarga Espectral</b> y hacé <b>clic</b> sobre un rival (o mantené el clic y soltalo sobre él).',
  'tut.d.sword': 'Pegate a un rival y golpeá con {k} o <b>clic derecho</b>.',
- 'tut.d.shield': 'Apretá {k} para el golpe de escudo: aparta a los de al lado y recibís un 75% menos de daño un instante (espera 8 s).',
+ 'tut.d.shield': 'Apretá {k} para el golpe de escudo: aparta a los de al lado y recibís un 25% menos de daño un instante (espera 8 s).',
  'tut.d.potion': '{hp} te cura y {mp} recupera maná. Las pociones son infinitas.',
  'tut.t.move': 'Movete con el <b>joystick</b> (abajo en el medio). Para un <b>dash</b>, deslizá el dedo por el mapa.',
  'tut.t.spell': 'Poné el dedo sobre el <b>rayo</b>, <b>arrastralo hasta un rival</b> y soltá: ahí le pega.',
  'tut.t.sword': 'Pegate a un rival y <b>tocá la pantalla</b>: golpeás con la espada.',
- 'tut.t.shield': 'Tocá el <b>escudo</b>: aparta a los de al lado y recibís un 75% menos de daño un instante (espera 8 s).',
+ 'tut.t.shield': 'Tocá el <b>escudo</b>: aparta a los de al lado y recibís un 25% menos de daño un instante (espera 8 s).',
  'tut.t.potion': 'Las pociones curan vida y maná. Son infinitas.',
  'net.lostTitle': 'Conexión perdida', 'net.lostText': 'Se cortó la conexión con el servidor.', 'net.reconnect': 'Volver a conectar',
  'net.full': 'La sala está llena, probá en un rato.', 'net.idle': 'Te sacamos de la sala por inactividad.', 'net.version': 'Hay una versión nueva: recargá la página.',
@@ -1227,7 +1227,7 @@
  'aim.hint': '{name} · {mana} mana · Left click to cast · Right click cancels',
  'banner.petrified': 'Petrified ({s}s) — Use {key} + click on yourself to Dispel',
  'banner.petrifiedTouch': 'Petrified ({s}s) — Use Dispel on yourself',
- 'banner.blocking': 'Shield active · -75% damage',
+ 'banner.blocking': 'Shield active · -25% damage',
  'tut.skip': 'Skip tutorial', 'tut.step': 'TUTORIAL · STEP {n}/{m}', 'tut.done': 'TUTORIAL · {n}/{m}', 'tut.complete': 'TUTORIAL COMPLETE', 'tut.ok': '✓ Nice!',
  'tut.endBase': 'Done! Eliminate enemies to steal their points: you take more from the <b>leader</b>. ',
  'tut.endTouch': '<b>☰ Menu</b> at the top right.', 'tut.endDesk': '<b>Esc</b> opens the menu.',
@@ -1235,12 +1235,12 @@
  'tut.d.orb': 'Walk over a <b>glowing orb</b> to score points.',
  'tut.d.spell': 'Press {k} to pick <b>Spectral Bolt</b>, then <b>click</b> on an enemy (or hold the click and release on them).',
  'tut.d.sword': 'Get next to an enemy and strike with {k} or <b>right click</b>.',
- 'tut.d.shield': 'Press {k} for the shield bash: it pushes nearby players and you take 75% less damage for a moment (8 s cooldown).',
+ 'tut.d.shield': 'Press {k} for the shield bash: it pushes nearby players and you take 25% less damage for a moment (8 s cooldown).',
  'tut.d.potion': '{hp} heals you and {mp} restores mana. Potions are unlimited.',
  'tut.t.move': 'Move with the <b>joystick</b> (bottom center). For a <b>dash</b>, swipe your finger across the map.',
  'tut.t.spell': 'Put your finger on the <b>bolt</b>, <b>drag it to an enemy</b> and release: it hits there.',
  'tut.t.sword': 'Get next to an enemy and <b>tap the screen</b>: you strike with the sword.',
- 'tut.t.shield': 'Tap the <b>shield</b> button: it pushes nearby players and you take 75% less damage for a moment (8 s cooldown).',
+ 'tut.t.shield': 'Tap the <b>shield</b> button: it pushes nearby players and you take 25% less damage for a moment (8 s cooldown).',
  'tut.t.potion': 'Potions restore health and mana. They are unlimited.',
  'net.lostTitle': 'Connection lost', 'net.lostText': 'The connection to the server was cut.', 'net.reconnect': 'Reconnect',
  'net.full': 'The room is full, try again in a bit.', 'net.idle': 'You were removed from the room for inactivity.', 'net.version': 'There is a new version: reload the page.',
@@ -2664,7 +2664,7 @@ sfx('slash', targetPos);
  });
  }
 
- const ZOOM_MIN = IS_TOUCH ? 8 : 13, ZOOM_MAX = IS_TOUCH ? 16 : 26; // límites del zoom (rueda y pellizco)
+ const ZOOM_MIN = IS_TOUCH ? 8 : 16, ZOOM_MAX = IS_TOUCH ? 16 : 21; // límites del zoom (rueda y pellizco)
 
  // Número flotante de daño (rojo) o curación (verde): sube un poco y se desvanece
  function spawnFloatText(pos, text, color) {
@@ -3210,7 +3210,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  c.dir = DIR_NAMES[b.dir] || 'front';
  c.isBlocking = !!(b.flags & 1);
  c.root.visible = !e.dead && e.seen;
- c.hpBar.scale.x = Math.max(0.001, b.hp / MAX_HP);
+ c.hpBar.scale.x = Math.max(0.001, b.hp / maxHpOf(e.id));
  updateWarlockVisuals(c, dt, !!(b.flags & 16), !!(b.flags & 2));
  }
  }
@@ -3402,7 +3402,12 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  }
 
  // ---------- Mensajes de la red ----------
- function onSnapshot(s) {
+ // Máximos de vida/maná: el líder (#1) tiene un extra
+let snapLeaderId = 0;
+const maxHpOf = (id) => MAX_HP + (id === snapLeaderId ? LEADER_HP_BONUS : 0);
+const maxMpOf = (id) => MAX_MP + (id === snapLeaderId ? LEADER_MP_BONUS : 0);
+function onSnapshot(s) {
+ snapLeaderId = s.ld || 0;
  net.offset = net.offset === null ? s.st - performance.now() : net.offset * 0.9 + (s.st - performance.now()) * 0.1;
  // Primero los eventos (pueden crear personajes), después las posiciones
  for (const ev of s.ev) handleEvent(ev);
@@ -3708,8 +3713,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  playerChar.isBlocking = !dead && !frozen && pred.shieldT > 0;
  if (!dead && !frozen && hasDir) playerChar.dir = DIR_NAMES[dirFromVector(currentInput.mx, currentInput.my, 0)];
  player.visible = !dead;
- playerChar.hpBar.scale.x = Math.max(0.001, playerHp / MAX_HP);
- playerChar.mpBar.scale.x = Math.max(0.001, playerMp / MAX_MP);
+ playerChar.hpBar.scale.x = Math.max(0.001, playerHp / maxHpOf(net.myId));
+ playerChar.mpBar.scale.x = Math.max(0.001, playerMp / maxMpOf(net.myId));
  updateWarlockVisuals(playerChar, dt, !dead && !frozen && (hasDir || pred.dashT > 0), frozen);
  }
 
@@ -4634,15 +4639,15 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  scoreTextEl.textContent = fmtScore(playerStats.score);
  streakTextEl.textContent = playerStats.streak;
  killsEl.textContent = playerStats.kills;
- hpTextEl.textContent = `${Math.ceil(playerHp)} / ${MAX_HP}`;
- mpTextEl.textContent = `${Math.floor(playerMp)} / ${MAX_MP}`;
- hpFillEl.style.width = `${(playerHp / MAX_HP) * 100}%`;
- mpFillEl.style.width = `${(playerMp / MAX_MP) * 100}%`;
+ hpTextEl.textContent = `${Math.ceil(playerHp)} / ${maxHpOf(net.myId)}`;
+ mpTextEl.textContent = `${Math.floor(playerMp)} / ${maxMpOf(net.myId)}`;
+ hpFillEl.style.width = `${(playerHp / maxHpOf(net.myId)) * 100}%`;
+ mpFillEl.style.width = `${(playerMp / maxMpOf(net.myId)) * 100}%`;
 
  if (playerHp < prevHpVis - 1 && playerDeadTimer <= 0) dmgFlashT = 0.25;
  prevHpVis = playerHp;
  dmgFlashT = Math.max(0, dmgFlashT - dt);
- const lowHp = playerDeadTimer <= 0 && playerHp > 0 && playerHp <= MAX_HP * 0.25;
+ const lowHp = playerDeadTimer <= 0 && playerHp > 0 && playerHp <= maxHpOf(net.myId) * 0.25;
  dmgVignetteEl.classList.toggle('low-hp', lowHp);
  dmgVignetteEl.style.opacity = dmgFlashT > 0 ? Math.min(0.85, 0.35 + dmgFlashT * 2).toFixed(2) : '';
 

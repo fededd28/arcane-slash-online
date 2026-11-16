@@ -4,7 +4,7 @@
 // así el servidor y el cliente calculan exactamente lo mismo.
 // ============================================================================
 
-export const PROTOCOL_VERSION = 3;
+export const PROTOCOL_VERSION = 4;
 
 // --- Tiempos de la simulación ---
 export const TICK_RATE = 20; // el servidor actualiza el mundo 20 veces por segundo
@@ -20,24 +20,31 @@ export const MELEE_INTERVAL = 1.5;
 // Escudo: un golpe corto (no se mantiene). Dura SHIELD_TIME y después espera SHIELD_COOLDOWN
 export const SHIELD_TIME = 0.8;
 export const SHIELD_COOLDOWN = 8.0;
-export const MELEE_DAMAGE = 70;
+export const MELEE_DAMAGE = 125;
 export const POTION_COOLDOWN_TOTAL = 0.3;
 export const POTION_HP_AMOUNT = 30;
 export const POTION_MP_AMOUNT = 30;
 export const RESPAWN_TIME = 5.0;
 export const MAX_HP = 300;
 export const MAX_MP = 300;
+export const LEADER_HP_BONUS = 100; // el líder (#1) tiene +100 de vida máxima
+export const LEADER_MP_BONUS = 50;  // y +50 de maná máximo
 export const BOT_POTION_INTERVAL = 2.2;
+// Reacción de los bots con la poción de vida (como una persona): tardan en empezar a tomar después del primer golpe,
+// y menos si les vuelven a pegar dentro del mismo combo
+export const BOT_HP_POTION_REACT = 0.7;
+export const BOT_HP_POTION_REACT_COMBO = 0.4;
+export const BOT_COMBO_WINDOW = 4; // segundos sin recibir golpes para que se corte el combo
 
 export const CHARACTER_RADIUS = 0.38;
 export const BASE_SPEED = 5.2;
 export const DASH_SPEED = 16.5;
 
 export const SPELLS = {
-  1: { id: 1, name: 'Petrificar', mana: 60, color: 0x9ea7b3, damage: 10, immobilize: 6.0 },
-  2: { id: 2, name: 'Descarga Espectral', mana: 50, color: 0x58a6ff, damage: 45, immobilize: 0 },
-  3: { id: 3, name: 'Cataclismo', mana: 180, color: 0xff6b35, damage: 85, immobilize: 0 },
-  4: { id: 4, name: 'Disipar', mana: 80, color: 0x3fb950, damage: 0, cleanse: true }
+  1: { id: 1, name: 'Petrificar', mana: 60, color: 0x9ea7b3, damage: 14, immobilize: 6.0 },
+  2: { id: 2, name: 'Descarga Espectral', mana: 50, color: 0x58a6ff, damage: 64, immobilize: 0 },
+  3: { id: 3, name: 'Cataclismo', mana: 180, color: 0xff6b35, damage: 157, immobilize: 0 },
+  4: { id: 4, name: 'Disipar', mana: 100, color: 0x3fb950, damage: 0, cleanse: true }
 };
 
 // --- Puntos ---
