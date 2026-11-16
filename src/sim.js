@@ -411,7 +411,7 @@ export class Game {
       target.dashT = 0;
       target.shieldT = 0;
       target.blocking = false;
-      if (target.isBot) target.ai.cleanseDelay = 1 + Math.random() * 1.2;
+      if (target.isBot) target.ai.cleanseDelay = 1.5 + Math.random() * 0.5;
       else this.msg(target.id, { t: 'pet', by: attacker.name });
     }
     if (sp.cleanse) target.imm = 0;
@@ -499,6 +499,12 @@ export class Game {
     // Si está petrificado, usa Disipar sobre sí mismo (con un pequeño retraso de reacción)
     if (b.imm > 0) {
       ai.cleanseDelay -= dt;
+      // Sin maná suficiente para Disipar, toma una poción de maná (si no, quedaba petrificado los 6 s enteros)
+      if (ai.cleanseDelay <= 0 && b.mp < SPELLS[4].mana && ai.potionCooldown <= 0) {
+        ai.potionCooldown = BOT_POTION_INTERVAL;
+        b.mp = Math.min(b.maxMp, b.mp + POTION_MP_AMOUNT);
+        this.ev(['po', r2(b.x), r2(b.y), 1]);
+      }
       if (ai.cleanseDelay <= 0 && ai.spellCooldown <= 0 && b.mp >= SPELLS[4].mana) {
         b.mp -= SPELLS[4].mana;
         ai.spellCooldown = SPELL_GLOBAL_INTERVAL;
