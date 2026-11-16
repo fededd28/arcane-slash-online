@@ -161,7 +161,7 @@ console.log('Escudo');
   inp(g, b.id, { bl: 1 });
   place(a, 4.5, 0);
   g.handleMelee(a.id);
-  check('bloquear con escudo reduce el daño al 25%', b.hp === MAX_HP - Math.round(MELEE_DAMAGE * 0.25), `hp=${b.hp}`);
+  check('bloquear con escudo reduce el daño un 25%', b.hp === MAX_HP - Math.round(MELEE_DAMAGE * 0.75), `hp=${b.hp}`);
   // Al activar el escudo se aparta un poco al de al lado, sin daño
   const g2 = arena(); g2.__seq = 0;
   const c = g2.addPlayer('C', 0); const d = g2.addPlayer('D', 1);

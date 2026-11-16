@@ -221,7 +221,7 @@ export class Game {
     let dmg = amount;
     if (attacker && attacker.isBot && !target.isBot) dmg = Math.round(amount * (fromMelee ? 0.7 : 0.55));
     if (target.blocking && target.imm <= 0) {
-      dmg = Math.max(1, Math.round(dmg * 0.25));
+      dmg = Math.max(1, Math.round(dmg * 0.75)); // el escudo reduce el daño un 25%
       this.ev(['bk', r2(target.x), r2(target.y)]);
       if (!target.isBot) {
         this.msg(target.id, { t: 'toast', k: 'blocked', a: { name: attacker ? attacker.name : '?', dmg } });
