@@ -20,7 +20,7 @@ export const MELEE_INTERVAL = 1.5;
 // Escudo: un golpe corto (no se mantiene). Dura SHIELD_TIME y después espera SHIELD_COOLDOWN
 export const SHIELD_TIME = 0.8;
 export const SHIELD_COOLDOWN = 8.0;
-export const MELEE_DAMAGE = 105;
+export const MELEE_DAMAGE = 102;
 export const POTION_COOLDOWN_TOTAL = 0.3;
 export const POTION_HP_AMOUNT = 30;
 export const POTION_MP_AMOUNT = 30;
@@ -42,8 +42,8 @@ export const DASH_SPEED = 16.5;
 
 export const SPELLS = {
   1: { id: 1, name: 'Petrificar', mana: 60, color: 0x9ea7b3, damage: 15, immobilize: 6.0 },
-  2: { id: 2, name: 'Descarga Espectral', mana: 50, color: 0x58a6ff, damage: 68, immobilize: 0 },
-  3: { id: 3, name: 'Cataclismo', mana: 180, color: 0xff6b35, damage: 165, immobilize: 0 },
+  2: { id: 2, name: 'Descarga Espectral', mana: 50, color: 0x58a6ff, damage: 65, immobilize: 0 },
+  3: { id: 3, name: 'Cataclismo', mana: 180, color: 0xff6b35, damage: 160, immobilize: 0 },
   4: { id: 4, name: 'Disipar', mana: 100, color: 0x3fb950, damage: 0, cleanse: true }
 };
 
