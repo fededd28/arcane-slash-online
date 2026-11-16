@@ -16,8 +16,9 @@ scp -i $Key -o BatchMode=yes $tgz "ubuntu@${Ip}:/tmp/arcane-deploy.tgz"
 $remote = @'
 set -e
 mkdir -p ~/arcane && cd ~/arcane
+chmod -R u+w public src 2>/dev/null || true
 rm -rf public src oracle/server.ts server.ts room.js
-tar --warning=no-timestamp -xzf /tmp/arcane-deploy.tgz
+tar --warning=no-timestamp --no-same-permissions -xzf /tmp/arcane-deploy.tgz
 cd oracle && npm install --omit=dev --no-audit --no-fund --loglevel=error
 sudo cp arcane.service /etc/systemd/system/arcane.service
 sudo systemctl daemon-reload && sudo systemctl enable arcane >/dev/null 2>&1
