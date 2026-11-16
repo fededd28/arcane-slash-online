@@ -69,8 +69,8 @@ console.log('Hechizos');
   run(g, 1.5);
   g.handleCast(a.id, { id: 4, x: 5, y: 0.3, rt: g.time * 1000 });
   check('Disipar le saca la petrificación', b.imm === 0);
-  // fallar
-  run(g, 1.5);
+  // fallar (se repone el maná: Descarga + Petrificar + Disipar ya gastaron casi todo)
+  run(g, 1.5); a.mp = MAX_MP;
   const hp2 = b.hp;
   const mpAntes = a.mp;
   g.handleCast(a.id, { id: 2, x: 12, y: 3, rt: g.time * 1000 });
