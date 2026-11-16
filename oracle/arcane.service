@@ -1,0 +1,13 @@
+[Unit]
+Description=Arcane Slash Online
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/arcane/oracle
+Environment=PORT=8787
+ExecStart=/usr/bin/node server.ts
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

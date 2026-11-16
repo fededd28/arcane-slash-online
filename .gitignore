@@ -4,3 +4,6 @@ node_modules/
 
 # Historial personal (no se sube a GitHub)
 HISTORIAL.md
+
+# Guia del servidor de Oracle (tiene IP y rutas personales)
+oracle/LEEME-VM.md
