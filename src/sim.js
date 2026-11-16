@@ -5,7 +5,7 @@
 import {
   TICK_DT, MAX_HP, MAX_MP, LEADER_HP_BONUS, LEADER_MP_BONUS, SPELLS, SCORE, OBSTACLES, HALF_MAP, ORB_COUNT, SPAWN_POINTS, PLAYER_COLORS,
   SPELL_GLOBAL_INTERVAL, SPELL_MISS_INTERVAL, MELEE_INTERVAL, MELEE_DAMAGE, POTION_COOLDOWN_TOTAL, POTION_HP_AMOUNT,
-  POTION_MP_AMOUNT, RESPAWN_TIME, BOT_POTION_INTERVAL, CHARACTER_RADIUS, BASE_SPEED,
+  POTION_MP_AMOUNT, RESPAWN_TIME, BOT_POTION_INTERVAL, BOT_HP_POTION_REACT, BOT_HP_POTION_REACT_COMBO, BOT_COMBO_WINDOW, CHARACTER_RADIUS, BASE_SPEED,
   clamp, resolveEnvironmentCollisions, separatePair, stepPlayerMovement, dirFromVector
 } from '../public/shared.js';
 
@@ -79,7 +79,7 @@ export class Game {
       input: { mx: 0, my: 0, bl: 0, ph: 0 }, ack: 0, budget: 4,
       hist: [],
       ai: isBot ? {
-        spellCooldown: rnd(3.5, 5), meleeCooldown: rnd(3, 3.8), potionCooldown: 0,
+        spellCooldown: rnd(3.5, 5), meleeCooldown: rnd(3, 3.8), potionCooldown: 0, lastHitT: -99, reactAt: 0,
         blockTimer: 0, moveAngle: rnd(0, Math.PI * 2), aiChangeTimer: rnd(0.9, 2.3), cleanseDelay: 0
       } : null
     };
@@ -229,6 +229,15 @@ export class Game {
     }
     this.ev(['dm', r2(target.x), r2(target.y), dmg, target.id, attacker ? attacker.id : 0]);
     target.hp = Math.max(0, target.hp - dmg);
+    if (target.isBot && target.ai) {
+      // Reacción humana: la poción de vida empieza 0,7 s después del primer golpe; si siguen pegándole en el mismo combo, 0,4 s
+      const ai = target.ai;
+      const inCombo = this.time - ai.lastHitT < BOT_COMBO_WINDOW;
+      const wait = inCombo ? BOT_HP_POTION_REACT_COMBO : BOT_HP_POTION_REACT;
+      if (ai.reactAt <= this.time) ai.reactAt = this.time + wait;
+      else ai.reactAt = Math.min(ai.reactAt, this.time + wait);
+      ai.lastHitT = this.time;
+    }
     if (target.hp <= 0) this.kill(target, attacker);
   }
 
@@ -501,7 +510,7 @@ export class Game {
     // Pociones
     // Vida: como un jugador que mantiene apretada la tecla; en cuanto le pegan empieza a tomar (cada POTION_COOLDOWN_TOTAL)
     ai.hpPotCd = Math.max(0, (ai.hpPotCd || 0) - dt);
-    if (b.hp < b.maxHp && ai.hpPotCd <= 0) {
+    if (b.hp < b.maxHp && this.time >= ai.reactAt && ai.hpPotCd <= 0) {
       ai.hpPotCd = POTION_COOLDOWN_TOTAL;
       this.heal(b, POTION_HP_AMOUNT);
       this.ev(['po', r2(b.x), r2(b.y), 0]);

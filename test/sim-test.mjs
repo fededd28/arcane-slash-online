@@ -208,15 +208,25 @@ console.log('Orbes y ventaja del líder');
 
 console.log('Los bots toman la poción de vida apenas les pegan');
 {
-  const g = new Game();
-  const bot = [...g.entities.values()].find((e) => e.isBot);
-  bot.hp = 250; // le pegaron (no está bajo 40%)
-  const antes = bot.hp;
-  run(g, 0.2);
-  check('el bot empieza a curarse enseguida (menos de 0,2 s)', bot.hp > antes || bot.dead, 'hp=' + bot.hp);
-  bot.hp = 100; const h0 = bot.hp;
+  const g = arena(); g.__seq = 0;
+  const p = g.addPlayer('P', 0); place(p, -40, -40);
+  const bot = g.addBot(); bot.x = 40; bot.y = 40; bot.mp = 300;
+  bot.ai.spellCooldown = 999; bot.ai.meleeCooldown = 999; bot.ai.blockTimer = 0;
+  g.damage(bot, 100, p);
+  const h1 = bot.hp;
+  run(g, 0.6);
+  check('el bot NO toma poción antes de 0,7 s del primer golpe', bot.hp === h1, 'hp=' + bot.hp);
+  run(g, 0.3);
+  check('a los ~0,7 s empieza a tomar la poción de vida', bot.hp > h1, 'hp=' + bot.hp);
   run(g, 1.5);
-  check('y sigue tomando mientras le falte vida (como mantener la tecla)', bot.hp >= h0 + 90 || bot.dead, 'hp=' + bot.hp);
+  check('y sigue tomando mientras le falte vida (como mantener la tecla)', bot.hp >= h1 + 90, 'hp=' + bot.hp);
+  run(g, 0.5); // ya está lleno (pasaron menos de 4 s desde el golpe: sigue el combo)
+  check('queda con la vida llena', bot.hp === bot.maxHp, 'hp=' + bot.hp);
+  g.damage(bot, 100, p); const h2 = bot.hp;
+  run(g, 0.3);
+  check('si le vuelven a pegar en el mismo combo, todavía no toma a los 0,3 s', bot.hp === h2, 'hp=' + bot.hp);
+  run(g, 0.2);
+  check('pero toma a los ~0,4 s (más rápido que la primera vez)', bot.hp > h2, 'hp=' + bot.hp);
 }
 
 console.log('Bots y población');
