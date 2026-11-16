@@ -7,3 +7,9 @@ HISTORIAL.md
 
 # Guia del servidor de Oracle (tiene IP y rutas personales)
 oracle/LEEME-VM.md
+
+# Keys SSH (nunca subir)
+*.key
+antigravity-deploy*
+id_ed25519*
+id_rsa*
