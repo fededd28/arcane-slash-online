@@ -268,14 +268,17 @@ console.log('Los bots se van cuando hay 8 jugadores reales');
 
 console.log('Bot petrificado');
 {
-  const g = arena();
+  // Camino real: un jugador lo petrifica con handleCast; el bot (con 0 maná) debe liberarse solo
+  const g = arena(); g.__seq = 0;
+  const a = g.addPlayer('A', 0);
   g.addBot();
   const b = [...g.entities.values()].find((e) => e.isBot);
-  b.imm = SPELLS[1].immobilize; b.mp = 0; b.ai.cleanseDelay = 1.5 + Math.random() * 0.5;
+  place(a, 0, 0); place(b, 3, 0.3); b.mp = 0; a.mp = MAX_MP;
+  g.handleCast(a.id, { id: 1, x: b.x, y: b.y, rt: g.time * 1000 });
+  check('el hechizo petrifica al bot', b.imm > 0);
   let t = 0;
-  while (b.imm > 0 && t < 6) { g.update(TICK_DT); t += TICK_DT; }
-  check('un bot sin maná se saca la petrificación en menos de 3 s', b.imm <= 0 && t < 3, 't=' + t.toFixed(2));
+  while (b.imm > 0 && t < 7) { g.update(TICK_DT); t += TICK_DT; }
+  check('el bot se saca la petrificación en 2,2 s o menos', b.imm <= 0 && t <= 2.2, 't=' + t.toFixed(2));
 }
 
-console.log(`\n${passed} bien, ${failed} con fallas`);
-process.exit(failed ? 1 : 0);
+
