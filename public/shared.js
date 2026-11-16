@@ -13,7 +13,7 @@ export const TICK_DT = 1 / TICK_RATE;
 // --- Reglas de combate (mismos valores que la versión local) ---
 export const DASH_COOLDOWN_TOTAL = 10.0;
 export const DASH_TIME = 0.16;
-export const SPELL_GLOBAL_INTERVAL = 1.4;
+export const SPELL_GLOBAL_INTERVAL = 1.2;
 // Un hechizo que falla no gasta maná, pero deja una espera corta: así no se puede ametrallar ni apuntar gratis a fuerza bruta
 export const SPELL_MISS_INTERVAL = 0.4;
 export const MELEE_INTERVAL = 1.5;

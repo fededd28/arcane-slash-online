@@ -1,6 +1,6 @@
 // Pruebas de las reglas del servidor (sin Cloudflare): node test/sim-test.mjs
 import { Game, sanitizeName } from '../src/sim.js';
-import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME, LEADER_HP_BONUS, LEADER_MP_BONUS } from '../public/shared.js';
+import { TICK_DT, MAX_HP, MAX_MP, SPELLS, MELEE_DAMAGE, POTION_HP_AMOUNT, POTION_COOLDOWN_TOTAL, BASE_SPEED, RESPAWN_TIME, LEADER_HP_BONUS, LEADER_MP_BONUS, SPELL_GLOBAL_INTERVAL } from '../public/shared.js';
 
 let failed = 0;
 let passed = 0;
@@ -52,7 +52,7 @@ console.log('Hechizos');
   g.update(TICK_DT);
   g.handleCast(a.id, { id: 2, x: 5, y: 0.3, rt: g.time * 1000 });
   check('Descarga Espectral hace 64 de daño', b.hp === MAX_HP - 64, `hp=${b.hp}`);
-  check('gasta maná y empieza el intervalo', a.mp === MAX_MP - 50 && a.spellCd > 1.3);
+  check('gasta maná y empieza el intervalo', a.mp === MAX_MP - 50 && a.spellCd > SPELL_GLOBAL_INTERVAL - 0.1);
   const hp1 = b.hp;
   g.handleCast(a.id, { id: 2, x: 5, y: 0.3, rt: g.time * 1000 });
   check('no se puede lanzar otro durante el intervalo', b.hp === hp1);

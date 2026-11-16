@@ -51,7 +51,7 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
 
 ## Reglas vigentes que NO hay que romper sin preguntar
 - Un hechizo que **falla no gasta maná**, pero deja una **espera corta de 0,4 s** (`SPELL_MISS_INTERVAL`; si fuera 0 se podría ametrallar:
-  80 efectos/s para todos y apuntar gratis a fuerza bruta). Acertar sí activa el intervalo de 1,4 s. No se puede **petrificar a un petrificado**.
+  80 efectos/s para todos y apuntar gratis a fuerza bruta). Acertar sí activa el intervalo de 1,2 s. No se puede **petrificar a un petrificado**.
 - Los hechizos **no esperan** a la poción; tras un hechizo la poción espera 0,3 s. Un petrificado **no se empuja**.
 - **Celular:** hay controles táctiles (joystick, botones, arrastrar el hechizo hasta el rival). Se activan con `IS_TOUCH` (puntero principal
   táctil; una notebook con pantalla táctil y mouse usa la interfaz de escritorio). Cada botón de la barra (hechizos, espada, pociones, dash)
