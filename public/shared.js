@@ -29,7 +29,7 @@ export const MAX_HP = 300;
 export const MAX_MP = 300;
 export const LEADER_HP_BONUS = 100; // el líder (#1) tiene +100 de vida máxima
 export const LEADER_MP_BONUS = 50;  // y +50 de maná máximo
-export const BOT_POTION_INTERVAL = 2.2;
+export const BOT_POTION_INTERVAL = 0.8;
 // Reacción de los bots con la poción de vida (como una persona): tardan en empezar a tomar después del primer golpe,
 // y menos si les vuelven a pegar dentro del mismo combo
 export const BOT_HP_POTION_REACT = 0.7;

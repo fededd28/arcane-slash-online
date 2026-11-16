@@ -500,12 +500,13 @@ export class Game {
     if (b.imm > 0) {
       ai.cleanseDelay -= dt;
       // Sin maná suficiente para Disipar, toma una poción de maná (si no, quedaba petrificado los 6 s enteros)
-      if (ai.cleanseDelay <= 0 && b.mp < SPELLS[4].mana && ai.potionCooldown <= 0) {
-        ai.potionCooldown = BOT_POTION_INTERVAL;
+      // (toma de a una cada POTION_COOLDOWN_TOTAL, como un jugador, sin esperar la demora de reacción)
+      if (b.mp < SPELLS[4].mana && ai.potionCooldown <= 0) {
+        ai.potionCooldown = POTION_COOLDOWN_TOTAL;
         b.mp = Math.min(b.maxMp, b.mp + POTION_MP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 1]);
       }
-      if (ai.cleanseDelay <= 0 && ai.spellCooldown <= 0 && b.mp >= SPELLS[4].mana) {
+      if (ai.cleanseDelay <= 0 && b.mp >= SPELLS[4].mana) { // no espera su ritmo de ataque: Disipar es una reacción
         b.mp -= SPELLS[4].mana;
         ai.spellCooldown = SPELL_GLOBAL_INTERVAL;
         b.imm = 0;
@@ -521,7 +522,7 @@ export class Game {
       this.heal(b, POTION_HP_AMOUNT);
       this.ev(['po', r2(b.x), r2(b.y), 0]);
     } else if (ai.potionCooldown <= 0) {
-      if (b.mp < 70) {
+      if (b.mp < 150) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
         b.mp = Math.min(b.maxMp, b.mp + POTION_MP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 1]);

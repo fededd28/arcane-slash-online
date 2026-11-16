@@ -266,5 +266,16 @@ console.log('Los bots se van cuando hay 8 jugadores reales');
   check('al bajar a 7 jugadores vuelve 1 bot', g.humans() === 7 && bots() === 1, 'humanos=' + g.humans() + ' bots=' + bots());
 }
 
+console.log('Bot petrificado');
+{
+  const g = arena();
+  g.addBot();
+  const b = [...g.entities.values()].find((e) => e.isBot);
+  b.imm = SPELLS[1].immobilize; b.mp = 0; b.ai.cleanseDelay = 1.5 + Math.random() * 0.5;
+  let t = 0;
+  while (b.imm > 0 && t < 6) { g.update(TICK_DT); t += TICK_DT; }
+  check('un bot sin maná se saca la petrificación en menos de 3 s', b.imm <= 0 && t < 3, 't=' + t.toFixed(2));
+}
+
 console.log(`\n${passed} bien, ${failed} con fallas`);
 process.exit(failed ? 1 : 0);
