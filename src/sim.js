@@ -515,7 +515,7 @@ export class Game {
       this.heal(b, POTION_HP_AMOUNT);
       this.ev(['po', r2(b.x), r2(b.y), 0]);
     } else if (ai.potionCooldown <= 0) {
-      if (b.mp < 70) {
+      if (b.mp < 180) {
         ai.potionCooldown = BOT_POTION_INTERVAL;
         b.mp = Math.min(b.maxMp, b.mp + POTION_MP_AMOUNT);
         this.ev(['po', r2(b.x), r2(b.y), 1]);
