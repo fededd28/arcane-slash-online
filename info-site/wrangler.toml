@@ -1,0 +1,6 @@
+name = "arcane-slash-info"
+compatibility_date = "2024-09-23"
+
+# Página de presentación (un solo archivo, sin servidor)
+[assets]
+directory = "./public"
