@@ -942,6 +942,24 @@
  body:not(.touch) .bar-track { position: absolute; inset: 11px 15px; height: auto; border: 0; border-radius: 2px; background: #05070b; }
  body:not(.touch) .bar-label { position: absolute; inset: 0; z-index: 3; margin: 0; padding: 0 22px; align-items: center; pointer-events: none; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
 
+ /* --- Menú inicial con el estilo del HUD (solo escritorio) --- */
+ body:not(.touch) .start-card.panel {
+ border: solid transparent; border-width: 34px 16px 16px 16px;
+ border-image: url(ui/leaderboard-frame.png) 44 20 20 20 stretch;
+ border-radius: 0; background: rgba(8, 11, 17, 0.94); background-clip: padding-box;
+ backdrop-filter: none; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+ }
+ body:not(.touch) .start-right { border-left: 1px solid rgba(138, 106, 48, 0.5); }
+ body:not(.touch) .g-title, body:not(.touch) .g-foot { border-color: rgba(138, 106, 48, 0.5); }
+ body:not(.touch) .t { position: relative; background: transparent; border: 0; border-radius: 0; padding: 4px 2px 3px; gap: 3px; }
+ body:not(.touch) .t-ico { position: relative; width: 54px; height: 54px; }
+ body:not(.touch) .t-ico::before { content: ''; position: absolute; inset: 8px; border-radius: 5px; background: radial-gradient(circle at 50% 40%, var(--accent-soft, #1a212d), #0a0d13); }
+ body:not(.touch) .t-ico::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: url(ui/slot.png) center / 100% 100% no-repeat; }
+ body:not(.touch) .t-ico .ico { position: relative; z-index: 1; width: 32px; height: 32px; }
+ body:not(.touch) .kc { background: none; border: 7px solid transparent; border-image: url(ui/keycap.png) 18 fill stretch; border-radius: 0; height: 30px; min-width: 30px; padding: 0 2px; font-size: 12px; }
+ body:not(.touch) .kc-s { height: 22px; min-width: 22px; border-width: 5px; padding: 0; font-size: 11px; }
+ body:not(.touch) .wasd { grid-template-columns: repeat(3, 30px); gap: 2px; }
+ body:not(.touch) #play-btn { border: 1px solid #8a6a30; box-shadow: 0 0 0 1px #6f5526, 0 8px 22px rgba(0, 0, 0, 0.5); border-radius: 8px; }
  /* --- Avisos en celular: chicos y arriba, para no tapar el juego --- */
  body.touch #toast { top: calc(34px + var(--sa-t)); bottom: auto; left: 50%; max-width: 46vw; padding: 3px 10px; font-size: 11px; line-height: 1.25; border-radius: 7px; background: rgba(14, 18, 26, 0.78); box-shadow: none; text-align: center; }
  body.touch #combat-banner { top: calc(6px + var(--sa-t)); bottom: auto; max-width: 46vw; padding: 3px 10px; font-size: 10.5px; line-height: 1.25; box-shadow: none; }
