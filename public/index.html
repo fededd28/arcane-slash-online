@@ -931,6 +931,13 @@
  border-radius: 0; background: #05080c; background-clip: padding-box; backdrop-filter: none; box-shadow: none;
  }
  body:not(.touch) #minimap { border-radius: 0; }
+
+ /* --- Vida y maná: barras dentro de un marco metálico, con el texto encima --- */
+ body:not(.touch) #vitals { bottom: 134px; }
+ body:not(.touch) .bar-wrap { position: relative; height: 44px; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; }
+ body:not(.touch) .bar-wrap::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border: solid transparent; border-width: 11px 15px; border-image: url(ui/bar-frame.png) 20 28 stretch; }
+ body:not(.touch) .bar-track { position: absolute; inset: 11px 15px; height: auto; border: 0; border-radius: 2px; background: #05070b; }
+ body:not(.touch) .bar-label { position: absolute; inset: 0; z-index: 3; margin: 0; padding: 0 22px; align-items: center; pointer-events: none; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
  </style>
  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 </head>
