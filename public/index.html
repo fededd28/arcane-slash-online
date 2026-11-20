@@ -960,6 +960,14 @@
  body:not(.touch) .kc-s { height: 22px; min-width: 22px; border-width: 5px; padding: 0; font-size: 11px; }
  body:not(.touch) .wasd { grid-template-columns: repeat(3, 30px); gap: 2px; }
  body:not(.touch) #play-btn { border: 1px solid #8a6a30; box-shadow: 0 0 0 1px #6f5526, 0 8px 22px rgba(0, 0, 0, 0.5); border-radius: 8px; }
+ /* --- Menú inicial: nombre, flechas y personaje con el estilo del HUD --- */
+ body:not(.touch) #name-input, body:not(.touch) #server-select { border: solid transparent; border-width: 11px 15px; border-image: url(ui/bar-frame.png) 20 28 stretch; border-radius: 0; background: #05070b; background-clip: padding-box; padding: 4px 6px; }
+ body:not(.touch) #name-input:focus { box-shadow: none; filter: drop-shadow(0 0 5px rgba(223, 177, 86, 0.7)); }
+ body:not(.touch) .lang-btn { border: solid transparent; border-width: 9px 13px; border-image: url(ui/bar-frame.png) 20 28 stretch; border-radius: 0; background: #05070b; background-clip: padding-box; padding: 2px 8px; }
+ body:not(.touch) .lang-btn:hover { filter: drop-shadow(0 0 5px rgba(223, 177, 86, 0.7)); }
+ body:not(.touch) .arrow-btn { border: 8px solid transparent; border-image: url(ui/keycap.png) 18 fill stretch; border-radius: 0; background: none; width: 42px; height: 56px; padding: 0; font-size: 12px; }
+ body:not(.touch) .arrow-btn:hover { background: none; filter: brightness(1.25) drop-shadow(0 0 4px rgba(223, 177, 86, 0.6)); }
+ body:not(.touch) #char-preview { width: 160px; height: 160px; border: solid transparent; border-width: 20px; border-image: url(ui/minimap-frame.png) 48 stretch; border-radius: 0; background: radial-gradient(circle at 50% 74%, rgba(223, 177, 86, 0.2), rgba(0, 0, 0, 0) 70%), #05080c; background-clip: padding-box; }
  /* --- Avisos en celular: chicos y arriba, para no tapar el juego --- */
  body.touch #toast { top: calc(34px + var(--sa-t)); bottom: auto; left: 50%; max-width: 46vw; padding: 3px 10px; font-size: 11px; line-height: 1.25; border-radius: 7px; background: rgba(14, 18, 26, 0.78); box-shadow: none; text-align: center; }
  body.touch #combat-banner { top: calc(6px + var(--sa-t)); bottom: auto; max-width: 46vw; padding: 3px 10px; font-size: 10.5px; line-height: 1.25; box-shadow: none; }
