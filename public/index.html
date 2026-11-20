@@ -837,7 +837,7 @@
  @media (orientation: landscape) {
  body.touch { --slot: min(50px, calc((100vh - 56px) / 7)); }
  body.touch #killfeed { display: none; }
- body.touch #minimap { width: 70px; height: 70px; }
+ body.touch #minimap { width: 64px; height: 64px; }
  body.touch #minimap-box { left: calc(var(--slot) + 26px + var(--sa-l)); }
  body.touch #tutorial { top: calc(8px + var(--sa-t)); bottom: auto; width: 230px; left: 50%; transform: translateX(-50%); }
  body.touch #toast { top: calc(120px + var(--sa-t)); left: 50%; }
@@ -952,13 +952,22 @@
  body:not(.touch) .start-right { border-left: 1px solid rgba(138, 106, 48, 0.5); }
  body:not(.touch) .g-title, body:not(.touch) .g-foot { border-color: rgba(138, 106, 48, 0.5); }
  body:not(.touch) .t { position: relative; background: transparent; border: 0; border-radius: 0; padding: 4px 2px 3px; gap: 3px; }
- body:not(.touch) .t-ico { position: relative; width: 54px; height: 54px; }
- body:not(.touch) .t-ico::before { content: ''; position: absolute; inset: 8px; border-radius: 5px; background: radial-gradient(circle at 50% 40%, var(--accent-soft, #1a212d), #0a0d13); }
+ body:not(.touch) .t-ico { position: relative; width: 70px; height: 70px; }
+ body:not(.touch) .t-ico::before { content: ''; position: absolute; inset: 9px; border-radius: 5px; background: radial-gradient(circle at 50% 40%, var(--accent-soft, #1a212d), #0a0d13); }
  body:not(.touch) .t-ico::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: url(ui/slot.png) center / 100% 100% no-repeat; }
- body:not(.touch) .t-ico .ico { position: relative; z-index: 1; width: 32px; height: 32px; }
- body:not(.touch) .kc { background: none; border: 7px solid transparent; border-image: url(ui/keycap.png) 18 fill stretch; border-radius: 0; height: 30px; min-width: 30px; padding: 0 2px; font-size: 12px; }
- body:not(.touch) .kc-s { height: 22px; min-width: 22px; border-width: 5px; padding: 0; font-size: 11px; }
- body:not(.touch) .wasd { grid-template-columns: repeat(3, 30px); gap: 2px; }
+ body:not(.touch) .t-ico .ico { position: relative; z-index: 1; width: 40px; height: 40px; }
+ body:not(.touch) .kc { background: none; border: 7px solid transparent; border-image: url(ui/keycap.png) 18 fill stretch; border-radius: 0; height: 36px; min-width: 36px; padding: 0 3px; font-size: 14px; }
+ body:not(.touch) .kc-s { height: 26px; min-width: 26px; border-width: 6px; padding: 0; font-size: 12px; }
+ body:not(.touch) .wasd { grid-template-columns: repeat(3, 36px); gap: 2px; }
+ body:not(.touch) .start-card.panel { width: min(1000px, 94vw); }
+ body:not(.touch) .g-cards { gap: 10px; margin-bottom: 10px; } body:not(.touch) .start-card.panel { padding-top: 18px; padding-bottom: 18px; } body:not(.touch) .g-move { margin-bottom: 10px; } body:not(.touch) .g-foot { padding-top: 8px; }
+ body:not(.touch) .g-title { font-size: 13px; }
+ body:not(.touch) .g-label { font-size: 12px; }
+ body:not(.touch) .g-note { font-size: 13px; }
+ body:not(.touch) .t-name { font-size: 13.5px; }
+ body:not(.touch) .g-dash { font-size: 13px; }
+ body:not(.touch) .g-foot { font-size: 13.5px; }
+ body:not(.touch) .g-more { font-size: 14px; }
  body:not(.touch) #play-btn { border: 1px solid #8a6a30; box-shadow: 0 0 0 1px #6f5526, 0 8px 22px rgba(0, 0, 0, 0.5); border-radius: 8px; }
  /* --- Menú inicial: nombre, flechas y personaje con el estilo del HUD --- */
  body:not(.touch) #name-input, body:not(.touch) #server-select { border: solid transparent; border-width: 11px 15px; border-image: url(ui/bar-frame.png) 20 28 stretch; border-radius: 0; background: #05070b; background-clip: padding-box; padding: 4px 6px; }
