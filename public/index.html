@@ -1144,6 +1144,7 @@
  </div>
  <div class="menu-actions">
  <button id="reset-controls" class="menu-btn" type="button" data-i18n="menu.reset">Restaurar controles</button>
+ <button id="leave-btn" class="menu-btn" type="button" data-i18n="menu.leave">Volver al inicio</button>
  <button id="lang-btn-menu" class="menu-btn lang-btn" type="button"></button>
  <button id="resume-btn" class="menu-btn primary" type="button" data-i18n="menu.resume">Continuar (Esc)</button>
  </div>
@@ -1207,7 +1208,7 @@
  'menu.title': '⚙ Menú', 'menu.sub': '· el juego sigue en marcha', 'menu.volume': 'Volumen',
  'menu.controls': 'Controles', 'menu.controlsHint': '(clic en una tecla y presioná la nueva · Esc cancela)',
  'menu.mouseNote': 'Fijo: Clic izquierdo = lanzar hechizo (clic, o mantener y soltar sobre el rival) · Clic derecho = espadazo (o cancelar el hechizo elegido) · Rueda = zoom',
- 'menu.reset': 'Restaurar controles', 'menu.resume': 'Continuar (Esc)', 'menu.pressKey': 'Presioná una tecla…',
+ 'menu.leave': 'Volver al inicio', 'menu.reset': 'Restaurar controles', 'menu.resume': 'Continuar (Esc)', 'menu.pressKey': 'Presioná una tecla…',
  'act.up': 'Mover arriba', 'act.down': 'Mover abajo', 'act.left': 'Mover izquierda', 'act.right': 'Mover derecha',
  'act.dash': 'Dash', 'act.sword': 'Espadazo', 'act.shield': 'Escudo', 'act.potHp': 'Poción de Vida', 'act.potMp': 'Poción de Maná',
  'key.Space': 'Espacio', 'key.CapsLock': 'Bloq Mayús',
@@ -1273,7 +1274,7 @@
  'menu.title': '⚙ Menu', 'menu.sub': '· the game keeps running', 'menu.volume': 'Volume',
  'menu.controls': 'Controls', 'menu.controlsHint': '(click a key and press the new one · Esc cancels)',
  'menu.mouseNote': 'Fixed: Left click = cast spell (click, or hold and release on the enemy) · Right click = sword slash (or cancel the selected spell) · Wheel = zoom',
- 'menu.reset': 'Reset controls', 'menu.resume': 'Resume (Esc)', 'menu.pressKey': 'Press a key…',
+ 'menu.leave': 'Back to start', 'menu.reset': 'Reset controls', 'menu.resume': 'Resume (Esc)', 'menu.pressKey': 'Press a key…',
  'act.up': 'Move up', 'act.down': 'Move down', 'act.left': 'Move left', 'act.right': 'Move right',
  'act.dash': 'Dash', 'act.sword': 'Sword Slash', 'act.shield': 'Shield', 'act.potHp': 'Health Potion', 'act.potMp': 'Mana Potion',
  'key.Space': 'Space', 'key.CapsLock': 'Caps Lock',
@@ -4231,6 +4232,12 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  }
 
  document.getElementById('resume-btn').addEventListener('click', closeMenu);
+ // Volver al menú inicial: se corta la conexión y se recarga la página (el servidor elegido y tu nombre/color se conservan)
+ document.getElementById('leave-btn').addEventListener('click', () => {
+ net.lastError = 'leave'; // evita que el cambio automático de servidor lo tome como una caída
+ try { net.ws.close(); } catch (err) { /* ignorar */ }
+ location.reload();
+ });
  document.getElementById('menu-btn').addEventListener('click', (e) => {
  e.stopPropagation();
  toggleMenu();
