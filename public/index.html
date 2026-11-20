@@ -4225,6 +4225,12 @@ sfx('spell' + spellId, targetPos);
  masterGain = audioCtx.createGain();
  masterGain.gain.value = masterVolume * masterVolume;
  masterGain.connect(audioCtx.destination);
+ // precalentar el audio con sonidos inaudibles (la primera vez cuesta más)
+ noiseBurst(0.05, 0.0001);
+ tone({ type: 'sine', f0: 440, f1: 300, dur: 0.05, vol: 0.0002 });
+ tone({ type: 'sawtooth', f0: 440, f1: 300, dur: 0.05, vol: 0.0002 });
+ tone({ type: 'square', f0: 440, f1: 300, dur: 0.05, vol: 0.0002 });
+ tone({ type: 'triangle', f0: 440, f1: 300, dur: 0.05, vol: 0.0002 });
  } catch (err) { audioCtx = null; }
  }
 
@@ -5018,6 +5024,60 @@ case 'orb': tone({ type: 'sine', f0: 880, f1: 1400, dur: 0.09, vol: 0.07 }); bre
  window.__arcane.setLang = setLang;
  Object.defineProperty(window.__arcane, 'lang', { get() { return LANG; } });
  applyLang();
+
+ // ===================== Precalentamiento =====================
+ // La primera vez que algo se dibuja, el navegador compila shaders y sube texturas/geometrías a la GPU
+ // (se nota sobre todo en un navegador o PC nuevos, sin caché). Dibujamos todo una vez, escondido,
+ // antes de jugar: se arma y se borra en el mismo instante, sin llegar a verse.
+ function warmUp() {
+ try {
+ const p = { x: camera.position.x, y: camera.position.y };
+ const before = activeFX.length;
+ const added = [];
+ spawnPotionAura(p, 0xff7b72);
+ spawnPotionAura(p, 0x58a6ff);
+ spawnPotionAura(p, 0xffe28a);
+ spawnLightningFX(p, { x: p.x + 1, y: p.y });
+ spawnApocalypseFX(p);
+ spawnImmobilizeFX(p);
+ spawnCleanseFX(p);
+ spawnMissFX(p, 0xffffff);
+ spawnSwordSlashFX(p);
+ spawnShieldBlockFX(p);
+ spawnFloatText(p, '88', '#ff7b72');
+ for (let i = before; i < activeFX.length; i++) added.push(activeFX[i]);
+ // personaje (con barras y nombre) y orbes
+ const ch = createWarlockCharacter({ name: 'Warm', tunicMain: '#8844cc', tunicDark: '#552288', trimColor: '#ffd36b', hairColor: '#1b2030' });
+ ch.root.position.set(p.x, p.y, 0);
+ scene.add(ch.root);
+ const orbWarm = [orbTexSmall, orbTexBig].map((tx) => {
+ const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: tx, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+ m.position.set(p.x, p.y, -3);
+ scene.add(m);
+ return m;
+ });
+ // los orbes y personajes reales están ocultos al principio: se ven por primera vez recién al usarlos
+ const hiddenOrbs = orbs.filter((o) => !o.mesh.visible);
+ for (const o of hiddenOrbs) o.mesh.visible = true;
+ renderer.compile(scene, camera);
+ renderer.render(scene, camera);
+ for (const o of hiddenOrbs) o.mesh.visible = false;
+ // limpiar
+ for (const fx of added) {
+ const i = activeFX.indexOf(fx);
+ if (i >= 0) activeFX.splice(i, 1);
+ if (fx.dispose) fx.dispose();
+ scene.remove(fx.group);
+ fx.group.traverse((c) => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+ }
+ scene.remove(ch.root);
+ ch.root.traverse((c) => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+ for (const m of orbWarm) { scene.remove(m); m.geometry.dispose(); m.material.dispose(); }
+ renderer.render(scene, camera); // deja en pantalla el cuadro normal
+ } catch (err) { window.__warmErr = String(err && err.stack || err); /* el precalentamiento es opcional */ }
+ }
+ window.__arcane.warmUp = warmUp;
+ setTimeout(warmUp, 400);
 
  animate();
 
