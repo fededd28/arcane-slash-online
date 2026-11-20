@@ -944,6 +944,12 @@
  /* --- Avisos en celular: chicos y arriba, para no tapar el juego --- */
  body.touch #toast { top: calc(34px + var(--sa-t)); bottom: auto; left: 50%; max-width: 46vw; padding: 3px 10px; font-size: 11px; line-height: 1.25; border-radius: 7px; background: rgba(14, 18, 26, 0.78); box-shadow: none; text-align: center; }
  body.touch #combat-banner { top: calc(6px + var(--sa-t)); bottom: auto; max-width: 46vw; padding: 3px 10px; font-size: 10.5px; line-height: 1.25; box-shadow: none; }
+ /* --- Celular horizontal: joystick a la derecha y sin las barras de vida/maná de la interfaz
+    (la vida y el maná se ven en el propio personaje) --- */
+ @media (orientation: landscape) {
+ body.touch #vitals { display: none; }
+ body.touch #joystick { left: auto; right: calc(16px + var(--sa-r)); margin-left: 0; bottom: calc(12px + var(--sa-b)); }
+ }
  @media (orientation: portrait) {
  body.touch #toast { top: calc(206px + var(--sa-t)); bottom: auto; max-width: 56vw; }
  body.touch #combat-banner { top: calc(180px + var(--sa-t)); max-width: 56vw; }
