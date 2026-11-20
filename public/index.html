@@ -950,6 +950,21 @@
  body.touch #vitals { display: none; }
  body.touch #joystick { left: auto; right: calc(16px + var(--sa-r)); margin-left: 0; bottom: calc(12px + var(--sa-b)); }
  }
+ /* --- Celular horizontal (pantallas bajas): paneles de arriba más chicos --- */
+ @media (orientation: landscape) and (max-height: 480px) {
+ body.touch #left-col { width: 124px; top: calc(6px + var(--sa-t)); right: calc(6px + var(--sa-r)); gap: 4px; }
+ body.touch #leaderboard { padding: 4px 6px 3px; }
+ body.touch .lb-title { font-size: 8.5px; letter-spacing: 1px; padding-bottom: 2px; margin-bottom: 1px; }
+ body.touch .lb-title small { display: none; }
+ body.touch .lb-row { font-size: 10px; padding: 1px 3px; grid-template-columns: 14px 8px 1fr auto; gap: 4px; }
+ body.touch #lb-me { font-size: 9px; margin-top: 3px; padding-top: 3px; }
+ body.touch #hud { background: none; border: 0; box-shadow: none; backdrop-filter: none; padding: 0; }
+ body.touch #hud .hud-btns { justify-content: flex-end; }
+ body.touch #hud .hud-btns #menu-btn { flex: none; position: relative; width: 36px; height: 36px; min-height: 0; padding: 0 !important; font-size: 0 !important; border: 0; border-radius: 0; background: url(ui/slot.png) center / 100% 100% no-repeat; }
+ body.touch #hud .hud-btns #menu-btn::before { content: ''; position: absolute; inset: 8px; background: url(ui/ico-menu.png) center / contain no-repeat; }
+ body.touch #minimap { width: 64px; height: 64px; }
+ body.touch #minimap-box { padding: 3px; }
+ }
  @media (orientation: portrait) {
  body.touch #toast { top: calc(206px + var(--sa-t)); bottom: auto; max-width: 56vw; }
  body.touch #combat-banner { top: calc(180px + var(--sa-t)); max-width: 56vw; }
