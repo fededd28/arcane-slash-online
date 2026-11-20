@@ -22,6 +22,10 @@ export class GameRoom {
   }
 
   async fetch(request) {
+    // Consulta interna del Worker (/status): cuántos jugadores reales hay en esta sala
+    if (new URL(request.url).pathname === '/status') {
+      return new Response(String(this.game.humans()));
+    }
     if (request.headers.get('Upgrade') !== 'websocket') {
       return new Response('Se esperaba una conexión WebSocket', { status: 426 });
     }

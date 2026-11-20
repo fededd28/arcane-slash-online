@@ -24,6 +24,9 @@ npm run deploy    # publica en Cloudflare (también hace falta si solo cambió e
 **Publicar "en ambos"** (cuando lo pida): no hace falta leer los scripts, ya están revisados. Desde una rama de trabajo: `git push origin HEAD:main`,
 después en `E:\arcane-slash-online` (ahí está `node_modules`): `git pull --ff-only`, `npm run deploy` y `.\oracle\deploy.ps1` (empaqueta `public/` y `src/`,
 lo sube por SSH y reinicia el servicio; termina con `active` y `ok`). Para comprobar: bajar `/shared.js` de los dos sitios y ver el valor cambiado.
+Links para jugar: Cloudflare `https://arcane-slash.fededd28.workers.dev/` (**el link único que se reparte**) · Oracle `https://arcaneslash.duckdns.org` (respaldo).
+La página elige sola el servidor (ping + gente vía `/status` de cada uno; South America = Oracle, North America = Cloudflare; desplegable en el inicio;
+cambia solo si uno no conecta/se cae/tiene ping alto). Lógica en `public/index.html` (`SERVER_HOSTS`, `autoPick`, `switchServer`). Hay que publicar en ambos.
 Repo: `https://github.com/fededd28/arcane-slash-online` (rama `main`). Identidad de Git configurada **solo en este repo**.
 Los commits llevan al final: `Co-Authored-By: Claude <noreply@anthropic.com>` (usá el modelo que corresponda).
 

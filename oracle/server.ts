@@ -27,6 +27,14 @@ app.get('/health', (_req, res) => {
   res.status(200).send('ok');
 });
 
+// Cuántos jugadores reales hay (lo usa el navegador para elegir servidor)
+app.get('/status', (_req, res) => {
+  let players = 0;
+  for (const room of rooms.values()) players += room.game.humans();
+  res.set({ 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' });
+  res.json({ players });
+});
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use((_req, res) => {

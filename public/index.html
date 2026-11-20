@@ -503,6 +503,18 @@
  transition: border-color 0.15s ease, box-shadow 0.15s ease;
  }
  #name-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(223, 177, 86, 0.15); }
+ #server-select {
+ width: 100%;
+ margin-top: 8px;
+ padding: 9px 12px;
+ background: #090d14;
+ color: var(--text);
+ border: 1px solid #323c4c;
+ border-radius: 9px;
+ font-size: 16px;
+ font-family: inherit;
+ }
+ #server-select[hidden] { display: none; }
  #play-btn {
  margin-top: 14px;
  width: 100%;
@@ -1087,6 +1099,10 @@
  <div class="start-left">
  <div class="start-title">ARCANE SLASH</div>
  <input id="name-input" type="text" maxlength="14" placeholder="Tu nombre" data-i18n-ph="start.name" autocomplete="off" spellcheck="false" />
+ <select id="server-select" aria-label="Server" hidden>
+ <option value="oracle">South America</option>
+ <option value="cloudflare">North America</option>
+ </select>
  <div class="start-section">
  <div class="pick-label" data-i18n="start.pick">ELEGÍ TU GUERRERO</div>
  <div class="pick-row">
@@ -3448,6 +3464,10 @@ function onSnapshot(s) {
  net.rtt = performance.now() - m.c;
  pingEl.textContent = `${Math.round(net.rtt)} ms`;
  pingEl.className = net.rtt < 80 ? 'ping-good' : net.rtt < 150 ? 'ping-warn' : 'ping-bad';
+ if (net.playing) {
+ badPing = net.rtt > 400 ? badPing + 1 : 0; // 8 pongs seguidos (~16 s) con más de 400 ms
+ if (badPing >= 8) { badPing = 0; probeOther(); }
+ }
  break;
  case 'err':
  net.lastError = m.reason === 'full' ? 'net.full' : m.reason === 'idle' ? 'net.idle' : 'net.version';
@@ -3467,6 +3487,73 @@ function onSnapshot(s) {
 
  const MAX_ROOMS = 10; // mismo tope que en src/worker.js
 
+ // ---------- Elegir servidor: South America (Oracle) / North America (Cloudflare) ----------
+ // La página es la misma en los dos; lo que cambia es a qué servidor se conecta el juego (el link no cambia).
+ // Al abrir se mide el ping y la gente de cada uno: se usa el de menor ping, salvo que tenga muy poca gente
+ // y el otro tenga más (con ping aceptable). Si uno no conecta o se cae, se pasa al otro.
+ const SERVER_HOSTS = { oracle: 'arcaneslash.duckdns.org', cloudflare: 'arcane-slash.fededd28.workers.dev' };
+ const MULTI = Object.values(SERVER_HOSTS).includes(location.hostname); // en localhost se usa el servidor local
+ const FEW_PLAYERS = 4;
+ const OK_PING_MS = 250;
+ const SW_COOLDOWN_MS = 120000;
+ const otherServer = (s) => (s === 'oracle' ? 'cloudflare' : 'oracle');
+ const ssGet = (k) => { try { return sessionStorage.getItem(k); } catch (err) { return null; } };
+ const ssSet = (k, v) => { try { sessionStorage.setItem(k, v); } catch (err) { /* ignorar */ } };
+ const serverSelectEl = document.getElementById('server-select');
+ let server = location.hostname === SERVER_HOSTS.oracle ? 'oracle' : 'cloudflare';
+ let serverManual = false;
+ let pickPromise = Promise.resolve();
+ const savedServer = ssGet('arena_server');
+ if (MULTI && (savedServer === 'oracle' || savedServer === 'cloudflare')) { server = savedServer; serverManual = true; }
+ function setServer(s) { server = s; serverSelectEl.value = s; }
+ const canSwitch = () => MULTI && Date.now() - (parseInt(ssGet('arena_switch_t'), 10) || 0) > SW_COOLDOWN_MS;
+ // Reinicia la página con el otro servidor y entra sola (pausa de 2 min para no ir y venir sin parar)
+ function switchServer() {
+ if (!canSwitch()) return false;
+ ssSet('arena_server', otherServer(server));
+ ssSet('arena_switch_t', String(Date.now()));
+ ssSet('arena_autojoin', '1');
+ location.reload();
+ return true;
+ }
+ // Ping y jugadores de un servidor (la primera consulta abre la conexión; se mide la segunda)
+ function probeServer(s) {
+ const url = `https://${SERVER_HOSTS[s]}/status`;
+ return fetch(url, { cache: 'no-store' })
+ .then(() => {
+ const t0 = performance.now();
+ return fetch(url, { cache: 'no-store' }).then((r) => r.json()).then((j) => ({ ping: performance.now() - t0, players: j.players | 0 }));
+ })
+ .catch(() => null);
+ }
+ function autoPick() {
+ return Promise.all([probeServer('oracle'), probeServer('cloudflare')]).then(([o, c]) => {
+ if (serverManual) return;
+ const st = { oracle: o, cloudflare: c };
+ const ok = ['oracle', 'cloudflare'].filter((s) => st[s]);
+ if (ok.length === 0) return;
+ if (ok.length === 1) { setServer(ok[0]); return; }
+ let best = st.oracle.ping <= st.cloudflare.ping ? 'oracle' : 'cloudflare';
+ const other = otherServer(best);
+ if (st[best].players < FEW_PLAYERS && st[other].players > st[best].players && st[other].ping < OK_PING_MS) best = other;
+ setServer(best);
+ });
+ }
+ if (MULTI) {
+ serverSelectEl.hidden = false;
+ setServer(server);
+ serverSelectEl.addEventListener('change', () => { serverManual = true; setServer(serverSelectEl.value); });
+ if (!serverManual) pickPromise = autoPick();
+ }
+ let badPing = 0;
+ let probing = false;
+ // Con ping alto sostenido: si el otro servidor responde bien, se cambia
+ function probeOther() {
+ if (probing || !canSwitch()) return;
+ probing = true;
+ probeServer(otherServer(server)).then((r) => { if (r && r.ping < OK_PING_MS) switchServer(); }).finally(() => { probing = false; });
+ }
+
  function beginConnect() {
  if (net.state === 'connecting' || net.state === 'open') return;
  const name = (nameInputEl.value.trim() || t('player.default')).slice(0, 14);
@@ -3476,7 +3563,9 @@ function onSnapshot(s) {
  playBtnEl.disabled = true;
  playBtnEl.textContent = t('start.connecting');
  ensureAudio();
- connectRoom(name, 1);
+ net.state = 'connecting';
+ // espera (hasta 2,5 s) a que termine la elección automática de servidor
+ Promise.race([pickPromise, new Promise((r) => setTimeout(r, 2500))]).then(() => connectRoom(name, 1));
  }
 
  // Si la sala está llena, se prueba la siguiente (2, 3...) hasta MAX_ROOMS
@@ -3485,7 +3574,7 @@ function onSnapshot(s) {
  let ws;
  try {
  const override = new URLSearchParams(location.search).get('ws'); // solo para pruebas locales
- const base = override || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`;
+ const base = override || (MULTI ? `wss://${SERVER_HOSTS[server]}/ws` : `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);
  ws = new WebSocket(`${base}${base.includes('?') ? '&' : '?'}room=${room}`);
  } catch (err) {
  connectFailed('net.openFail');
@@ -3493,7 +3582,9 @@ function onSnapshot(s) {
  }
  net.ws = ws;
  net.state = 'connecting';
+ const connTimeout = setTimeout(() => { if (net.ws === ws && net.state === 'connecting') { try { ws.close(); } catch (err) { /* ignorar */ } } }, 5000);
  ws.onopen = () => {
+ clearTimeout(connTimeout);
  net.state = 'open';
  sendNet({ t: 'join', v: PROTOCOL_VERSION, name, color: colorIndex });
  pingTimer = setInterval(() => sendNet({ t: 'ping', c: performance.now() }), 2000);
@@ -3507,12 +3598,16 @@ function onSnapshot(s) {
  clearInterval(pingTimer);
  net.state = 'closed';
  net.joined = false;
+ clearTimeout(connTimeout);
  if (net.playing) {
+ if (!net.lastError && switchServer()) return; // se cortó solo: pasa al otro servidor
  net.lost = true;
  netOverlayEl.classList.add('visible');
  } else if (net.lastError === 'net.full' && room < MAX_ROOMS) {
  net.state = 'idle';
  connectRoom(name, room + 1);
+ } else if ((!net.lastError || net.lastError === 'net.full') && switchServer()) {
+ // no conectó o está todo lleno: se reinicia con el otro servidor
  } else {
  connectFailed(net.lastError || 'net.connectFail');
  }
@@ -3526,6 +3621,11 @@ function onSnapshot(s) {
  });
  document.getElementById('net-reload').addEventListener('click', () => location.reload());
  setTimeout(() => nameInputEl.focus(), 60);
+ // Si la página se reinició por un cambio automático de servidor, entra sola
+ if (MULTI && ssGet('arena_autojoin') === '1') {
+ ssSet('arena_autojoin', '');
+ setTimeout(beginConnect, 300);
+ }
 
  // Cuando llega el primer estado mío, empieza el juego
  function startPlaying() {
