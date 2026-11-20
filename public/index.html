@@ -3516,15 +3516,26 @@ function onSnapshot(s) {
  location.reload();
  return true;
  }
- // Ping y jugadores de un servidor (la primera consulta abre la conexión; se mide la segunda)
- function probeServer(s) {
- const url = `https://${SERVER_HOSTS[s]}/status`;
- return fetch(url, { cache: 'no-store' })
- .then(() => {
+ // Ping real: tiempo de abrir un WebSocket hasta la sala (en Cloudflare llega hasta donde vive la sala,
+ // no solo al servidor de borde más cercano, que siempre da un ping bajo y engañoso)
+ function wsPing(s) {
+ return new Promise((resolve) => {
  const t0 = performance.now();
- return fetch(url, { cache: 'no-store' }).then((r) => r.json()).then((j) => ({ ping: performance.now() - t0, players: j.players | 0 }));
- })
- .catch(() => null);
+ let done = false;
+ let ws = null;
+ let to = 0;
+ const end = (v) => { if (done) return; done = true; clearTimeout(to); try { ws.close(); } catch (err) { /* ignorar */ } resolve(v); };
+ to = setTimeout(() => end(null), 3000);
+ try { ws = new WebSocket(`wss://${SERVER_HOSTS[s]}/ws?room=1`); } catch (err) { end(null); return; }
+ ws.onopen = () => end(performance.now() - t0);
+ ws.onerror = () => end(null);
+ });
+ }
+ // Ping (mejor de 2 intentos) y jugadores de un servidor
+ function probeServer(s) {
+ const players = fetch(`https://${SERVER_HOSTS[s]}/status`, { cache: 'no-store' }).then((r) => r.json()).then((j) => j.players | 0);
+ const ping = wsPing(s).then((a) => wsPing(s).then((b) => (a == null || b == null ? null : Math.min(a, b))));
+ return Promise.all([players, ping]).then(([p, g]) => (g == null ? null : { ping: g, players: p })).catch(() => null);
  }
  function autoPick() {
  return Promise.all([probeServer('oracle'), probeServer('cloudflare')]).then(([o, c]) => {
