@@ -1,6 +1,8 @@
 name = "arcane-slash-info"
+main = "worker.js"
 compatibility_date = "2024-09-23"
 
-# Página de presentación (un solo archivo, sin servidor)
+# Pagina de presentacion (un solo archivo)
 [assets]
 directory = "./public"
+binding = "ASSETS"
