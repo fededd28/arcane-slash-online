@@ -977,6 +977,18 @@
  body:not(.touch) .arrow-btn { border: 8px solid transparent; border-image: url(ui/keycap.png) 18 fill stretch; border-radius: 0; background: none; width: 42px; height: 56px; padding: 0; font-size: 12px; }
  body:not(.touch) .arrow-btn:hover { background: none; filter: brightness(1.25) drop-shadow(0 0 4px rgba(223, 177, 86, 0.6)); }
  body:not(.touch) #char-preview { width: 160px; height: 160px; border: solid transparent; border-width: 20px; border-image: url(ui/minimap-frame.png) 48 stretch; border-radius: 0; background: radial-gradient(circle at 50% 74%, rgba(223, 177, 86, 0.2), rgba(0, 0, 0, 0) 70%), #05080c; background-clip: padding-box; }
+ /* --- Menú del juego (Esc) con el estilo del HUD (solo escritorio) --- */
+ body:not(.touch) .menu-panel { width: min(720px, 94vw); border: solid transparent; border-width: 34px 16px 16px 16px; border-image: url(ui/leaderboard-frame.png) 44 20 20 20 stretch; border-radius: 0; background: rgba(8, 11, 17, 0.96); background-clip: padding-box; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7); padding: 6px 12px 8px; }
+ body:not(.touch) .menu-label { font-size: 14px; letter-spacing: 1px; }
+ body:not(.touch) .ctrl-row { font-size: 14px; } body:not(.touch) #controls-list { gap: 2px 22px; } body:not(.touch) .menu-section { margin-bottom: 10px; } body:not(.touch) .menu-title { margin-bottom: 8px; } body:not(.touch) .menu-actions { flex-wrap: wrap; align-items: center; }
+ body:not(.touch) .mouse-note { font-size: 12.5px; }
+ body:not(.touch) .menu-btn { border: solid transparent; border-width: 9px 13px; border-image: url(ui/bar-frame.png) 20 28 stretch; border-radius: 0; background: #05070b; background-clip: padding-box; color: var(--text); padding: 3px 4px; font-size: 14px; min-width: 44px; white-space: nowrap; }
+ body:not(.touch) .menu-btn:hover { filter: drop-shadow(0 0 5px rgba(223, 177, 86, 0.7)); }
+ body:not(.touch) .menu-btn.primary { border: 1px solid #8a6a30; border-image: none; border-radius: 8px; background: linear-gradient(180deg, #f2cf7c, #c8963d); color: #1a1204; font-weight: 800; padding: 9px 18px; box-shadow: 0 0 0 1px #6f5526, 0 8px 22px rgba(0, 0, 0, 0.5); }
+ body:not(.touch) .menu-btn.primary:hover { filter: brightness(1.1); }
+ body:not(.touch) .key-btn { border: 7px solid transparent; border-image: url(ui/keycap.png) 18 fill stretch; border-radius: 0; background: none; min-width: 104px; height: 32px; padding: 0 4px; font-size: 13px; color: #f3efe6; }
+ body:not(.touch) .key-btn:hover { filter: brightness(1.2) drop-shadow(0 0 4px rgba(223, 177, 86, 0.6)); }
+ body:not(.touch) .key-btn.waiting { color: var(--gold-bright); filter: drop-shadow(0 0 6px rgba(223, 177, 86, 0.9)); }
  /* --- Avisos en celular: chicos y arriba, para no tapar el juego --- */
  body.touch #toast { top: calc(34px + var(--sa-t)); bottom: auto; left: 50%; max-width: 46vw; padding: 3px 10px; font-size: 11px; line-height: 1.25; border-radius: 7px; background: rgba(14, 18, 26, 0.78); box-shadow: none; text-align: center; }
  body.touch #combat-banner { top: calc(6px + var(--sa-t)); bottom: auto; max-width: 46vw; padding: 3px 10px; font-size: 10.5px; line-height: 1.25; box-shadow: none; }
