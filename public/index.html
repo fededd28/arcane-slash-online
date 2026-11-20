@@ -867,6 +867,70 @@
  .lang-btn { background: transparent; color: var(--steel); border: 1px solid #3a4350; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 14px; }
  .lang-btn:hover { border-color: var(--gold); color: var(--text); }
  .menu-btn.lang-btn { margin-top: 0; font-size: 13px; color: var(--text); }
+ /* ===================== Skin nueva de la interfaz (imágenes en /ui) =====================
+    Solo escritorio: en celular se conserva la disposición táctil; ahí solo cambian los íconos.
+    Para volver al aspecto anterior alcanza con borrar este bloque. */
+ img.ico { object-fit: contain; image-rendering: auto; -webkit-user-drag: none; }
+ .sb-deco { display: none; }
+
+ /* --- Barra de hechizos --- */
+ body:not(.touch) #spellbar {
+ gap: 6px; padding: 14px 18px 12px; border-radius: 8px;
+ background: linear-gradient(180deg, #1a1f29 0%, #0e1218 100%);
+ border: 3px solid #2b313c;
+ box-shadow: 0 0 0 1px #8a6a30, inset 0 0 0 1px #6f5526, 0 12px 30px rgba(0, 0, 0, 0.65);
+ backdrop-filter: none;
+ }
+ body:not(.touch) .sb-deco { display: block; position: absolute; pointer-events: none; background-repeat: no-repeat; background-size: 100% 100%; }
+ body:not(.touch) .sb-wing { top: 50%; width: 52px; height: 130px; margin-top: -65px; }
+ body:not(.touch) .sb-wing.l { left: -50px; background-image: url(ui/wing-left.png); }
+ body:not(.touch) .sb-wing.r { right: -50px; background-image: url(ui/wing-right.png); }
+ body:not(.touch) .sb-crest { left: 50%; top: -22px; width: 150px; height: 50px; margin-left: -75px; background-image: url(ui/crest.png); }
+ body:not(.touch) .spell-slot, body:not(.touch) .potion-slot,
+ body:not(.touch) #dash-slot { width: 66px; height: 66px; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: visible; --frame: url(ui/slot.png); }
+ body:not(.touch) .spell-slot::before, body:not(.touch) .potion-slot::before { content: ''; position: absolute; inset: 8px; border-radius: 5px; background: radial-gradient(circle at 50% 40%, #1a212d, #0a0d13); z-index: 0; }
+ body:not(.touch) .spell-slot::after, body:not(.touch) .potion-slot::after { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; background: var(--frame) center / 100% 100% no-repeat; }
+ body:not(.touch) .spell-slot:hover, body:not(.touch) .potion-slot:hover { border: 0; transform: translateY(-2px); --frame: url(ui/slot-hover.png); }
+ body:not(.touch) .spell-slot.selected, body:not(.touch) .potion-slot.active-shield { border: 0; background: transparent; box-shadow: none; --frame: url(ui/slot-hover.png); filter: drop-shadow(0 0 8px rgba(120, 200, 255, 0.55)); }
+ body:not(.touch) .potion-slot.on-cd, body:not(.touch) .spell-slot.on-cd { border: 0; }
+ body:not(.touch) .spell-icon { position: absolute; inset: 11px; height: auto; margin: 0; }
+ body:not(.touch) .ico { width: 100%; height: 100%; }
+ body:not(.touch) .spell-name { display: none; }
+ body:not(.touch) .cd-mask { inset: 8px; border-radius: 5px; }
+ body:not(.touch) .cd-num { inset: 8px; font-size: 17px; }
+ body:not(.touch) .spell-top { position: absolute; left: 7px; right: 7px; bottom: 4px; margin: 0; z-index: 5; pointer-events: none; font-size: 9px; }
+ body:not(.touch) .spell-key { background: #0b0f15; border: 1px solid #5b6472; padding: 0 3px; line-height: 12px; max-width: 34px; }
+ body:not(.touch) .spell-top > span:not(.spell-key) { text-shadow: 0 1px 2px #000, 0 0 3px #000; }
+ body:not(.touch) .bar-divider { background: linear-gradient(180deg, transparent, #8a6a30, transparent); margin: 6px 2px; }
+
+ /* --- Clasificación --- */
+ body:not(.touch) #leaderboard {
+ border: solid transparent; border-width: 30px 14px 14px 14px;
+ border-image: url(ui/leaderboard-frame.png) 44 20 20 20 stretch;
+ border-radius: 0; background: rgba(8, 11, 17, 0.9); background-clip: padding-box;
+ backdrop-filter: none; box-shadow: none; padding: 2px 4px 4px;
+ }
+ body:not(.touch) .lb-title { font-size: 12px; border-bottom: 0; padding-bottom: 2px; }
+ body:not(.touch) .lb-row.me { background: url(ui/row-highlight.png) center / 100% 100% no-repeat; outline: 0; }
+ body:not(.touch) #lb-me { border-top: 1px solid rgba(138, 106, 48, 0.5); }
+
+ /* --- Botones de arriba (menú y pantalla completa): solo ícono --- */
+ body:not(.touch) #hud { background: transparent; border: 0; box-shadow: none; backdrop-filter: none; padding: 0; }
+ body:not(.touch) .hud-btns { margin-top: 0; gap: 8px; }
+ body:not(.touch) #hud .hud-btns #menu-btn, body:not(.touch) #hud .hud-btns #fullscreen-btn { flex: none; position: relative; width: 40px; height: 40px; min-height: 0; padding: 0; font-size: 0; border: 0; border-radius: 0; background: url(ui/slot.png) center / 100% 100% no-repeat; }
+ body:not(.touch) #menu-btn::before, body:not(.touch) #fullscreen-btn::before { content: ''; position: absolute; inset: 9px; background: center / contain no-repeat; }
+ body:not(.touch) #fullscreen-btn::before { background-image: url(ui/ico-fullscreen.png); }
+ body:not(.touch) #menu-btn::before { background-image: url(ui/ico-menu.png); }
+ body:not(.touch) #hud .hud-btns #menu-btn:hover, body:not(.touch) #hud .hud-btns #fullscreen-btn:hover { background: url(ui/slot-hover.png) center / 100% 100% no-repeat; }
+ body:not(.touch) #hud .hud-btns #fullscreen-btn.locked { background: url(ui/slot-hover.png) center / 100% 100% no-repeat; }
+
+ /* --- Minimapa --- */
+ body:not(.touch) #minimap-box {
+ padding: 0; border: solid transparent; border-width: 22px;
+ border-image: url(ui/minimap-frame.png) 48 stretch;
+ border-radius: 0; background: #05080c; background-clip: padding-box; backdrop-filter: none; box-shadow: none;
+ }
+ body:not(.touch) #minimap { border-radius: 0; }
  </style>
  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 </head>
@@ -1025,60 +1089,61 @@
  </div>
 
  <div id="spellbar">
+ <i class="sb-deco sb-wing l"></i><i class="sb-deco sb-wing r"></i><i class="sb-deco sb-crest"></i>
  <div class="potion-slot" id="dash-slot" title="Dash rápido" data-i18n-title="dash.title">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">Espacio</span><span class="dash-tag">10s</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-dash"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-dash.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="dash">Dash</div>
  </div>
  <div class="bar-divider"></div>
  <div class="spell-slot" data-spell="1" id="slot-1">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">1</span><span class="spell-mana">60</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-petrify"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-spell1.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="spell.1">Petrificar</div>
  </div>
  <div class="spell-slot" data-spell="2" id="slot-2">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">2</span><span class="spell-mana">50</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-spectral"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-spell2.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="spell.2.short">Desc. Espectral</div>
  </div>
  <div class="spell-slot" data-spell="3" id="slot-3">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">3</span><span class="spell-mana">180</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-cataclysm"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-spell3.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="spell.3">Cataclismo</div>
  </div>
  <div class="spell-slot" data-spell="4" id="slot-4">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">4</span><span class="spell-mana">100</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-dispel"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-spell4.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="spell.4">Disipar</div>
  </div>
  <div class="bar-divider"></div>
  <div class="potion-slot" id="melee-slot" title="Tajo de espada cuerpo a cuerpo (tecla de espada o clic derecho, pegado al enemigo)" data-i18n-title="melee.title">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">Q</span><span class="melee-dmg">115</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-sword"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-sword.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="melee">Espadazo</div>
  </div>
  <div class="potion-slot" id="shield-slot" title="Mantener la tecla de escudo para bloquear" data-i18n-title="shield.title">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">Shift</span><span class="dash-tag">8s</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-shield"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-shield.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="shield">Escudo</div>
  </div>
  <div class="potion-slot" id="pot-hp" title="Poción de Vida" data-i18n-title="potHp">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">V</span><span class="potion-heal">+30</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-potion-hp"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-potion-hp.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="potHp.short">Poción Vida</div>
  </div>
  <div class="potion-slot" id="pot-mp" title="Poción de Maná" data-i18n-title="potMp">
  <div class="cd-mask"></div><div class="cd-num"></div>
  <div class="spell-top"><span class="spell-key">B</span><span class="spell-mana">+30</span></div>
- <div class="spell-icon"><svg class="ico"><use href="#ico-potion-mp"/></svg></div>
+ <div class="spell-icon"><img class="ico" src="ui/ico-potion-mp.png" alt="" draggable="false"></div>
  <div class="spell-name" data-i18n="potMp.short">Poción Maná</div>
  </div>
  </div>
@@ -3073,7 +3138,8 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  : `<path d="M10 1.5 V11 H18.5 V10 A8.5 8.5 0 0 0 10 1.5 Z" fill="#d4a64a"/>`) +
  `<path d="M10 1.5 V11 M1.5 11 H18.5" stroke="#4b5566" stroke-width="1" fill="none"/></svg>`;
  const hex = (n) => '#' + n.toString(16).padStart(6, '0');
- const ico = (name) => `<svg class="ico"><use href="#ico-${name}"/></svg>`;
+ const ICO_PNG = { petrify: 'ico-spell1', spectral: 'ico-spell2', cataclysm: 'ico-spell3', dispel: 'ico-spell4', sword: 'ico-sword', shield: 'ico-shield', 'potion-hp': 'ico-potion-hp', 'potion-mp': 'ico-potion-mp', dash: 'ico-dash' };
+ const ico = (name) => (ICO_PNG[name] ? `<img class="ico" src="ui/${ICO_PNG[name]}.png" alt="" draggable="false">` : `<svg class="ico"><use href="#ico-${name}"/></svg>`);
  const tile = (icon, name, keysHtml, accent) =>
  `<div class="t" style="--accent:${accent || '#2a313c'}"><div class="t-ico">${icon}</div><div class="t-keys">${keysHtml}</div><div class="t-name">${name}</div></div>`;
 

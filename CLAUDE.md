@@ -55,6 +55,11 @@ Dentro de `public/index.html`, buscá por nombre: `drawWarlockFrame` / `createWa
 - Si cambian los mensajes cliente↔servidor: subir `PROTOCOL_VERSION` en `shared.js`.
 - **Idiomas (es/en):** todos los textos están en la tabla `I18N` de `public/index.html` (función `t(clave)`; en el HTML, `data-i18n`). Se elige por el idioma del navegador y hay botón 🌐. Los avisos del servidor (`toast`) mandan una clave (`k`) y datos (`a`), no texto: la traducción `srv.<clave>` está en la tabla. Todo texto nuevo va en los dos idiomas.
 
+## Interfaz con imágenes (`public/ui/`)
+Marcos, casillas, íconos y alas hechos con IA (fondo magenta recortado). La "skin" está en un bloque de CSS al final de `<style>` en `public/index.html`
+("Skin nueva de la interfaz"), **solo para escritorio** (`body:not(.touch)`); el celular conserva su disposición y solo usa los íconos nuevos.
+Borrando ese bloque vuelve el aspecto anterior (los íconos SVG viejos siguen en `<symbol id="ico-...">`).
+
 ## Reglas vigentes que NO hay que romper sin preguntar
 - Un hechizo que **falla no gasta maná**, pero deja una **espera corta de 0,4 s** (`SPELL_MISS_INTERVAL`; si fuera 0 se podría ametrallar:
   80 efectos/s para todos y apuntar gratis a fuerza bruta). Acertar sí activa el intervalo de 1,2 s. No se puede **petrificar a un petrificado**.
