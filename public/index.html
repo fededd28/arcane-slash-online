@@ -933,7 +933,9 @@
  body:not(.touch) #minimap { border-radius: 0; }
 
  /* --- Vida y maná: barras dentro de un marco metálico, con el texto encima --- */
- body:not(.touch) #vitals { bottom: 134px; }
+ body:not(.touch) #vitals { position: absolute; left: 0; right: 0; bottom: calc(100% - 3px); transform: none; width: auto; gap: 0; grid-template-columns: 1fr 150px 1fr; pointer-events: none; }
+ body:not(.touch) #vitals .bar-wrap:first-child { grid-column: 1; }
+ body:not(.touch) #vitals .bar-wrap:last-child { grid-column: 3; }
  body:not(.touch) .bar-wrap { position: relative; height: 44px; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; }
  body:not(.touch) .bar-wrap::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border: solid transparent; border-width: 11px 15px; border-image: url(ui/bar-frame.png) 20 28 stretch; }
  body:not(.touch) .bar-track { position: absolute; inset: 11px 15px; height: auto; border: 0; border-radius: 2px; background: #05070b; }
@@ -1416,6 +1418,8 @@
  return matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window && !matchMedia('(any-hover: hover)').matches);
  })();
  document.body.classList.toggle('touch', IS_TOUCH);
+ // En escritorio, vida y maná van pegadas sobre la barra de hechizos, a cada lado del adorno del medio
+ if (!IS_TOUCH) document.getElementById('spellbar').appendChild(document.getElementById('vitals'));
  // viewSize = alto visible en horizontal; en vertical es el ANCHO visible (así no se ve gigante ni angosto)
  let viewSize = IS_TOUCH ? 9.5 : 18;
  function getFrustum() {
