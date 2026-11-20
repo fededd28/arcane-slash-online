@@ -748,6 +748,7 @@
  .wasd .up { grid-column: 2; grid-row: 1; }
  .wasd > :not(.up) { grid-row: 2; }
  svg.mouse { width: 13px; height: 17px; vertical-align: middle; }
+ svg.mouse.big { width: 22px; height: 28px; }
 
  /* ---- Conexión ---- */
  #net-overlay { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; background: rgba(5, 7, 10, 0.82); }
@@ -3258,7 +3259,7 @@ const tk = (a) => `<span class="kc kc-s">${keyName(bindings[a])}</span>`;
  `<div class="g-cards">${spellTiles}</div>` +
  `<div class="g-label">${t('help.actions')}</div>` +
  `<div class="g-cards">` +
- tile(ico('sword'), t('help.sword'), `${kc('sword')}${mouse('right')}`) +
+ tile(ico('sword'), t('help.sword'), `${mouse('right').replace('class="mouse"', 'class="mouse big"')}${kc('sword', 'kc-s')}`) +
  tile(ico('shield'), t('shield'), kc('shield')) +
  tile(ico('potion-hp'), t('help.potHp'), kc('potHp')) +
  tile(ico('potion-mp'), t('help.potMp'), kc('potMp')) +
