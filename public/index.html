@@ -934,8 +934,8 @@
 
  /* --- Vida y maná: barras dentro de un marco metálico, con el texto encima --- */
  body:not(.touch) #vitals { position: absolute; left: 0; right: 0; bottom: calc(100% - 3px); transform: none; width: auto; gap: 0; grid-template-columns: 1fr 150px 1fr; pointer-events: none; }
- body:not(.touch) #vitals .bar-wrap:first-child { grid-column: 1; }
- body:not(.touch) #vitals .bar-wrap:last-child { grid-column: 3; }
+ body:not(.touch) #vitals .bar-wrap:first-child { grid-column: 1; margin-left: 18px; }
+ body:not(.touch) #vitals .bar-wrap:last-child { grid-column: 3; margin-right: 18px; }
  body:not(.touch) .bar-wrap { position: relative; height: 44px; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; }
  body:not(.touch) .bar-wrap::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border: solid transparent; border-width: 11px 15px; border-image: url(ui/bar-frame.png) 20 28 stretch; }
  body:not(.touch) .bar-track { position: absolute; inset: 11px 15px; height: auto; border: 0; border-radius: 2px; background: #05070b; }
