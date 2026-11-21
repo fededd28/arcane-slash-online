@@ -57,6 +57,8 @@ section{padding-block:80px 0}
 .moves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:10px}
 .mv{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;min-width:0;background:var(--panel-solid);border:1px solid var(--line-solid);border-radius:8px;padding:16px 20px}
 .mv img{width:56px;height:56px;padding:12px}
+.mv.two{grid-template-columns:auto 1fr}
+.pair{display:flex;gap:6px}
 .mv b{font-family:var(--display);font-size:.95rem;color:var(--gold-bright)}
 .mv span{display:block;color:var(--muted);font-size:.88rem;line-height:1.35}
 .steps{margin:28px 0 0;padding:0;list-style:none;display:grid;gap:22px;font-size:1.1rem}
@@ -132,7 +134,7 @@ body{margin:0}img{max-width:100%}
       <div class="mv"><img src="ui/ico-sword.png" alt=""><div><b data-i18n="m1n">Sword</b><span data-i18n="m1d">Close-range strike.</span></div></div>
       <div class="mv"><img src="ui/ico-shield.png" alt=""><div><b data-i18n="m2n">Shield</b><span data-i18n="m2d">Blocks a hit for a moment.</span></div></div>
       <div class="mv"><img src="ui/ico-dash.png" alt=""><div><b data-i18n="m3n">Dash</b><span data-i18n="m3d">Quick burst to dodge or escape.</span></div></div>
-      <div class="mv"><img src="ui/ico-potion-hp.png" alt=""><div><b data-i18n="m4n">Potions</b><span data-i18n="m4d">Restore health and mana.</span></div></div>
+      <div class="mv two"><span class="pair"><img src="ui/ico-potion-hp.png" alt=""><img src="ui/ico-potion-mp.png" alt=""></span><div><b data-i18n="m4n">Potions</b><span data-i18n="m4d">Restore health and mana.</span></div></div>
     </div>
   </section>
 
