@@ -54,8 +54,8 @@ section{padding-block:80px 0}
 .spell h3{font-size:.98rem;font-weight:700;color:var(--c)}
 .spell .k{color:var(--muted);font-size:.82rem}
 .spell p{clear:both;font-size:.95rem;padding-top:14px;color:#c9c7c0}
-.moves{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:6px}
-.mv{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;min-width:0;background:var(--panel-solid);border:1px solid var(--line-solid);border-radius:8px;padding:10px 12px}
+.moves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:10px}
+.mv{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;min-width:0;background:var(--panel-solid);border:1px solid var(--line-solid);border-radius:8px;padding:16px 20px}
 .mv img{width:56px;height:56px;padding:12px}
 .mv b{font-family:var(--display);font-size:.95rem;color:var(--gold-bright)}
 .mv span{display:block;color:var(--muted);font-size:.88rem;line-height:1.35}
@@ -77,7 +77,7 @@ kbd{display:inline-flex;align-items:center;justify-content:center;min-width:30px
 .end::after{right:0;background-image:url(ui/wing-right.png)}
 footer{color:var(--muted);font-size:.8rem;letter-spacing:.1em;text-align:center;padding-bottom:40px}
 @media (max-width:720px){.end::before,.end::after{display:none}}
-@media (max-width:560px){.spells{grid-template-columns:minmax(0,1fr)}.hero{grid-template-columns:1fr;text-align:center;justify-items:center}.hero .tag{margin-inline:auto}.facts{justify-content:center}.bar{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.spells,.moves{grid-template-columns:minmax(0,1fr)}.hero{grid-template-columns:1fr;text-align:center;justify-items:center}.hero .tag{margin-inline:auto}.facts{justify-content:center}.bar{grid-template-columns:repeat(4,minmax(0,1fr))}}
 body{margin:0}img{max-width:100%}
 </style>
 </head>
@@ -127,6 +127,16 @@ body{margin:0}img{max-width:100%}
   </section>
 
   <section>
+    <h2 data-i18n="h_more">Besides spells</h2>
+    <div class="moves">
+      <div class="mv"><img src="ui/ico-sword.png" alt=""><div><b data-i18n="m1n">Sword</b><span data-i18n="m1d">Close-range strike.</span></div></div>
+      <div class="mv"><img src="ui/ico-shield.png" alt=""><div><b data-i18n="m2n">Shield</b><span data-i18n="m2d">Blocks a hit for a moment.</span></div></div>
+      <div class="mv"><img src="ui/ico-dash.png" alt=""><div><b data-i18n="m3n">Dash</b><span data-i18n="m3d">Quick burst to dodge or escape.</span></div></div>
+      <div class="mv"><img src="ui/ico-potion-hp.png" alt=""><div><b data-i18n="m4n">Potions</b><span data-i18n="m4d">Restore health and mana.</span></div></div>
+    </div>
+  </section>
+
+  <section>
     <h2 data-i18n="h_ctrl">Controls</h2>
     <div class="tablewrap">
       <table>
@@ -171,6 +181,11 @@ body{margin:0}img{max-width:100%}
     sp2n: 'Descarga Espectral', sp2k: 'Tecla 2 · 50 de maná', sp2d: 'Daño a distancia rápido y barato.',
     sp3n: 'Cataclismo', sp3k: 'Tecla 3 · 180 de maná', sp3d: 'Daño enorme. Cuesta mucho maná.',
     sp4n: 'Disipar', sp4k: 'Tecla 4 · 100 de maná', sp4d: 'Quita la petrificación.',
+    h_more: 'Además de los hechizos',
+    m1n: 'Espada', m1d: 'Golpe cuerpo a cuerpo.',
+    m2n: 'Escudo', m2d: 'Frena un golpe un instante.',
+    m3n: 'Dash', m3d: 'Salto rápido para esquivar o escapar.',
+    m4n: 'Pociones', m4d: 'Recuperan vida y maná.',
     h_ctrl: 'Controles',
     ctrl_lead: 'En celular: joystick y botones táctiles.',
     c1: 'Moverse', c2: 'Hechizos', c2k: '<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> + clic',
